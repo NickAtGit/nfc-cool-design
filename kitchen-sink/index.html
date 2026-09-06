@@ -169,6 +169,19 @@
   .ks-navbox .nav-scrim { position:absolute; }
 
 
+
+  .ks-decisions td { vertical-align:top; }
+  .ks-decisions tr.is-open td { background:var(--color-warning-bg); }
+  .ks-yellows { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
+  @media (min-width:768px) { .ks-yellows { grid-template-columns:1fr 1fr; } }
+  .ks-yellow { border:1px solid var(--color-border); border-radius:var(--radius-lg);
+    padding:var(--space-5); background:var(--color-bg); }
+  .ks-yellow > p { margin-block-end:var(--space-3); }
+  .ks-voice { display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:var(--space-4); }
+  .ks-voice > div { border-inline-start:3px solid var(--color-link); padding-inline-start:var(--space-4); }
+  .ks-voice b { display:block; font-family:var(--font-heading); font-size:var(--text-md); }
+  .ks-voice span { font-size:var(--text-xs); color:var(--color-text-muted); }
+
   /* gradient comparison */
   .ks-grads { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
   @media (min-width:900px) { .ks-grads { grid-template-columns:1fr 1fr; } }
@@ -182,36 +195,16 @@
   .ks-grad-band h4 { font-family:var(--font-heading); font-size:var(--text-subhead); font-weight:600;
     line-height:1.1; letter-spacing:var(--tracking-display); margin-bottom:var(--space-2); }
   .ks-grad-band p { font-size:var(--text-sm); line-height:1.5; margin-bottom:var(--space-4); }
-  .has-shadow .ks-grad-band h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
-  .has-shadow .ks-grad-band p { color:rgba(255,255,255,.92); }
+  .ks-grad-band h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
+  .ks-grad-band p { color:rgba(255,255,255,.92); }
   .ks-grad-stats { width:100%; border-collapse:collapse; font-size:var(--text-3xs); }
   .ks-grad-stats td { padding:var(--space-2) var(--space-4); border-top:1px solid var(--color-border-light);
     font-variant-numeric:tabular-nums; }
   .ks-grad-stats td:first-child { color:var(--color-text-muted); }
   .ks-grad-stats td:nth-child(2) { font-family:var(--font-mono); }
-
-  /* hero band comparison, light mode only */
-  .ks-compare { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
-  @media (min-width:900px) { .ks-compare { grid-template-columns:repeat(3,1fr); } }
-  .ks-opt { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--color-bg-card); }
+  /* label used by the yellow comparison cards */
   .ks-opt-head { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs); font-weight:700;
     text-transform:uppercase; letter-spacing:var(--tracking-label); border-bottom:1px solid var(--color-border); }
-  .ks-opt-band { position:relative; padding:var(--space-7) var(--space-5); color:#fff; isolation:isolate; }
-  .ks-opt-band h4 { font-family:var(--font-heading); font-size:var(--text-subhead); font-weight:600;
-    line-height:1.1; letter-spacing:var(--tracking-display); margin-bottom:var(--space-2); }
-  .ks-opt-band p { font-size:var(--text-sm); line-height:1.5; margin-bottom:var(--space-4); }
-  .ks-opt-foot { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs); line-height:1.5;
-    color:var(--color-text-secondary); }
-  .ks-opt-foot b { color:var(--color-text); }
-  /* A: exactly what ships today, patches included */
-  .ks-band-live { background:linear-gradient(180deg,#137BD9 0%,#00A2F3 100%); }
-  .ks-band-live h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
-  .ks-band-live p { color:rgba(255,255,255,.92); }
-  /* B: both stops deepened, no patches */
-  .ks-band-deep { background:linear-gradient(180deg,#1276D0 0%,#007BB9 100%); }
-  /* C: shipped gradient, faint veil behind the text only */
-  .ks-band-scrim { background:linear-gradient(180deg,#137BD9 0%,#00A2F3 100%); }
-  .ks-band-scrim::before { content:""; position:absolute; inset:0; z-index:-1;
     background:linear-gradient(180deg,rgba(4,40,70,0) 0%,rgba(4,40,70,.34) 100%); }
 
   /* stand-in artwork so the demo has no external dependencies */
@@ -258,22 +251,54 @@
   </p>
 
 
-  <!-- ============================ GRADIENTS ============================ -->
-  <h2 class="ks-h2" id="gradients">Every blue gradient in the brand</h2>
+  <!-- ============================ DECISIONS ============================ -->
+  <h2 class="ks-h2" id="decisions">Decisions</h2>
   <p class="ks-lede">
-    The brand carried six different blues at once. The app's <code class="ks-code">appThemeGradient</code>
-    is now canonical and everything below is measured against the same headline.
-    Ratios are measured live against white at the top, middle and bottom of every band. Body text needs
-    <b>4.5</b>; large display text needs <b>3.0</b>.
+    What is settled, and what is still open. Everything below this section is built on these.
   </p>
-  <div class="ks-row" style="margin-bottom:var(--space-5)">
-    <button class="btn btn-secondary btn-sm" type="button" id="ks-shadow-toggle">Shadow compensation: on</button>
-    <span class="ks-note" style="margin:0">The shadow is what the shipped site uses to carry white text. Turn it off to judge the colour alone.</span>
+
+  <div class="ks-scroll">
+    <table class="ks-table ks-decisions">
+      <thead><tr><th>Question</th><th>Decision</th><th>Consequence</th></tr></thead>
+      <tbody>
+        <tr><td>Brand blue</td>
+            <td><b>The iOS app's <code>appThemeGradient</code></b><br><code>#1A60CE &rarr; #128CF0</code></td>
+            <td>Four other blues retired. The web band matches what the product renders.</td></tr>
+        <tr><td>How many gradients</td>
+            <td><b>One</b></td>
+            <td>It is the band. It is never ramped across a button; filled buttons are solid.</td></tr>
+        <tr><td>Interactive colour</td>
+            <td><b>The two stops themselves</b></td>
+            <td>No derived tints. Dark stop for text (5.38:1), light stop for borders and icons (3.22:1).</td></tr>
+        <tr><td>Light vs dark</td>
+            <td><b>Keep the mode flip</b></td>
+            <td>Blue is interactive by day, brand yellow by night. Yellow is never text on a light surface.</td></tr>
+        <tr><td>Primary button</td>
+            <td><b>Filled, with the outline as secondary</b></td>
+            <td>Store badges stay the marketing hero's CTA. Solid fill, never a gradient.</td></tr>
+        <tr><td>Page headers</td>
+            <td><b>Three tiers</b></td>
+            <td>Gradient hero, gradient strip, quiet header. A band never sits above a data table.</td></tr>
+        <tr><td>Navigation</td>
+            <td><b>One component, two modes</b></td>
+            <td>Sidebar follows the theme, superseding the 2026-09-02 spec's fixed dark console.</td></tr>
+        <tr><td>Typeface</td>
+            <td><b>Titillium everywhere</b></td>
+            <td>Momento Marks takes the skeleton, not the typeface; its own face comes later.</td></tr>
+        <tr><td>Ink Black</td>
+            <td><code>#212529</code></td>
+            <td>The one value Brand Manual V1 is unambiguous about. Already correct everywhere.</td></tr>
+        <tr class="is-open"><td>Brand yellow</td>
+            <td><b>OPEN</b> &mdash; <code>#FFC700</code> or <code>#FFC709</code></td>
+            <td>See below. The brand's own files disagree.</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="ks-grads has-shadow" id="ks-grads">
+  <h3 class="ks-h3">The one blue gradient</h3>
+  <div class="ks-grads">
     <figure class="ks-grad" data-top="#1A60CE" data-bottom="#128CF0">
-      <figcaption><b>iOS app</b> <code>appThemeGradient</code> <span class="ks-flag is-kept">CANONICAL</span></figcaption>
+      <figcaption><b>Brand gradient</b> <code>--brand-gradient</code> <span class="ks-flag is-kept">canonical</span></figcaption>
       <div class="ks-grad-band">
         <h4>Tap it. It works.</h4>
         <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
@@ -281,72 +306,77 @@
       </div>
       <table class="ks-grad-stats"></table>
     </figure>
-
-    <figure class="ks-grad" data-top="#137BD9" data-bottom="#00A2F3">
-      <figcaption><b>Website</b>, until now <span class="ks-flag">superseded</span></figcaption>
-      <div class="ks-grad-band">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+    <div>
+      <div class="ks-basis" style="margin-top:0">
+        <b>Why this one.</b> It is what the iOS app renders, and it is the darkest of the five that were
+        in circulation, so white clears AA at the top stop and stays above the 3.0 large-text floor at the
+        bottom. Every retired alternative dropped below 3.0 before its band ended.
+        <br><br>
+        <b>The shadow stays, and it is not a hack.</b> Brand Manual V1, page 10, on the secondary logo:
+        the "NFC" element in white and ".cool" in the brand's yellow, and <i>"both elements should always
+        be used with the designated shadows."</i> <code>--on-brand-text-shadow</code> is a brand
+        requirement that also happens to carry body copy over the lower half of the band.
       </div>
-      <table class="ks-grad-stats"></table>
-    </figure>
-
-    <figure class="ks-grad" data-top="#00A2F3" data-bottom="#137BD9">
-      <figcaption><b>Brand manual asset</b> <code>NFC_Gradient.png</code> <span class="ks-flag">same colours, flipped</span></figcaption>
-      <div class="ks-grad-band">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
-      </div>
-      <table class="ks-grad-stats"></table>
-    </figure>
-
-    <figure class="ks-grad" data-top="#3878D1" data-bottom="#45A1ED">
-      <figcaption><b>Manual swatches</b> Dark Blue &rarr; Light Blue <span class="ks-flag">used by the dashboard + all email</span></figcaption>
-      <div class="ks-grad-band">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
-      </div>
-      <table class="ks-grad-stats"></table>
-    </figure>
-
-    <figure class="ks-grad" data-top="#169DFE" data-bottom="#169DFE">
-      <figcaption><b>Card page CTA</b> flat <code>#169dfe</code> <span class="ks-flag">the brand's highest-traffic button</span></figcaption>
-      <div class="ks-grad-band">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
-      </div>
-      <table class="ks-grad-stats"></table>
-    </figure>
-
+    </div>
   </div>
 
+  <h4 class="ks-h3" style="font-size:var(--text-base)">Retired, and where they still live</h4>
+  <div class="ks-scroll">
+    <table class="ks-table">
+      <thead><tr><th>Blue</th><th>Was</th><th>Still in</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#137BD9,#00A2F3)"></span> <code>#137BD9 &rarr; #00A2F3</code></td>
+            <td>the website band</td><td>nfc-cool-website <code>Theme/css/theme.css</code></td></tr>
+        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#00A2F3,#137BD9)"></span> <code>#00A2F3 &rarr; #137BD9</code></td>
+            <td>the manual's gradient asset</td><td><code>NFC_Gradient.png</code>, mirrored; likely drawn for a square logo frame</td></tr>
+        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#3878D1,#45A1ED)"></span> <code>#3878D1 &rarr; #45A1ED</code></td>
+            <td>two flat palette swatches ramped together</td><td>dashboard, auth pages, all six email templates</td></tr>
+        <tr><td><span class="ks-chip" style="background:#169DFE"></span> <code>#169dfe</code> flat</td>
+            <td>the card page CTA</td><td>the brand's highest-traffic button</td></tr>
+        <tr><td><span class="ks-chip" style="background:#4074B9"></span> <code>#4074B9</code> flat</td>
+            <td>never a brand colour</td><td>every icon SVG in the manual; recolour to <code>currentColor</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="ks-h3">Open: which yellow</h3>
+  <p class="ks-lede">
+    The brand's own vector files disagree. Both are shown at the size the yellow is actually used:
+    the script tail of the wordmark, and the numeral watermark on a feature card.
+  </p>
+  <div class="ks-yellows">
+    <div class="ks-yellow" style="--y:#FFC700">
+      <p class="ks-opt-head" style="border:0;padding-inline:0"><code>#FFC700</code> &middot; Secondary Logo SVG</p>
+      <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail" style="color:var(--y)">.cool</em></p>
+      <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--y);line-height:1">01</p>
+      <p class="ks-note">The logo the wordmark is derived from.</p>
+    </div>
+    <div class="ks-yellow" style="--y:#FFC709">
+      <p class="ks-opt-head" style="border:0;padding-inline:0"><code>#FFC709</code> &middot; shipped on the website</p>
+      <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail" style="color:var(--y)">.cool</em></p>
+      <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--y);line-height:1">01</p>
+      <p class="ks-note">What every page already renders.</p>
+    </div>
+  </div>
   <div class="ks-basis">
-    <b>Why the app's wins.</b> It is the darkest of the set (13% relative luminance at the top, against
-    19% for the website and the manual swatches), so it is the only gradient where white clears AA at the
-    top and still holds above the 3.0 large-text floor at the bottom. Every other definition drops below
-    3.0 before the band ends. It is also what the product actually renders, which no other candidate
-    could claim.
-    <br><br>
-    <b>On direction.</b> The app and the old website value both run dark at the top and light at the
-    bottom. Only <code>NFC_Gradient.png</code> runs the other way, which reads as a file oriented for a
-    square logo frame rather than a wide page band. So "match the brand" and "make the text readable"
-    were never actually in conflict.
-    <br><br>
-    <b>The interactive colours are now these two stops</b>, not tints derived from them.
-    <code>--color-link-text</code> is the dark stop at 5.38:1 on the page, which is what body-copy links
-    need; <code>--color-link</code> is the light stop at 3.22:1, used only where 3:1 is the bar.
-    <br><br>
-    <b>Retired.</b> A sixth blue, a flat <code>#4074B9</code>, sits in every icon SVG in the manual
-    (QR, NFC, 3D, Document). It is not a brand colour and is not kept: any of those icons that get reused
-    take <code>--color-link</code> or <code>currentColor</code> instead.
-    <br><br>
-    <b>Where each one is used today.</b> The website band and every marketing hero take the second.
-    The <code>business_card_service</code> dashboard, its auth pages and all six email templates take the
-    fourth. The card page uses none of them: it has a flat <code>#169dfe</code>.
+    <b>They are nine units apart on one channel</b>, which is drift rather than intent. Both measure
+    1.45:1 on the page background, so contrast does not decide it: the yellow is a logotype colour and a
+    decorative watermark, never body text. Pick the source you want to be authoritative, the logo or the
+    shipped site.
+  </div>
+
+  <h3 class="ks-h3">Tone of voice</h3>
+  <p class="ks-lede">
+    From Brand Manual V1, page 4. Six paired constraints, each naming the failure mode on the other side.
+    These govern copy in the system the way the tokens govern colour.
+  </p>
+  <div class="ks-voice">
+    <div><b>Tech-Savvy</b><span>but not Complex</span></div>
+    <div><b>User-Friendly</b><span>but not Oversimplified</span></div>
+    <div><b>Efficient</b><span>but not Rigid</span></div>
+    <div><b>Joyful</b><span>but not Superficial</span></div>
+    <div><b>Community-Oriented</b><span>but not Exclusive</span></div>
+    <div><b>Supportive</b><span>but not Intrusive</span></div>
   </div>
 
   <!-- ============================ NAVIGATION ============================ -->
@@ -1127,11 +1157,6 @@
       }).join('');
     });
   }
-  const shadowBtn = document.getElementById('ks-shadow-toggle');
-  if (shadowBtn) shadowBtn.addEventListener('click', () => {
-    const on = document.getElementById('ks-grads').classList.toggle('has-shadow');
-    shadowBtn.textContent = 'Shadow compensation: ' + (on ? 'on' : 'off');
-  });
 
   renderTables(); renderType(); renderGrads(); bp();
 })();
