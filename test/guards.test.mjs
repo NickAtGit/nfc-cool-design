@@ -52,6 +52,16 @@ for (const f of AUTHORED) {
   });
 }
 
+/* The wordmark is Latin and must never reorder inside RTL text. */
+test('the wordmark is isolated left-to-right', () => {
+  const css = read('src/archetypes.css');
+  const rule = css.slice(css.indexOf('.brand-name {'), css.indexOf('}', css.indexOf('.brand-name {')));
+  assert.match(rule, /direction:\s*ltr/, '.brand-name must force direction: ltr');
+  assert.match(rule, /unicode-bidi:\s*isolate/, '.brand-name must isolate its bidi run');
+  assert.ok(!/\[dir="rtl"\][^{]*\.brand-name/.test(css),
+    'the rule must apply unconditionally, not only under [dir="rtl"]');
+});
+
 /* Both themes define exactly the same token set, or a token silently
    inherits its light value in the dark theme. */
 test('every brand token is defined in both themes', () => {

@@ -12,7 +12,16 @@
    as one token so it can be changed in one place if that call is revisited.
    Do NOT copy this pattern onto ordinary text.
    ============================================================ */
-.brand-name { white-space: nowrap; }
+.brand-name {
+   /* The wordmark is a logotype and always reads left to right, including
+      mid-sentence in an Arabic heading. Isolating it stops the script ".cool"
+      tail jumping ahead of "NFC", and lets the tail's tuck margins below
+      behave as drawn. Set unconditionally, not under [dir="rtl"], so a
+      consumer that ships no RTL stylesheet still cannot get it wrong. */
+   direction: ltr;
+   unicode-bidi: isolate;
+   white-space: nowrap;
+}
 .brand-tail, em.brand-tail {
    font-family: var(--font-script);
    font-style: normal; font-weight: 400;
