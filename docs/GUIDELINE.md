@@ -82,6 +82,26 @@ the store. It has no answer for Save, Invite, Delete or Save Contact, and
 business_card_service filled that vacuum with five different button designs.
 Store badges remain the marketing hero's primary CTA.
 
+**One nav component, two modes.** A nav is a list of destinations plus a
+utility cluster laid out along an axis, and the axis is the only thing the mode
+changes: `data-nav="bar"` for the marketing header, `data-nav="side"` for the
+product console. Link shape, active state, focus, drawer mechanics and the
+toggle button are written once.
+
+The side mode has three responsive states, all on the existing four
+breakpoints: full with labels at `lg` and up, an icon rail from `md` to `lg`
+with labels hidden visually but kept in the accessibility tree, and an
+off-canvas drawer with a scrim below `md`. `.is-collapsed` forces the rail at
+any width, which is how a person collapses the sidebar themselves; the choice
+persists in `localStorage`.
+
+**This supersedes a written decision.** `business_card_service`'s
+`docs/superpowers/specs/2026-09-02-team-product-refocus-design.md` chose
+Direction B with a permanently dark `#161B22` sidebar. The sidebar follows the
+theme instead, so the console obeys one palette rather than carrying a second
+dark surface family that has to be kept in contrast on its own. If that spec is
+revisited, this is the newer decision.
+
 **Three header tiers, not one.** `.hero-band` for marketing landings,
 `.hero-strip` for blog and secondary pages, `.app-header` for product UI and
 card pages. A gradient band above a data table is marketing intruding on work.

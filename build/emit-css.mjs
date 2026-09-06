@@ -51,6 +51,9 @@ ${block(p.radius, 'radius-')}
    /* Elevation - resolves against brand-layer shadow colours */
 ${block(p.elevation, 'elev-')}
 
+   /* Navigation geometry */
+${block(p.nav, 'nav-')}
+
    /* Motion */
 ${block(p.motion, '')}
 

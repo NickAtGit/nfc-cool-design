@@ -18,7 +18,8 @@
     "./email.css": "./src/email.css",
     "./design.css": "./dist/design.css",
     "./tokens.json": "./src/tokens.json",
-    "./design-tokens.css": "./dist/design-tokens.css"
+    "./design-tokens.css": "./dist/design-tokens.css",
+    "./nav.js": "./src/nav.js"
   },
   "scripts": {
     "build": "node build/emit-css.mjs && node build/emit-bundle.mjs",

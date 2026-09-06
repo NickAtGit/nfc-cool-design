@@ -86,6 +86,12 @@
    --elev-2: 0 12px 32px var(--color-shadow-lg);
    --elev-3: 0 24px 60px -20px var(--color-shadow-lg);
 
+   /* Navigation geometry */
+   --nav-height: 4.5rem;
+   --nav-width: 15rem;
+   --nav-rail: 3.5rem;
+   --nav-blur: 10px;
+
    /* Motion */
    --transition: 0.2s ease;
    --lift-1: -1px;

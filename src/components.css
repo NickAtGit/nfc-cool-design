@@ -437,3 +437,194 @@ a.card-interactive:hover { color: inherit; transform: translateY(var(--lift-3));
 .stack > * + * { margin-block-start: var(--space-5); }
 .cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); gap: var(--space-5); }
+
+/* ============================================================
+   Navigation - one component, two modes.
+
+   A nav is a list of destinations plus a utility cluster, laid out
+   along an axis. The axis is the only thing the mode changes, so the
+   link shape, active state, focus, drawer mechanics and toggle button
+   are written once and shared.
+
+     <nav class="nav" data-nav="bar">    marketing header, inline axis
+     <nav class="nav" data-nav="side">   product console, block axis
+
+   Responsive behaviour, driven by the four breakpoints:
+     bar    xl and up   inline row
+            below xl    burger + drop panel
+     side   lg and up   full sidebar with labels
+            md to lg    icon rail, labels hidden but still announced
+            below md    off-canvas drawer + scrim
+
+   .is-collapsed forces the rail at any width, so a person can collapse
+   the sidebar themselves. It is also what lets one page show every mode.
+   ============================================================ */
+.nav {
+   --nav-fg: var(--color-text-secondary);
+   --nav-fg-active: var(--color-link-text);
+   --nav-fill-active: var(--color-link-light);
+   display: flex;
+   align-items: center;
+   gap: var(--space-5);
+   font-family: var(--font-heading);
+}
+
+.nav-brand { display: inline-flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+.nav-brand img { block-size: 1.75rem; inline-size: auto; }
+
+.nav-list {
+   display: flex;
+   align-items: center;
+   gap: var(--space-1);
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   min-width: 0;
+}
+.nav-link {
+   display: flex;
+   align-items: center;
+   gap: var(--space-3);
+   padding: var(--space-2) var(--space-4);
+   border-radius: var(--radius);
+   color: var(--nav-fg);
+   font-weight: 600;
+   font-size: var(--text-sm);
+   text-decoration: none;
+   white-space: nowrap;
+   transition: color var(--transition), background var(--transition);
+}
+.nav-link:hover { color: var(--nav-fg-active); background: var(--nav-fill-active); }
+.nav-link.is-active { color: var(--nav-fg-active); background: var(--nav-fill-active); }
+.nav-icon { inline-size: 1.15rem; block-size: 1.15rem; flex-shrink: 0; }
+.nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nav-count {
+   margin-inline-start: auto;
+   font-size: var(--text-3xs);
+   font-variant-numeric: tabular-nums;
+   color: var(--color-text-muted);
+}
+
+.nav-utility { display: flex; align-items: center; gap: var(--space-2); margin-inline-start: auto; }
+.nav-toggle {
+   display: none;
+   align-items: center;
+   justify-content: center;
+   inline-size: 2.25rem;
+   block-size: 2.25rem;
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius);
+   background: transparent;
+   color: var(--color-text);
+   cursor: pointer;
+}
+.nav-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
+
+.nav-scrim {
+   position: fixed;
+   inset: 0;
+   z-index: 79;
+   background: var(--nav-scrim);
+}
+
+/* ---------- mode: bar ---------- */
+[data-nav="bar"] {
+   position: sticky;
+   inset-block-start: 0;
+   z-index: 50;
+   block-size: var(--nav-height);
+   padding-inline: var(--container-padding);
+   background: var(--nav-bar-bg);
+   backdrop-filter: saturate(180%) blur(var(--nav-blur));
+   -webkit-backdrop-filter: saturate(180%) blur(var(--nav-blur));
+   border-block-end: 1px solid var(--color-border-light);
+}
+[data-nav="bar"] .nav-panel { display: flex; align-items: center; gap: var(--space-5); flex: 1; }
+[data-nav="bar"] .nav-list { flex: 1; justify-content: flex-end; }
+
+@media (max-width: 1199px) {
+   [data-nav="bar"] .nav-toggle { display: inline-flex; order: 3; }
+   [data-nav="bar"] .nav-utility { margin-inline-start: auto; }
+   [data-nav="bar"] .nav-panel {
+      position: absolute;
+      inset-block-start: var(--nav-height);
+      inset-inline: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--container-padding) var(--space-5);
+      background: var(--color-bg-card);
+      border-block-end: 1px solid var(--color-border);
+      box-shadow: var(--elev-2);
+   }
+   [data-nav="bar"] .nav-panel[hidden] { display: none; }
+   [data-nav="bar"] .nav-list { flex-direction: column; align-items: stretch; gap: var(--space-1); }
+   [data-nav="bar"] .nav-link { padding: var(--space-3) var(--space-4); }
+}
+
+/* ---------- mode: side ---------- */
+[data-nav="side"] {
+   flex-direction: column;
+   align-items: stretch;
+   gap: var(--space-5);
+   inline-size: var(--nav-width);
+   block-size: 100%;
+   padding: var(--space-5) var(--space-4);
+   background: var(--nav-side-bg);
+   border-inline-end: 1px solid var(--color-border);
+}
+[data-nav="side"] .nav-list { flex-direction: column; align-items: stretch; gap: var(--space-1); }
+[data-nav="side"] .nav-utility { flex-direction: column; align-items: stretch; margin-block-start: auto; margin-inline-start: 0; }
+[data-nav="side"] .nav-section {
+   padding: var(--space-4) var(--space-4) var(--space-2);
+   font-size: var(--text-3xs);
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: var(--tracking-eyebrow);
+   color: var(--color-text-muted);
+}
+
+/* rail: icons only, labels still in the accessibility tree */
+[data-nav="side"].is-collapsed { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
+[data-nav="side"].is-collapsed .nav-link { justify-content: center; padding-inline: 0; }
+[data-nav="side"].is-collapsed .nav-label,
+[data-nav="side"].is-collapsed .nav-count,
+[data-nav="side"].is-collapsed .nav-section,
+[data-nav="side"].is-collapsed .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (min-width: 768px) and (max-width: 899px) {
+   [data-nav="side"] { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
+   [data-nav="side"] .nav-link { justify-content: center; padding-inline: 0; }
+   [data-nav="side"] .nav-label,
+   [data-nav="side"] .nav-count,
+   [data-nav="side"] .nav-section,
+   [data-nav="side"] .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* drawer */
+@media (max-width: 767px) {
+   [data-nav="side"] {
+      position: fixed;
+      inset-block: 0;
+      inset-inline-start: 0;
+      z-index: 80;
+      inline-size: var(--nav-width);
+      max-inline-size: 85vw;
+      box-shadow: var(--elev-3);
+      transform: translateX(-100%);
+      transition: transform var(--transition);
+   }
+   [dir="rtl"] [data-nav="side"] { transform: translateX(100%); }
+   [data-nav="side"].is-open { transform: translateX(0); }
+   [data-nav="side"][hidden] { display: flex; }
+}
+@media (min-width: 768px) {
+   .nav-scrim { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+   [data-nav="side"] { transition: none; }
+}
+
+/* The shell a console page sits in. */
+.app-shell { display: flex; min-block-size: 100vh; }
+.app-shell > .app-main { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; }

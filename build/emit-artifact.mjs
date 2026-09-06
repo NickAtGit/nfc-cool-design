@@ -39,6 +39,11 @@ let body = html.slice(html.indexOf('<body>') + 6, html.lastIndexOf('</body>'));
 const style = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'))
   .replace(/@font-face\s*\{[^}]*\}\s*/g, '');
 
+// the artifact cannot fetch a sibling file, so the behaviour script is inlined
+body = body.replace(
+  '<script type="module" src="../src/nav.js"></script>',
+  '<script type="module">\n' + r('src/nav.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script') + '\n</script>');
+
 body = body
   .replace('<button type="button" id="ks-theme">Dark</button>', '<button type="button" id="ks-theme"></button>')
   .replace('<button type="button" id="ks-dir">RTL</button>', '<button type="button" id="ks-dir"></button>')

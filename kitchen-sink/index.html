@@ -157,6 +157,17 @@
     .ks-badge-img { inline-size:8.5rem; block-size:2.75rem; }
   }
 
+
+  /* nav examples: contain sticky/fixed so they stay in their box */
+  .ks-navbox { position:relative; overflow:hidden; border:1px dashed var(--color-border);
+    border-radius:var(--radius-lg); margin-block-end:var(--space-3); background:var(--color-bg); }
+  .ks-navbox [data-nav="bar"] { position:static; }
+  .ks-navbox .ks-shell { display:flex; min-block-size:15rem; }
+  .ks-navbox [data-nav="side"] { position:static; transform:none; block-size:auto; }
+  .ks-navbox .ks-shell-main { flex:1; min-inline-size:0; padding:var(--space-5);
+    font-size:var(--text-sm); color:var(--color-text-secondary); }
+  .ks-navbox .nav-scrim { position:absolute; }
+
   /* hero band comparison, light mode only */
   .ks-compare { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
   @media (min-width:900px) { .ks-compare { grid-template-columns:repeat(3,1fr); } }
@@ -280,6 +291,123 @@
     <span class="ks-note" style="display:block;margin-top:var(--space-2)">Light mode only. In dark mode
     the band deliberately collapses to the page colour and the shadow token becomes
     <code>none</code>.</span>
+  </div>
+
+
+  <!-- ============================ NAVIGATION ============================ -->
+  <h2 class="ks-h2">Navigation</h2>
+  <p class="ks-lede">
+    One component, two modes. A nav is a list of destinations plus a utility cluster laid out along an
+    axis; the axis is the only thing the mode changes, so the link shape, active state, focus, drawer
+    mechanics and toggle button are written once and shared.
+  </p>
+
+  <h3 class="ks-h3">Mode: bar <span class="ks-flag is-kept">kept</span></h3>
+  <div class="ks-navbox">
+    <nav class="nav" data-nav="bar" id="ks-bar" aria-label="Site">
+      <a class="nav-brand" href="#"><strong>NFC<em class="brand-tail">.cool</em></strong></a>
+      <button class="nav-toggle" type="button" aria-controls="ks-bar-panel" aria-expanded="false" aria-label="Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="nav-panel" id="ks-bar-panel">
+        <ul class="nav-list">
+          <li class="nav-item"><a class="nav-link is-active" href="#">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Business Card</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Developers</a></li>
+        </ul>
+        <div class="nav-utility">
+          <button class="btn btn-secondary btn-sm" type="button">EN</button>
+          <button class="btn btn-secondary btn-sm" type="button">Theme</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="ks-basis">
+    <b>Basis.</b> This is the shipped nfc.cool header: sticky, translucent over the content it scrolls
+    past, with a hairline rule and a utility cluster on the end. It collapses to a burger and a drop
+    panel below <code>xl</code>, matching today's 1199px. What is new is that the burger is markup with a
+    real <code>aria-expanded</code> and <code>aria-controls</code>, rather than a button
+    <code>theme.js</code> injects at runtime.
+    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Narrow the window past 1200px
+    to collapse it. The example is contained in its box, so it does not stick.</span>
+  </div>
+
+  <h3 class="ks-h3">Mode: side, full <span class="ks-flag is-new">new</span></h3>
+  <div class="ks-navbox">
+    <div class="ks-shell">
+      <nav class="nav" data-nav="side" id="ks-side" aria-label="Console">
+        <a class="nav-brand" href="#"><strong class="nav-brand-text">NFC<em class="brand-tail">.cool</em></strong></a>
+        <p class="nav-section">Organisation</p>
+        <ul class="nav-list">
+          <li class="nav-item"><a class="nav-link is-active" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Overview</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Cards</span><span class="nav-count">12</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Members</span><span class="nav-count">4</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Seats</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Domains</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Billing</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Settings</span></a></li>
+        </ul>
+        <div class="nav-utility">
+          <button class="btn btn-ghost btn-sm" data-nav-collapse aria-label="Collapse navigation">Collapse</button>
+        </div>
+      </nav>
+      <div class="ks-shell-main">
+        <header class="app-header" style="margin:calc(var(--space-5) * -1) calc(var(--space-5) * -1) var(--space-5)">
+          <button class="nav-toggle" type="button" data-nav-open="ks-side" aria-label="Menu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <h1>Overview</h1><span class="spacer"></span>
+          <button class="btn btn-primary btn-sm">New card</button>
+        </header>
+        The console sits in <code class="ks-code">.app-shell</code>: the nav in one column, the page in
+        the other. Resize the window to walk the three modes.
+      </div>
+    </div>
+  </div>
+
+  <h3 class="ks-h3">Mode: side, rail</h3>
+  <div class="ks-navbox">
+    <div class="ks-shell">
+      <nav class="nav is-collapsed" data-nav="side" id="ks-side-rail" aria-label="Console">
+        <a class="nav-brand" href="#"><strong class="nav-brand-text">NFC<em class="brand-tail">.cool</em></strong></a>
+        <p class="nav-section">Organisation</p>
+        <ul class="nav-list">
+          <li class="nav-item"><a class="nav-link is-active" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Overview</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Cards</span><span class="nav-count">12</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Members</span><span class="nav-count">4</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Seats</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Domains</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Billing</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Settings</span></a></li>
+        </ul>
+        <div class="nav-utility">
+          <button class="btn btn-ghost btn-sm" data-nav-collapse aria-label="Collapse navigation">Collapse</button>
+        </div>
+      </nav>
+      <div class="ks-shell-main">
+        The rail is what <code class="ks-code">md</code> to <code class="ks-code">lg</code> gets, and what
+        <code class="ks-code">.is-collapsed</code> forces at any width. Labels are hidden visually but
+        stay in the accessibility tree, so a screen reader still reads "Members, 4".
+      </div>
+    </div>
+  </div>
+  <div class="ks-basis">
+    <b>Basis.</b> <span class="ks-flag is-new">new</span>, and it replaces nothing, because the dashboard
+    has no responsive navigation at all today: a single <code>.topnav</code> with
+    <code>flex-wrap: wrap</code> and zero media queries, so the links simply wrap onto more lines as the
+    screen narrows.
+    <br><br>
+    <b>This supersedes a written decision.</b> The 2026-09-02 spec chose Direction B with a permanently
+    dark <code>#161B22</code> sidebar. The sidebar now follows the theme instead, so the console obeys one
+    palette rather than carrying a second dark surface family that has to be kept in contrast on its own.
+    <br><br>
+    Three modes, all on the existing four breakpoints, so no new breakpoint enters the system:
+    full with labels at <code>lg</code> and up, icon rail from <code>md</code> to <code>lg</code>, and an
+    off-canvas drawer with a scrim below <code>md</code>. <code>.is-collapsed</code> is a real feature,
+    not a demo trick: it is how a person collapses the sidebar themselves, and the choice persists.
+    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Below 768px the first example
+    becomes a drawer. Use the burger in its header to open it.</span>
   </div>
 
   <!-- ============================ FOUNDATIONS ============================ -->
@@ -924,5 +1052,6 @@
   renderTables(); renderType(); bp();
 })();
 </script>
+<script type="module" src="../src/nav.js"></script>
 </body>
 </html>
