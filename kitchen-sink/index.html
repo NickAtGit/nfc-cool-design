@@ -168,6 +168,28 @@
     font-size:var(--text-sm); color:var(--color-text-secondary); }
   .ks-navbox .nav-scrim { position:absolute; }
 
+
+  /* gradient comparison */
+  .ks-grads { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
+  @media (min-width:900px) { .ks-grads { grid-template-columns:1fr 1fr; } }
+  .ks-grad { margin:0; border:1px solid var(--color-border); border-radius:var(--radius-lg);
+    overflow:hidden; background:var(--color-bg-card); }
+  .ks-grad figcaption { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs);
+    border-bottom:1px solid var(--color-border); display:flex; flex-wrap:wrap; gap:var(--space-2);
+    align-items:center; }
+  .ks-grad figcaption code { font-family:var(--font-mono); font-size:0.9em; color:var(--color-text-muted); }
+  .ks-grad-band { padding:var(--space-8) var(--space-5); color:#fff; }
+  .ks-grad-band h4 { font-family:var(--font-heading); font-size:var(--text-subhead); font-weight:600;
+    line-height:1.1; letter-spacing:var(--tracking-display); margin-bottom:var(--space-2); }
+  .ks-grad-band p { font-size:var(--text-sm); line-height:1.5; margin-bottom:var(--space-4); }
+  .has-shadow .ks-grad-band h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
+  .has-shadow .ks-grad-band p { color:rgba(255,255,255,.92); }
+  .ks-grad-stats { width:100%; border-collapse:collapse; font-size:var(--text-3xs); }
+  .ks-grad-stats td { padding:var(--space-2) var(--space-4); border-top:1px solid var(--color-border-light);
+    font-variant-numeric:tabular-nums; }
+  .ks-grad-stats td:first-child { color:var(--color-text-muted); }
+  .ks-grad-stats td:nth-child(2) { font-family:var(--font-mono); }
+
   /* hero band comparison, light mode only */
   .ks-compare { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
   @media (min-width:900px) { .ks-compare { grid-template-columns:repeat(3,1fr); } }
@@ -236,63 +258,95 @@
   </p>
 
 
-  <!-- ============================ DECIDED ============================ -->
-  <h2 class="ks-h2" id="decision" style="margin-top:var(--space-8)">The blue band, and why it stays</h2>
+  <!-- ============================ GRADIENTS ============================ -->
+  <h2 class="ks-h2" id="gradients">Every blue gradient in the brand</h2>
   <p class="ks-lede">
-    <b>Decided: the gradient does not change.</b> <code class="ks-code">#137BD9 &rarr; #00A2F3</code> are the
-    NFC<em class="brand-tail">.cool</em> <b>app icon's</b> colours, so the band matches the icon on the
-    App Store and on a home screen. They are brand identity, not a styling choice.
+    Four different definitions are in use across the brand right now, with the same headline on each.
+    Ratios are measured live against white at the top, middle and bottom of every band. Body text needs
+    <b>4.5</b>; large display text needs <b>3.0</b>.
   </p>
-  <p class="ks-lede">
-    White text on the lower stop measures 2.81, below the 4.5 the standard asks for. Since the colour
-    cannot move, the text is carried instead: <code class="ks-code">--on-brand-text-shadow</code> is now a
-    token rather than a shadow sprinkled onto individual headings, so it travels with the gradient.
-    Both values are pinned by a test, so changing either one has to be deliberate.
-  </p>
-
-  <div class="ks-compare">
-    <div class="ks-opt">
-      <div class="ks-opt-head">Shipping: brand blue + shadow token</div>
-      <div class="ks-opt-band ks-band-live">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
-      </div>
-      <div class="ks-opt-foot"><b>The icon's colours, unchanged.</b> Legibility comes from the shadow
-        token, not from moving the brand.</div>
-    </div>
-
-    <div class="ks-opt">
-      <div class="ks-opt-head">Rejected: deepen the blue</div>
-      <div class="ks-opt-band ks-band-deep">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
-      </div>
-      <div class="ks-opt-foot"><b>Passes on its own at 4.63.</b> Rejected: it no longer matches the app
-        icon, which is the whole point of the band.</div>
-    </div>
-
-    <div class="ks-opt">
-      <div class="ks-opt-head">Rejected: keep the blue, add a veil</div>
-      <div class="ks-opt-band ks-band-scrim">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
-      </div>
-      <div class="ks-opt-foot"><b>Also keeps the exact blue.</b> Rejected as the more invasive of the two
-        ways to keep it: an extra compositing layer on every hero, where a shadow on the text does.</div>
-    </div>
+  <div class="ks-row" style="margin-bottom:var(--space-5)">
+    <button class="btn btn-secondary btn-sm" type="button" id="ks-shadow-toggle">Shadow compensation: on</button>
+    <span class="ks-note" style="margin:0">The shadow is what the shipped site uses to carry white text. Turn it off to judge the colour alone.</span>
   </div>
+
+  <div class="ks-grads has-shadow" id="ks-grads">
+    <figure class="ks-grad" data-top="#1A60CE" data-bottom="#128CF0">
+      <figcaption><b>iOS app</b> <code>appThemeGradient</code> <span class="ks-flag is-new">what the product renders</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+
+    <figure class="ks-grad" data-top="#137BD9" data-bottom="#00A2F3">
+      <figcaption><b>Website</b> <code>--brand-gradient</code> <span class="ks-flag">shipped today</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+
+    <figure class="ks-grad" data-top="#00A2F3" data-bottom="#137BD9">
+      <figcaption><b>Brand manual asset</b> <code>NFC_Gradient.png</code> <span class="ks-flag">same colours, flipped</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+
+    <figure class="ks-grad" data-top="#3878D1" data-bottom="#45A1ED">
+      <figcaption><b>Manual swatches</b> Dark Blue &rarr; Light Blue <span class="ks-flag">used by the dashboard + all email</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+
+    <figure class="ks-grad" data-top="#169DFE" data-bottom="#169DFE">
+      <figcaption><b>Card page CTA</b> flat <code>#169dfe</code> <span class="ks-flag">the brand's highest-traffic button</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+
+    <figure class="ks-grad" data-top="#4074B9" data-bottom="#4074B9">
+      <figcaption><b>Icon set</b> flat <code>#4074B9</code> <span class="ks-flag">every icon SVG in the manual</span></figcaption>
+      <div class="ks-grad-band">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
+      </div>
+      <table class="ks-grad-stats"></table>
+    </figure>
+  </div>
+
   <div class="ks-basis">
-    <b>The rule this sets.</b> Never darken a brand colour to pass a contrast check. Brand values are
-    fixed by the app icon and the store listings; carry the text instead, with a shadow, a scrim, or a
-    different foreground. Only non-brand colours are free to move.
-    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Light mode only. In dark mode
-    the band deliberately collapses to the page colour and the shadow token becomes
-    <code>none</code>.</span>
+    <b>What the numbers say.</b> The iOS app's blue is the darkest of the four (13% relative luminance at
+    the top, against 19% for the website and the manual swatches) and it is the only one where white
+    clears AA at the top and still holds above the 3.0 large-text floor at the bottom. Every other
+    definition drops below 3.0 before the band ends.
+    <br><br>
+    <b>On direction.</b> The app and the website both run dark at the top and light at the bottom. Only
+    <code>NFC_Gradient.png</code> runs the other way, which is why I suspect that file was oriented for a
+    square logo frame rather than a wide page band. If it is, then "match the brand" and "make the text
+    readable" stop being in conflict: the app's blue is both.
+    <br><br>
+    <b>Where each one is used today.</b> The website band and every marketing hero take the second.
+    The <code>business_card_service</code> dashboard, its auth pages and all six email templates take the
+    fourth. The card page uses none of them: it has a flat <code>#169dfe</code>.
   </div>
-
 
   <!-- ============================ NAVIGATION ============================ -->
   <h2 class="ks-h2">Navigation</h2>
@@ -1049,7 +1103,36 @@
   }
   window.addEventListener('resize', bp);
 
-  renderTables(); renderType(); bp();
+
+  /* --- gradient comparison --- */
+  function renderGrads() {
+    document.querySelectorAll('.ks-grad').forEach(fig => {
+      const top = fig.dataset.top, bot = fig.dataset.bottom;
+      const band = fig.querySelector('.ks-grad-band');
+      band.style.background = `linear-gradient(180deg, ${top} 0%, ${bot} 100%)`;
+      const midHex = (a, b) => {
+        const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16);
+        const m = s => Math.round((((A >> s) & 255) + ((B >> s) & 255)) / 2);
+        return '#' + [m(16), m(8), m(0)].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+      };
+      const flat = top.toUpperCase() === bot.toUpperCase();
+      const rows = flat ? [['Flat', top]]
+        : [['Top', top], ['Middle', midHex(top, bot)], ['Bottom', bot]];
+      fig.querySelector('.ks-grad-stats').innerHTML = rows.map(([label, hex]) => {
+        const r = ratio('#FFFFFF', hex);
+        const verdict = r >= 4.5 ? '<span class="ks-pass">AA</span>'
+          : r >= 3 ? '<span class="ks-exempt">large only</span>' : '<span class="ks-fail">FAIL</span>';
+        return `<tr><td>${label}</td><td>${hex}</td><td>${r.toFixed(2)}:1</td><td>${verdict}</td></tr>`;
+      }).join('');
+    });
+  }
+  const shadowBtn = document.getElementById('ks-shadow-toggle');
+  if (shadowBtn) shadowBtn.addEventListener('click', () => {
+    const on = document.getElementById('ks-grads').classList.toggle('has-shadow');
+    shadowBtn.textContent = 'Shadow compensation: ' + (on ? 'on' : 'off');
+  });
+
+  renderTables(); renderType(); renderGrads(); bp();
 })();
 </script>
 <script type="module" src="../src/nav.js"></script>
