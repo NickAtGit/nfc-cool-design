@@ -23,6 +23,7 @@
     font-family:var(--font-sans); background:var(--color-bg); color:var(--color-text);
     line-height:var(--leading-body); -webkit-font-smoothing:antialiased;
     padding-block-start:3.5rem;
+    overflow-x:hidden;
   }
 
   /* ---- demo chrome, prefixed ks- so it never collides with the system ---- */
@@ -105,7 +106,7 @@
   .ks-scale-row { display:flex; align-items:center; gap:var(--space-4); margin-block-end:var(--space-2); }
   .ks-scale-row .ks-name { font-family:var(--font-mono); font-size:var(--text-3xs);
     inline-size:8rem; flex-shrink:0; color:var(--color-text-muted); }
-  .ks-bar-fill { block-size:0.75rem; background:var(--color-link); border-radius:var(--radius-sm); }
+  .ks-bar-fill { block-size:0.75rem; max-inline-size:100%; flex-shrink:1; background:var(--color-link); border-radius:var(--radius-sm); }
 
   .ks-note { font-size:var(--text-2xs); color:var(--color-text-muted); margin-block-start:var(--space-2); }
   .ks-flag {
@@ -116,6 +117,69 @@
   }
   .ks-flag.is-new { background:var(--color-info-bg); color:var(--color-info-fg); border-color:var(--color-info-border); }
   .ks-flag.is-kept { background:var(--color-success-bg); color:var(--color-success-fg); border-color:var(--color-success-border); }
+
+
+
+  /* ---------- narrow screens ---------- */
+  .ks-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin-block-end:var(--space-3); }
+  .ks-scroll .ks-table { min-width:34rem; }
+
+  .ks-type-row { display:flex; align-items:baseline; gap:var(--space-4);
+    padding-block:var(--space-2); border-bottom:1px solid var(--color-border-light); }
+  .ks-type-name { font-family:var(--font-mono); font-size:var(--text-3xs);
+    color:var(--color-text-muted); inline-size:8rem; flex-shrink:0; }
+  .ks-type-sample { font-family:var(--font-heading); line-height:1.1;
+    letter-spacing:var(--tracking-heading); min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ks-type-use { margin-inline-start:auto; white-space:nowrap;
+    font-size:var(--text-2xs); color:var(--color-text-muted); }
+
+  @media (max-width:899px) {
+    .ks-type-use { display:none; }
+  }
+  @media (max-width:767px) {
+    .ks-type-row { flex-direction:column; align-items:flex-start; gap:var(--space-1); }
+    .ks-type-name { inline-size:auto; }
+    .ks-type-sample { white-space:normal; }
+    .ks-scale-row .ks-name { inline-size:5.5rem; font-size:var(--text-3xs); }
+    .ks-demo { padding:var(--space-4); }
+    .ks-page { padding-inline:var(--space-4); }
+    .ks-swatch-grid { grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr)); }
+    .ks-basis { padding:var(--space-3); }
+  }
+  @media (max-width:599px) {
+    .ks-bar { gap:var(--space-2); padding-inline:var(--space-4); }
+    .ks-bar strong { font-size:var(--text-2xs); min-width:0; overflow:hidden;
+      text-overflow:ellipsis; white-space:nowrap; }
+    .ks-bar button { padding:var(--space-1) var(--space-3); font-size:var(--text-3xs); }
+    .ks-bp { display:none; }
+    .ks-h2 { font-size:var(--text-subhead); }
+    .ks-badge-img { inline-size:8.5rem; block-size:2.75rem; }
+  }
+
+  /* hero band comparison, light mode only */
+  .ks-compare { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
+  @media (min-width:900px) { .ks-compare { grid-template-columns:repeat(3,1fr); } }
+  .ks-opt { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--color-bg-card); }
+  .ks-opt-head { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs); font-weight:700;
+    text-transform:uppercase; letter-spacing:var(--tracking-label); border-bottom:1px solid var(--color-border); }
+  .ks-opt-band { position:relative; padding:var(--space-7) var(--space-5); color:#fff; isolation:isolate; }
+  .ks-opt-band h4 { font-family:var(--font-heading); font-size:var(--text-subhead); font-weight:600;
+    line-height:1.1; letter-spacing:var(--tracking-display); margin-bottom:var(--space-2); }
+  .ks-opt-band p { font-size:var(--text-sm); line-height:1.5; margin-bottom:var(--space-4); }
+  .ks-opt-foot { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs); line-height:1.5;
+    color:var(--color-text-secondary); }
+  .ks-opt-foot b { color:var(--color-text); }
+  /* A: exactly what ships today, patches included */
+  .ks-band-live { background:linear-gradient(180deg,#137BD9 0%,#00A2F3 100%); }
+  .ks-band-live h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
+  .ks-band-live p { color:rgba(255,255,255,.92); }
+  /* B: both stops deepened, no patches */
+  .ks-band-deep { background:linear-gradient(180deg,#1276D0 0%,#007BB9 100%); }
+  /* C: shipped gradient, faint veil behind the text only */
+  .ks-band-scrim { background:linear-gradient(180deg,#137BD9 0%,#00A2F3 100%); }
+  .ks-band-scrim::before { content:""; position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(180deg,rgba(4,40,70,0) 0%,rgba(4,40,70,.34) 100%); }
 
   /* stand-in artwork so the demo has no external dependencies */
   .ks-art { aspect-ratio:4/3; background:var(--brand-gradient); display:grid; place-items:center;
@@ -160,6 +224,60 @@
     <span class="ks-flag">changed</span> from what ships today.
   </p>
 
+
+  <!-- ============================ DECISION ============================ -->
+  <h2 class="ks-h2" id="decision" style="margin-top:var(--space-8)">Decision needed: the blue band</h2>
+  <p class="ks-lede">
+    The blue band at the top of every page fades from a medium blue down to a bright cyan.
+    <b>White text on that bright cyan is hard to read.</b> The standard asks for 4.5; the bottom of the
+    band measures 2.81. The site already compensates without saying so: every hero headline carries a
+    dark shadow behind it, and every subtitle is set to slightly see-through white.
+    Below are the three ways out, side by side, with real text on each.
+    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Light mode only. In dark mode
+    the band deliberately collapses to the page colour, so none of this applies there.</span>
+  </p>
+
+  <div class="ks-compare">
+    <div class="ks-opt">
+      <div class="ks-opt-head">A · What ships today</div>
+      <div class="ks-opt-band ks-band-live">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
+      </div>
+      <div class="ks-opt-foot"><b>2.81 at the bottom.</b> Needs a shadow behind the headline and a
+        see-through subtitle to stay legible. Nothing changes on the site.</div>
+    </div>
+
+    <div class="ks-opt">
+      <div class="ks-opt-head">B · Deepen the blue</div>
+      <div class="ks-opt-band ks-band-deep">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
+      </div>
+      <div class="ks-opt-foot"><b>4.63 everywhere.</b> Same hue, both ends a step deeper. No shadow, no
+        see-through text, full-strength white. The top is imperceptibly different; the bottom is a
+        visibly richer blue.</div>
+    </div>
+
+    <div class="ks-opt">
+      <div class="ks-opt-head">C · Keep the blue, add a veil</div>
+      <div class="ks-opt-band ks-band-scrim">
+        <h4>Tap it. It works.</h4>
+        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
+        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
+      </div>
+      <div class="ks-opt-foot"><b>Passes where text sits.</b> The exact brand blue is untouched; a faint
+        dark veil fades in toward the bottom. Costs one extra layer on every hero.</div>
+    </div>
+  </div>
+  <div class="ks-basis">
+    <b>How to choose.</b> Look at the three bands, not the numbers. B is the honest fix and is what the
+    package ships today. C is right if the exact brand blue is non-negotiable. A is right only if you
+    would rather not change the site's appearance at all.
+  </div>
+
   <!-- ============================ FOUNDATIONS ============================ -->
   <h2 class="ks-h2">1. Colour</h2>
   <p class="ks-lede">
@@ -177,12 +295,12 @@
   </div>
 
   <h3 class="ks-h3">Text</h3>
-  <table class="ks-table" data-contrast='[
+  <div class="ks-scroll"><table class="ks-table" data-contrast='[
     ["--color-text","--color-bg","Body text on page",4.5],
     ["--color-text","--color-bg-card","Body text on card",4.5],
     ["--color-text-secondary","--color-bg","Secondary text",4.5],
     ["--color-text-muted","--color-bg","Muted text on page",4.5],
-    ["--color-text-muted","--color-bg-alt","Muted text on alt surface",4.5]]'></table>
+    ["--color-text-muted","--color-bg-alt","Muted text on alt surface",4.5]]'></table></div>
   <div class="ks-basis">
     <b>Basis.</b> Values inherited from the live site, except <code>--color-text-muted</code>, which moved
     from <code>#686F76</code> to <code>#666D74</code> so it survives the new <code>--color-bg-alt</code>.
@@ -190,12 +308,12 @@
   </div>
 
   <h3 class="ks-h3">Interactive</h3>
-  <table class="ks-table" data-contrast='[
+  <div class="ks-scroll"><table class="ks-table" data-contrast='[
     ["--color-link-text","--color-bg","Link text on page",4.5],
     ["--color-link-text","--color-bg-card","Link text on card",4.5],
     ["--color-link-text-hover","--color-bg","Link text, hovered",4.5],
     ["--focus-stroke","--color-bg","Focus ring outer stroke",3],
-    ["--focus-stroke","--color-bg-card","Focus ring on a card",3]]'></table>
+    ["--focus-stroke","--color-bg-card","Focus ring on a card",3]]'></table></div>
   <div class="ks-basis">
     <b>Basis.</b> <span class="ks-flag">changed</span>, and this fixes three measured failures on the live site.
     <code>--color-link</code> stays <code>#137BD9</code> as the <i>interactive hue</i> for borders, chevrons and
@@ -207,10 +325,10 @@
 
   <h3 class="ks-h3">Brand</h3>
   <div class="ks-swatch-grid" data-swatches="color-accent,color-accent-hover,brand-blue-1,brand-blue-2,color-brand-tail"></div>
-  <table class="ks-table" data-contrast='[
+  <div class="ks-scroll"><table class="ks-table" data-contrast='[
     ["--color-on-brand","--brand-blue-1","White on gradient, top stop",4.5],
     ["--color-on-brand","--brand-blue-2","White on gradient, bottom stop",4.5],
-    ["--color-brand-tail","--color-bg","Script tail on page (logotype)",4.5]]'></table>
+    ["--color-brand-tail","--color-bg","Script tail on page (logotype)",4.5]]'></table></div>
   <div class="ks-basis">
     <b>Basis.</b> The gradient is <span class="ks-flag">changed</span>. On the live site it runs
     <code>#137BD9 → #00A2F3</code>, where white text measures <b>4.32:1</b> at the top and
@@ -232,11 +350,11 @@
     <span class="pill pill-info">Info</span>
     <span class="pill">Neutral</span>
   </div>
-  <table class="ks-table" data-contrast='[
+  <div class="ks-scroll"><table class="ks-table" data-contrast='[
     ["--color-success-fg","--color-bg","Success text",4.5],
     ["--color-warning-fg","--color-bg","Warning text",4.5],
     ["--color-danger-fg","--color-bg","Danger text",4.5],
-    ["--color-info-fg","--color-bg","Info text",4.5]]'></table>
+    ["--color-info-fg","--color-bg","Info text",4.5]]'></table></div>
   <div class="ks-basis">
     <b>Basis.</b> <span class="ks-flag is-new">new</span>. The live site has one
     <code>--color-success</code> and a single inline <code>#DC2626</code>; the pricing pills each invent
@@ -742,10 +860,10 @@
   function renderType() {
     document.getElementById('ks-type').innerHTML = RAMP.map(([tok, use]) => {
       const el = document.createElement('div'); el.style.fontSize = `var(${tok})`;
-      return `<div style="display:flex;align-items:baseline;gap:var(--space-4);padding-block:var(--space-2);border-bottom:1px solid var(--color-border-light)">
-        <span style="font-family:var(--font-mono);font-size:var(--text-3xs);color:var(--color-text-muted);width:8rem;flex-shrink:0">${tok}</span>
-        <span style="font-family:var(--font-heading);font-size:var(${tok});line-height:1.1;letter-spacing:var(--tracking-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Tap it. It works.</span>
-        <span class="ks-note" style="margin:0 0 0 auto;white-space:nowrap">${use}</span></div>`;
+      return `<div class="ks-type-row">
+        <span class="ks-type-name">${tok}</span>
+        <span class="ks-type-sample" style="font-size:var(${tok})">Tap it. It works.</span>
+        <span class="ks-type-use">${use}</span></div>`;
     }).join('');
   }
 
