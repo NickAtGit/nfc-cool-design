@@ -54,6 +54,13 @@ function initBar(nav) {
     if (!mq.matches || panel.hidden) return;
     if (!nav.contains(e.target)) setExpanded(toggle, panel, false);
   });
+
+  // Choosing a destination should close the panel. Without this the menu
+  // stays open over the page it just navigated to, which reads as a stuck
+  // menu on any same-document or client-routed navigation.
+  panel.addEventListener('click', (e) => {
+    if (mq.matches && e.target.closest('a')) setExpanded(toggle, panel, false);
+  });
 }
 
 /* ---- side: drawer below md, rail toggle above ---- */
@@ -91,6 +98,11 @@ function initSide(nav) {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+  });
+
+  // Same for the drawer: picking a destination dismisses it.
+  nav.addEventListener('click', (e) => {
+    if (nav.classList.contains('is-open') && e.target.closest('a')) close();
   });
   // Leaving the drawer band should not strand an open drawer.
   mqDrawer().addEventListener('change', (e) => { if (!e.matches) close(); });
