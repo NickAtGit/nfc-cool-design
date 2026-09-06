@@ -298,9 +298,9 @@
         <tr><td>Primary button fill</td>
             <td><b>The light stop</b> <code>#128CF0</code><br>label <code>#0D1117</code></td>
             <td>Near-black label, because white on it is 3.48:1. Hover brightens rather than darkens.</td></tr>
-        <tr class="is-open"><td>Brand yellow</td>
-            <td><b>OPEN</b> &mdash; <code>#FFC700</code> or <code>#FFC709</code></td>
-            <td>See below. The brand's own files disagree.</td></tr>
+        <tr><td>Brand yellow</td>
+            <td><code>#FFC700</code></td>
+            <td>The Secondary Logo SVG's value, over the <code>#FFC709</code> the website shipped. Never text on a light surface.</td></tr>
       </tbody>
     </table>
   </div>
@@ -349,30 +349,39 @@
     </table>
   </div>
 
-  <h3 class="ks-h3">Open: which yellow</h3>
+  <h3 class="ks-h3">Brand yellow <span class="ks-flag is-kept">decided</span></h3>
   <p class="ks-lede">
-    The brand's own vector files disagree. Both are shown at the size the yellow is actually used:
-    the script tail of the wordmark, and the numeral watermark on a feature card.
+    <code class="ks-code">#FFC700</code>, the Secondary Logo SVG's value in Brand Manual V1, chosen over
+    the <code class="ks-code">#FFC709</code> the website had been shipping. The logo is the source the
+    wordmark is derived from, so it arbitrates.
   </p>
   <div class="ks-yellows">
-    <div class="ks-yellow" style="--y:#FFC700">
-      <p class="ks-opt-head" style="border:0;padding-inline:0"><code>#FFC700</code> &middot; Secondary Logo SVG</p>
-      <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail" style="color:var(--y)">.cool</em></p>
-      <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--y);line-height:1">01</p>
-      <p class="ks-note">The logo the wordmark is derived from.</p>
+    <div class="ks-yellow" style="--y:var(--color-accent)">
+      <p class="ks-opt-head" style="border:0;padding-inline:0">On a light surface</p>
+      <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail">.cool</em></p>
+      <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--color-accent);line-height:1;text-shadow:var(--on-brand-text-shadow)">01</p>
+      <p class="ks-note">Logotype tail and decorative watermark only. 1.45:1, so never body text.</p>
     </div>
-    <div class="ks-yellow" style="--y:#FFC709">
-      <p class="ks-opt-head" style="border:0;padding-inline:0"><code>#FFC709</code> &middot; shipped on the website</p>
-      <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail" style="color:var(--y)">.cool</em></p>
-      <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--y);line-height:1">01</p>
-      <p class="ks-note">What every page already renders.</p>
+    <div class="ks-yellow" style="background:var(--color-bg);border-color:var(--color-border)">
+      <p class="ks-opt-head" style="border:0;padding-inline:0">As the interactive colour, dark mode</p>
+      <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">
+        Switch the theme in the bar. Yellow becomes the link and the filled primary at
+        <b>11.06:1</b>, which is the whole reason the mode flip works.
+      </p>
+      <div class="ks-row"><button class="btn btn-primary">Subscribe</button><a href="#">An inline link</a></div>
     </div>
   </div>
   <div class="ks-basis">
-    <b>They are nine units apart on one channel</b>, which is drift rather than intent. Both measure
-    1.45:1 on the page background, so contrast does not decide it: the yellow is a logotype colour and a
-    decorative watermark, never body text. Pick the source you want to be authoritative, the logo or the
-    shipped site.
+    <b>Basis.</b> The two candidates were nine units apart on one channel, which is drift rather than
+    intent, and both measure 1.45:1 on the page background so contrast could not decide it. In light mode
+    the yellow is only ever the wordmark tail and the numeral watermark - the tail permitted as a
+    logotype under WCAG 1.4.3, the watermark because it is decorative and always
+    <code>aria-hidden</code>. In dark mode it becomes the interactive colour outright at 11.06:1.
+    <br><br>
+    <b>One asset was deliberately left alone:</b>
+    <code>Theme/images/nfc-the-cool-way-to-connect-black.svg</code> still fills with
+    <code>#ffc709</code>. It is brand artwork rather than a token, the difference is imperceptible, and
+    recolouring supplied artwork is not a systems decision to make unasked.
   </div>
 
   <h3 class="ks-h3">Tone of voice</h3>

@@ -94,9 +94,9 @@ ${block(b.dark, '')}
       radial, so brand bands blend into the page instead of forming a
       dark slab. This is nfc.cool's existing dark-mode behaviour. */
    --brand-gradient:
-      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 9, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
-   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 9, 0.08) 0%, var(--color-bg) 60%);
+   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 0, 0.08) 0%, var(--color-bg) 60%);
 }
 `;
 }

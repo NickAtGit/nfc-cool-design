@@ -26,7 +26,7 @@ const systemDark = `
    :root:not([data-theme="light"]) {
 ${dark}
       --brand-gradient:
-         radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 9, 0.10) 0%, transparent 70%),
+         radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
          linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
    }
    :root:not([data-theme="light"]) .hero-band::before,

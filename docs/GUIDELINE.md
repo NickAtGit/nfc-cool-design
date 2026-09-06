@@ -129,6 +129,13 @@ revisited, this is the newer decision.
 `.hero-strip` for blog and secondary pages, `.app-header` for product UI and
 card pages. A gradient band above a data table is marketing intruding on work.
 
+**The brand yellow is `#FFC700`.** The Secondary Logo SVG's value in Brand
+Manual V1, chosen over the `#FFC709` the website shipped; the logo is the source
+the wordmark derives from, so it arbitrates. In light mode the yellow is only
+ever the wordmark tail and the decorative numeral watermark. It is never body
+text: it measures 1.45:1. In dark mode it becomes the interactive colour outright
+at 11.06:1, which is what makes the mode flip work.
+
 **The script brand tail is an accepted contrast exemption.** `.brand-tail`
 renders the brand name, and WCAG 1.4.3 exempts text that is part of a logo or
 brand name. It measures 1.45:1 and that is allowed. It is one token

@@ -16,10 +16,10 @@
    --color-text-muted: #666D74;
    --color-border: #E6E8EB;
    --color-border-light: #F0F1F3;
-   --color-accent: #FFC709;
+   --color-accent: #FFC700;
    --color-accent-hover: #E6B400;
-   --color-accent-light: rgba(255, 199, 9, 0.12);
-   --color-brand-tail: #FFC709;
+   --color-accent-light: rgba(255, 199, 0, 0.12);
+   --color-brand-tail: #FFC700;
    --color-brand-highlight: rgba(255, 255, 255, 0.18);
    --nav-bar-bg: rgba(255, 255, 255, 0.92);
    --nav-side-bg: #FFFFFF;
@@ -82,28 +82,28 @@
    --color-text-muted: #8B949E;
    --color-border: #30363D;
    --color-border-light: #21262D;
-   --color-accent: #FFC709;
+   --color-accent: #FFC700;
    --color-accent-hover: #FFD93D;
-   --color-accent-light: rgba(255, 199, 9, 0.18);
-   --color-brand-tail: #FFC709;
+   --color-accent-light: rgba(255, 199, 0, 0.18);
+   --color-brand-tail: #FFC700;
    --color-brand-highlight: transparent;
    --nav-bar-bg: rgba(22, 27, 34, 0.85);
    --nav-side-bg: #1C2128;
    --nav-scrim: rgba(0, 0, 0, 0.6);
    --on-brand-text-shadow: none;
-   --elev-media: 0 30px 60px -20px rgba(255, 199, 9, 0.28), 0 8px 24px -8px rgba(255, 199, 9, 0.16);
+   --elev-media: 0 30px 60px -20px rgba(255, 199, 0, 0.28), 0 8px 24px -8px rgba(255, 199, 0, 0.16);
    --brand-blue-1: #161B22;
    --brand-blue-2: #161B22;
-   --color-link: #FFC709;
+   --color-link: #FFC700;
    --color-link-hover: #FFD93D;
-   --color-link-text: #FFC709;
+   --color-link-text: #FFC700;
    --color-link-text-hover: #FFD93D;
-   --color-link-light: rgba(255, 199, 9, 0.18);
+   --color-link-light: rgba(255, 199, 0, 0.18);
    --color-on-brand: #F0F2F5;
-   --color-primary-bg: #FFC709;
+   --color-primary-bg: #FFC700;
    --color-primary-fg: #161B22;
    --color-primary-bg-hover: #FFD93D;
-   --btn-onbrand-bg: #FFC709;
+   --btn-onbrand-bg: #FFC700;
    --btn-onbrand-fg: #161B22;
    --focus-halo: #0D1117;
    --focus-stroke: #F0F2F5;
@@ -139,7 +139,7 @@
       radial, so brand bands blend into the page instead of forming a
       dark slab. This is nfc.cool's existing dark-mode behaviour. */
    --brand-gradient:
-      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 9, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
-   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 9, 0.08) 0%, var(--color-bg) 60%);
+   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 0, 0.08) 0%, var(--color-bg) 60%);
 }
