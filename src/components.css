@@ -1,0 +1,429 @@
+/* Layer 3: components.
+   Consumes L1 primitives and L2 brand tokens only. No literal colour, no
+   literal length outside the token scale - test/guards.test.mjs enforces both.
+
+   Buttons extend nfc.cool's own best idea: one component parameterised by
+   four local custom properties, so the same element re-skins by context
+   instead of forking into a variant per surface. */
+
+/* ============================================================
+   Focus - one ring, every surface
+   ============================================================ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+   outline: none;
+   box-shadow: var(--focus-ring);
+   border-radius: var(--radius-sm);
+}
+.on-brand :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+   --focus-halo: var(--color-on-brand);
+   --focus-stroke: var(--color-text);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+   --btn-bg: transparent;
+   --btn-fg: var(--color-link-text);
+   --btn-border: var(--color-link);
+   --btn-bg-hover: var(--color-link-light);
+   --btn-fg-hover: var(--color-link-text-hover);
+   --btn-border-hover: var(--color-link-text-hover);
+
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--space-2);
+   padding: var(--space-3) var(--space-6);
+   background: var(--btn-bg);
+   color: var(--btn-fg);
+   border: 1.5px solid var(--btn-border);
+   border-radius: var(--radius-md);
+   font-family: var(--font-heading);
+   font-weight: 600;
+   font-size: var(--text-sm);
+   line-height: 1.25;
+   letter-spacing: var(--tracking-label);
+   text-decoration: none;
+   cursor: pointer;
+   white-space: nowrap;
+   transition: background var(--transition), border-color var(--transition),
+               color var(--transition), transform var(--transition);
+}
+.btn:hover:not(:disabled):not([aria-disabled="true"]) {
+   background: var(--btn-bg-hover);
+   color: var(--btn-fg-hover);
+   border-color: var(--btn-border-hover);
+   transform: translateY(var(--lift-1));
+}
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled, .btn[aria-disabled="true"] {
+   opacity: 0.55; cursor: not-allowed; transform: none;
+}
+.btn svg { width: 1.15em; height: 1.15em; flex-shrink: 0; }
+
+/* Filled primary. The action a surface exists for: Save, Invite, Save Contact.
+   nfc.cool had no filled button at all - its primary CTA was a store badge,
+   which only works when the conversion is "leave for the App Store". */
+.btn-primary {
+   --btn-bg: var(--color-link-text);
+   --btn-fg: var(--color-on-brand);
+   --btn-border: var(--color-link-text);
+   --btn-bg-hover: var(--color-link-text-hover);
+   --btn-fg-hover: var(--color-on-brand);
+   --btn-border-hover: var(--color-link-text-hover);
+}
+/* Outlined. This is nfc.cool's shipped .landing-cta-button, unchanged. */
+.btn-secondary { /* inherits the .btn defaults */ }
+
+.btn-ghost {
+   --btn-border: transparent;
+   --btn-border-hover: transparent;
+}
+.btn-danger {
+   --btn-bg: transparent;
+   --btn-fg: var(--color-danger-fg);
+   --btn-border: var(--color-danger-border);
+   --btn-bg-hover: var(--color-danger-bg);
+   --btn-fg-hover: var(--color-danger-fg);
+   --btn-border-hover: var(--color-danger-fg);
+}
+.btn-danger.btn-primary {
+   --btn-bg: var(--color-danger-fg);
+   --btn-fg: var(--color-on-brand);
+   --btn-border: var(--color-danger-fg);
+   --btn-bg-hover: var(--color-danger-fg);
+   --btn-border-hover: var(--color-danger-fg);
+}
+
+.btn-sm { padding: var(--space-2) var(--space-4); font-size: var(--text-xs); }
+.btn-lg { padding: var(--space-4) var(--space-7); font-size: var(--text-body); }
+.btn-block { width: 100%; }
+.btn-pill { border-radius: var(--radius-pill); }
+
+/* On a brand gradient band both tiers invert. */
+.on-brand .btn {
+   --btn-fg: var(--color-on-brand);
+   --btn-border: var(--color-on-brand);
+   --btn-bg-hover: var(--color-neutral-bg);
+   --btn-fg-hover: var(--color-on-brand);
+   --btn-border-hover: var(--color-on-brand);
+}
+.on-brand .btn-primary {
+   --btn-bg: var(--color-on-brand);
+   --btn-fg: var(--color-link-text);
+   --btn-border: var(--color-on-brand);
+   --btn-bg-hover: var(--color-on-brand);
+   --btn-fg-hover: var(--color-link-text-hover);
+}
+
+/* Loading state - the button keeps its width so the row does not reflow. */
+.btn[data-loading="true"] { color: transparent; pointer-events: none; position: relative; }
+.btn[data-loading="true"]::after {
+   content: ""; position: absolute; width: 1em; height: 1em;
+   border: 2px solid currentColor; border-top-color: transparent;
+   border-radius: 50%; color: var(--btn-fg);
+   animation: btn-spin 0.7s linear infinite;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+   .btn[data-loading="true"]::after { animation-duration: 2s; }
+}
+
+/* ============================================================
+   Form controls
+   ============================================================ */
+.field { display: grid; gap: var(--space-2); }
+.field-label {
+   font-family: var(--font-heading); font-weight: 600;
+   font-size: var(--text-sm); color: var(--color-text);
+}
+.field-label .required { color: var(--color-danger-fg); margin-inline-start: var(--space-1); }
+.field-hint { font-size: var(--text-xs); color: var(--color-text-muted); line-height: var(--leading-normal); }
+.field-error { font-size: var(--text-xs); color: var(--color-danger-fg); line-height: var(--leading-normal); }
+
+.input, .textarea, .select {
+   width: 100%;
+   padding: var(--space-3) var(--space-4);
+   background: var(--field-bg);
+   color: var(--color-text);
+   border: 1px solid var(--field-border);
+   border-radius: var(--radius-md);
+   font-family: var(--font-sans);
+   font-size: var(--text-body); /* 16px - anything smaller zooms iOS Safari on focus */
+   line-height: var(--leading-normal);
+   transition: border-color var(--transition), box-shadow var(--transition);
+}
+.textarea { min-height: 6rem; resize: vertical; }
+.input::placeholder, .textarea::placeholder { color: var(--color-text-muted); }
+.input:hover:not(:disabled), .textarea:hover:not(:disabled), .select:hover:not(:disabled) {
+   border-color: var(--color-text-secondary);
+}
+/* Generalised from nfc.cool's newsletter :focus-within, the nicest
+   interaction already on the site. */
+.input:focus, .textarea:focus, .select:focus {
+   outline: none;
+   border-color: var(--color-link);
+   box-shadow: 0 0 0 4px var(--color-link-light);
+}
+.input[aria-invalid="true"], .textarea[aria-invalid="true"], .select[aria-invalid="true"] {
+   border-color: var(--color-danger-fg);
+}
+.input[aria-invalid="true"]:focus, .textarea[aria-invalid="true"]:focus {
+   box-shadow: 0 0 0 4px var(--color-danger-bg);
+}
+.input:disabled, .textarea:disabled, .select:disabled {
+   opacity: 0.6; cursor: not-allowed; background: var(--color-bg-alt);
+}
+.input[readonly] { background: var(--color-bg-alt); }
+
+.select {
+   appearance: none;
+   padding-inline-end: var(--space-8);
+   background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                     linear-gradient(135deg, currentColor 50%, transparent 50%);
+   background-position: right var(--space-5) center, right var(--space-4) center;
+   background-size: 5px 5px, 5px 5px;
+   background-repeat: no-repeat;
+}
+[dir="rtl"] .select {
+   background-position: left var(--space-4) center, left var(--space-5) center;
+}
+
+.checkbox-row { display: flex; align-items: flex-start; gap: var(--space-3); }
+.checkbox-row input[type="checkbox"], .checkbox-row input[type="radio"] {
+   inline-size: 1.15rem; block-size: 1.15rem; margin-block-start: 0.15rem;
+   accent-color: var(--color-link); flex-shrink: 0;
+}
+.checkbox-row label { font-size: var(--text-sm); line-height: var(--leading-normal); }
+
+/* Pill-in-a-pill input group, as used by the newsletter form. */
+.input-group {
+   display: flex; align-items: center;
+   background: var(--field-bg);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-pill);
+   padding: var(--space-1);
+   transition: border-color var(--transition), box-shadow var(--transition);
+}
+.input-group:focus-within { border-color: var(--color-link); box-shadow: 0 0 0 4px var(--color-link-light); }
+.input-group .input { border: 0; background: transparent; box-shadow: none; }
+.input-group .input:focus { box-shadow: none; }
+.input-group .btn { flex-shrink: 0; border-radius: var(--radius-pill); }
+
+/* ============================================================
+   Surfaces
+   ============================================================ */
+.card {
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   padding: var(--space-6);
+   box-shadow: var(--elev-0);
+   transition: transform var(--transition), box-shadow var(--transition);
+}
+.card-interactive:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+a.card-interactive:hover { color: inherit; transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+.card-flush { padding: 0; overflow: hidden; }
+
+.panel {
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   box-shadow: var(--elev-0);
+}
+.panel-header {
+   display: flex; align-items: center; gap: var(--space-4);
+   padding: var(--space-5) var(--space-6);
+   border-bottom: 1px solid var(--color-border-light);
+}
+.panel-title { font-family: var(--font-heading); font-weight: 600; font-size: var(--text-md); margin: 0; }
+.panel-body { padding: var(--space-6); }
+.panel-footer {
+   padding: var(--space-5) var(--space-6);
+   border-top: 1px solid var(--color-border-light);
+   background: var(--color-bg-alt);
+   display: flex; gap: var(--space-3); justify-content: flex-end;
+}
+
+/* ============================================================
+   Data display
+   ============================================================ */
+.table-wrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.table th, .table td {
+   text-align: start; padding: var(--space-3) var(--space-4);
+   border-bottom: 1px solid var(--color-border-light);
+}
+.table thead th {
+   background: var(--color-bg-alt);
+   font-size: var(--text-2xs); font-weight: 700;
+   text-transform: uppercase; letter-spacing: var(--tracking-label);
+   color: var(--color-text-muted);
+   border-bottom: 1px solid var(--color-border);
+}
+.table tbody tr:last-child td { border-bottom: 0; }
+.table tbody tr:hover { background: var(--color-neutral-bg); }
+.table .num { text-align: end; font-variant-numeric: tabular-nums; }
+
+.pill {
+   display: inline-flex; align-items: center; gap: var(--space-1);
+   padding: var(--space-1) var(--space-3);
+   border-radius: var(--radius-pill);
+   font-size: var(--text-2xs); font-weight: 700; line-height: 1.4;
+   letter-spacing: var(--tracking-normal);
+   background: var(--color-neutral-bg);
+   color: var(--color-neutral-fg);
+   border: 1px solid var(--color-neutral-border);
+   white-space: nowrap;
+}
+.pill-success { background: var(--color-success-bg); color: var(--color-success-fg); border-color: var(--color-success-border); }
+.pill-warning { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
+.pill-danger  { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
+.pill-info    { background: var(--color-info-bg);    color: var(--color-info-fg);    border-color: var(--color-info-border); }
+
+/* Round status marker, from the pricing table. */
+.status-dot {
+   display: inline-flex; align-items: center; justify-content: center;
+   inline-size: 1.6rem; block-size: 1.6rem; border-radius: 50%;
+   font-size: var(--text-xs); font-weight: 600;
+   background: var(--color-neutral-bg); color: var(--color-neutral-fg);
+   border: 1px solid var(--color-neutral-border);
+}
+.status-dot.is-yes     { background: var(--color-success-bg); color: var(--color-success-fg); border-color: var(--color-success-border); }
+.status-dot.is-no      { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
+.status-dot.is-limited { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
+
+.empty-state {
+   text-align: center; padding: var(--space-10) var(--space-6);
+   color: var(--color-text-secondary);
+}
+.empty-state-title {
+   font-family: var(--font-heading); font-weight: 600; font-size: var(--text-md);
+   color: var(--color-text); margin: 0 0 var(--space-2);
+}
+.empty-state p { margin: 0 auto var(--space-5); max-width: 34em; font-size: var(--text-sm); }
+
+/* ============================================================
+   Feedback
+   ============================================================ */
+.alert {
+   display: flex; gap: var(--space-3);
+   padding: var(--space-4) var(--space-5);
+   border-radius: var(--radius-md);
+   border: 1px solid var(--color-neutral-border);
+   background: var(--color-neutral-bg);
+   color: var(--color-text);
+   font-size: var(--text-sm);
+   line-height: var(--leading-normal);
+}
+.alert-success { background: var(--color-success-bg); border-color: var(--color-success-border); }
+.alert-warning { background: var(--color-warning-bg); border-color: var(--color-warning-border); }
+.alert-danger  { background: var(--color-danger-bg);  border-color: var(--color-danger-border); }
+.alert-info    { background: var(--color-info-bg);    border-color: var(--color-info-border); }
+.alert-title { font-weight: 700; }
+
+.toast {
+   position: fixed; inset-block-end: var(--space-6); inset-inline-start: 50%;
+   transform: translateX(-50%);
+   padding: var(--space-3) var(--space-5);
+   border-radius: var(--radius-md);
+   background: var(--color-text); color: var(--color-bg);
+   font-size: var(--text-sm); font-weight: 600;
+   box-shadow: var(--elev-2); z-index: 90;
+}
+
+.skeleton {
+   background: var(--color-neutral-bg);
+   border-radius: var(--radius-sm);
+   animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-pulse { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; opacity: 0.8; } }
+
+/* ============================================================
+   Overlay - one modal that is a bottom sheet on small screens.
+   Replaces three separate implementations in business_card_service.
+   ============================================================ */
+.overlay {
+   position: fixed; inset: 0; z-index: 80;
+   background: var(--color-neutral-bg);
+   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+   display: grid; place-items: center; padding: var(--space-5);
+}
+.modal {
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   box-shadow: var(--elev-3);
+   width: 100%; max-width: var(--measure-content);
+   max-height: 85vh; overflow-y: auto;
+}
+@media (max-width: 599px) {
+   .overlay { place-items: end center; padding: 0; }
+   .modal { max-width: none; border-radius: var(--radius-xl) var(--radius-xl) 0 0; max-height: 90vh; }
+}
+.menu {
+   min-width: 11rem; padding: var(--space-2);
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius);
+   box-shadow: var(--elev-2);
+   z-index: 70;
+}
+.menu a, .menu button {
+   display: block; width: 100%; text-align: start;
+   padding: var(--space-2) var(--space-3);
+   border: 0; background: transparent; cursor: pointer;
+   border-radius: var(--radius-sm);
+   font-size: var(--text-sm); color: var(--color-text);
+}
+.menu a:hover, .menu button:hover { background: var(--color-link-light); color: var(--color-link-text); }
+
+/* ============================================================
+   Header tiers
+   ============================================================ */
+.hero-band, .hero-strip {
+   position: relative; isolation: isolate; overflow: hidden;
+   background: var(--brand-gradient);
+   color: var(--color-on-brand);
+}
+.hero-band { padding: var(--section-y-loose) 0 var(--section-y); }
+.hero-strip { padding: var(--section-y-tight) 0; }
+.hero-band::before, .hero-strip::before {
+   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+   background: radial-gradient(at 70% 25%, var(--color-brand-highlight) 0%, transparent 55%);
+}
+[data-theme="dark"] .hero-band::before, [data-theme="dark"] .hero-strip::before { display: none; }
+.hero-band h1, .hero-strip h1 {
+   font-family: var(--font-heading); font-weight: 600;
+   font-size: var(--text-hero); line-height: var(--leading-hero);
+   letter-spacing: var(--tracking-hero);
+   color: var(--color-on-brand); margin: 0 0 var(--space-4);
+}
+.hero-strip h1 { font-size: var(--text-display); line-height: var(--leading-display); }
+
+/* Tier 3: the quiet header. Product UI, card pages, settings. */
+.app-header {
+   display: flex; align-items: center; gap: var(--space-4);
+   min-height: 3.5rem;
+   padding: var(--space-3) var(--container-padding);
+   background: var(--color-bg);
+   border-bottom: 1px solid var(--color-border);
+}
+.app-header h1 {
+   font-family: var(--font-heading); font-weight: 600;
+   font-size: var(--text-md); letter-spacing: var(--tracking-normal);
+   margin: 0; color: var(--color-text);
+}
+.app-header .spacer { margin-inline-start: auto; }
+
+/* ============================================================
+   Layout helpers
+   ============================================================ */
+.container { max-width: var(--max-width); margin-inline: auto; padding-inline: var(--container-padding); }
+.section { padding: var(--section-y) 0; background: var(--color-bg); }
+.section-alt { background: var(--color-bg-alt); }
+.stack > * + * { margin-block-start: var(--space-5); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); gap: var(--space-5); }

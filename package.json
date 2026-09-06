@@ -1,0 +1,23 @@
+{
+  "name": "@nfccool/design",
+  "version": "0.1.0",
+  "description": "The NFC.cool design system: tokens, components and marketing archetypes shared across every NFC.cool web presence.",
+  "license": "UNLICENSED",
+  "private": false,
+  "type": "module",
+  "files": ["src", "dist", "docs"],
+  "exports": {
+    "./tokens.css": "./src/tokens.css",
+    "./brands/nfccool.css": "./src/brands/nfccool.css",
+    "./components.css": "./src/components.css",
+    "./archetypes.css": "./src/archetypes.css",
+    "./email.css": "./src/email.css",
+    "./design.css": "./dist/design.css",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "scripts": {
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs",
+    "sitekit": "node build/emit-sitekit-theme.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
