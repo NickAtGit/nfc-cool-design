@@ -23,15 +23,19 @@
    Buttons
    ============================================================ */
 .btn {
-   /* One blue per button. The border and the label both take the dark stop:
-      pairing the light stop's border with the dark stop's text put two
-      different blues on a single control. */
+   /* Blue as an AREA is the light stop; blue as TEXT is the dark stop.
+      A button's blue is therefore always the light stop, because on a button
+      the blue is a fill or a border, never the label. The outlined tier takes
+      the same blue as the filled one for its border, and an ink label - a blue
+      label beside a blue border would put two blues on one control, and the
+      light stop is only 3.48:1 as text anyway. A border is a UI boundary and
+      needs 3:1, which it clears. */
    --btn-bg: transparent;
-   --btn-fg: var(--color-link-text);
-   --btn-border: var(--color-link-text);
+   --btn-fg: var(--color-text);
+   --btn-border: var(--color-primary-bg);
    --btn-bg-hover: var(--color-link-light);
-   --btn-fg-hover: var(--color-link-text-hover);
-   --btn-border-hover: var(--color-link-text-hover);
+   --btn-fg-hover: var(--color-text);
+   --btn-border-hover: var(--color-primary-bg-hover);
 
    display: inline-flex;
    align-items: center;
@@ -83,6 +87,10 @@
 .btn-secondary { /* inherits the .btn defaults */ }
 
 .btn-ghost {
+   /* No border, so the label carries the whole affordance and has to read as
+      interactive. It is text, so it takes the dark stop, like an inline link. */
+   --btn-fg: var(--color-link-text);
+   --btn-fg-hover: var(--color-link-text-hover);
    --btn-border: transparent;
    --btn-border-hover: transparent;
 }

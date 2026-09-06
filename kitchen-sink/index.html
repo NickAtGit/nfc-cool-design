@@ -291,9 +291,9 @@
         <tr><td>Ink Black</td>
             <td><code>#212529</code></td>
             <td>The one value Brand Manual V1 is unambiguous about. Already correct everywhere.</td></tr>
-        <tr><td>Primary button fill</td>
-            <td><b>The light stop</b> <code>#128CF0</code><br>label <code>#0D1117</code></td>
-            <td>Near-black label, because white on it is 3.48:1. Hover brightens rather than darkens.</td></tr>
+        <tr><td>Button blue</td>
+            <td><b>The light stop</b> <code>#128CF0</code>, filled and outlined alike</td>
+            <td>Blue is an area on a button, never the label. White label on the fill (3.48:1, a recorded exception); ink label on the outline. Hover darkens to 4.70:1.</td></tr>
         <tr><td>Brand yellow</td>
             <td><code>#FFC700</code></td>
             <td>The Secondary Logo SVG's value, over the <code>#FFC709</code> the website shipped. Never text on a light surface.</td></tr>
@@ -715,11 +715,12 @@
       <div class="ks-fill-opt">
         <button class="btn btn-primary">Subscribe</button>
         <p><code>#128CF0</code> light stop &middot; <b>chosen</b><br>
-          label <code>#0D1117</code> &middot; <b class="ks-pass">5.44:1 PASS</b></p>
+          white label &middot; <b class="ks-exempt">3.48:1, recorded exception</b><br>
+          hover <code>#0F76CA</code> &middot; <b class="ks-pass">4.70:1</b></p>
       </div>
       <div class="ks-fill-opt">
-        <button class="btn" style="--btn-bg:#128CF0;--btn-fg:#fff;--btn-border:#128CF0">Subscribe</button>
-        <p>same fill, white label<br><b class="ks-fail">3.48:1 FAIL</b></p>
+        <button class="btn">Cancel</button>
+        <p>outlined, same blue<br>border 3.48:1 (a boundary needs 3)<br>ink label <b class="ks-pass">15.43:1</b></p>
       </div>
       <div class="ks-fill-opt">
         <button class="btn" style="--btn-bg:#1A60CE;--btn-fg:#fff;--btn-border:#1A60CE">Subscribe</button>
@@ -728,17 +729,18 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>The fill is the gradient's light stop, and the label is near-black.</b> White on
-    <code>#128CF0</code> is 3.48:1, and a 15px label needs 4.5, so the fill and a white label could not
-    both survive. Changing the label rather than the colour keeps the blue that was chosen.
+    <b>One blue, used as an area.</b> The filled tier fills with <code>#128CF0</code> and the outlined
+    tier borders with the same value, so they read as one family. White on that fill is 3.48:1, under the
+    4.5 a 15px label needs; it is a deliberate decision, pinned in the contrast suite with its date so it
+    stays revisitable rather than becoming an invisible regression.
     <br><br>
-    <b>Hover brightens, it does not darken.</b> With a dark label, a brighter fill gains contrast:
-    <code>#2595F1</code> takes the label from 5.44 to 5.99. Darkening would have pulled it the other way.
-    That is the opposite of the usual reflex, so a test pins the direction in both themes.
+    <b>Hover darkens to <code>#0F76CA</code></b>, which lifts the label to 4.70:1, so the state a person
+    is actively pointing at is the compliant one. The test does not pin a direction, it pins the outcome:
+    hover must never make the label harder to read. In dark mode, where the primary is brand yellow with
+    a near-black label, that same rule makes hover brighten instead.
     <br><br>
-    <b>The two themes now read the same way</b> - a bright fill with a near-black label. Light mode is
-    blue on near-black, dark mode is brand yellow on near-black at 11.06:1. That fell out of the mode
-    flip rather than being designed for.
+    <b>If it is ever revisited,</b> <code>#0F78CE</code> is the nearest shade of this blue where a white
+    label clears 4.5 at rest.
   </div>
 
   <h3 class="ks-h3">Sizes and states</h3>
@@ -757,6 +759,13 @@
     </div>
   </div>
   <div class="ks-basis">
+    <b>One blue on a button.</b> Blue as an <i>area</i> is the light stop; blue as <i>text</i> is the
+    dark stop. On a button the blue is always a fill or a border and never the label, so Save and Cancel
+    border and fill in the same <code>#128CF0</code>. Cancel's label is ink rather than blue: a blue label
+    beside a blue border is two blues on one control, and the light stop is only 3.48:1 as text anyway. A
+    border is a UI boundary, so 3:1 applies and it clears at 3.48. Ghost has no border, so its label
+    carries the affordance and takes the dark stop, like an inline link.
+    <br><br>
     <b>Basis.</b> Every state is defined, including <code>:focus-visible</code> - tab through them.
     On business_card_service the primary CTA has <code>:hover</code>, <code>:focus</code> and
     <code>:active</code> all forced back to the resting state with <code>!important</code>, so the most

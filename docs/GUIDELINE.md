@@ -89,15 +89,28 @@ what body-copy links need. `--color-link` is the light stop at 3.22:1, used only
 where 3:1 is the bar: borders, chevrons, icons, hover fills. One control uses one
 blue: an outlined button takes the dark stop for both its border and its label.
 
-**The filled primary is the light stop with a near-black label**, `#128CF0` with
-`#0D1117` at 5.44:1. White on that fill is 3.48:1 and a 15px label needs 4.5, so
-the label changed rather than the colour.
+**The filled primary is the light stop with a white label**, `#128CF0` with
+`#FFFFFF`. That measures 3.48:1, under the 4.5 a 15px label needs, and is a
+deliberate brand decision **recorded as a pinned exception** in
+`test/contrast.test.mjs` rather than shipped silently. `#0F78CE` is the nearest
+shade of the same blue where white clears 4.5 at rest, if it is revisited.
 
-**Its hover brightens rather than darkens.** With a dark label a brighter fill
-*gains* contrast, 5.44 to 5.99. Darkening would pull the other way. This is the
-opposite of the usual reflex, so `test/contrast.test.mjs` pins the direction in
-both themes. The result is that both themes read the same way: a bright fill with
-a near-black label, blue by day and brand yellow by night.
+**Blue as an area is the light stop; blue as text is the dark stop.** That one
+sentence settles every button. On a button the blue is always a fill or a
+border, never the label, so a button's blue is always `#128CF0`: the filled tier
+fills with it, the outlined tier borders with it, and both look like the same
+control family. The outlined label is ink, not blue - a blue label beside a blue
+border puts two blues on one control, and the light stop is only 3.48:1 as text.
+A border is a UI boundary and needs 3:1, which it clears at 3.48. The ghost tier
+has no border, so its label carries the affordance and takes the dark stop, like
+an inline link.
+
+**Its hover darkens.** White on the resting fill is 3.48:1, which is a recorded
+exception; hover takes it to 4.70:1, so the state a person is actively pointing
+at is the compliant one. The rule the test enforces is not a direction but an
+outcome: hover must never make the label harder to read. In dark mode, where the
+primary is brand yellow with a near-black label, that same rule makes hover
+brighten instead.
 
 **There is a filled primary button.** The marketing site has none: its primary
 CTA is an App Store badge, which works only when the conversion is leaving for

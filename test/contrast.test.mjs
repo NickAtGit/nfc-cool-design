@@ -120,6 +120,22 @@ test('the filled primary label gains contrast on hover, in both themes', () => {
   }
 });
 
+/* Buttons use one blue. It is the light stop, and on a button it is only ever
+   a fill or a border - never the label. */
+test('the outlined button borders in the same blue as the filled one', () => {
+  const css = readFileSync(new URL('../src/components.css', import.meta.url), 'utf8');
+  const rule = css.slice(css.indexOf('.btn {'), css.indexOf('}', css.indexOf('.btn {')));
+  assert.match(rule, /--btn-border:\s*var\(--color-primary-bg\)/,
+    'the outlined border must be the same token as the filled fill');
+  assert.match(rule, /--btn-fg:\s*var\(--color-text\)/,
+    'the outlined label must be ink, not a second blue');
+});
+
+test('the outlined button border reads against a card', () => {
+  assert.ok(ratio(L['color-primary-bg'], L['color-bg-card']) >= 3.0,
+    'the border is a UI boundary and must clear 3:1');
+});
+
 /* RECORDED EXCEPTION, decided deliberately on 2026-09-06.
    The filled primary is the brand's light stop with a white label. That pairing
    is 3.48:1, under the 4.5 a 15px label needs. It is pinned here so it stays a
