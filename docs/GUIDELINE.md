@@ -65,16 +65,29 @@ bar. The second carries actual link text, where 4.5:1 is. On the live site one
 token does both jobs at 3.99:1, and its hover state is *lighter* at 2.60:1, so
 hovering a link today makes it harder to read.
 
-**The brand gradient is fixed, and the shadow is how it is carried.**
-`#137BD9 → #00A2F3` are the NFC.cool **app icon's** colours, so the band matches
-the icon on the App Store and on a home screen. They are brand identity, not a
-styling choice, and must not be darkened for contrast.
+**The brand gradient is the app's, and the shadow is how it is carried.**
+`#1A60CE → #128CF0`, dark at the top and light at the bottom, is the iOS app's
+`appThemeGradient`. The web band matches what the product actually renders.
 
-White on the lower stop measures 2.81:1, so the text is carried by
-`--on-brand-text-shadow` instead. That is a deliberate, accepted exception, and
-the shadow is a token so it travels with the gradient rather than being
-sprinkled per heading. `test/contrast.test.mjs` pins both values, so changing
-either one fails the suite and has to be an explicit decision.
+Four other definitions exist and none of them is canonical:
+
+| value | where it lives | why not |
+|---|---|---|
+| `#137BD9 → #00A2F3` | the website until now | same family, lighter; white fails at the bottom |
+| `#00A2F3 → #137BD9` | `NFC_Gradient.png` in the manual | the same colours mirrored; reads as oriented for a square logo frame, not a wide band |
+| `#3878D1 → #45A1ED` | the dashboard, auth pages and all six emails | the manual's two flat *palette swatches* ramped together, which is not the brand gradient |
+| `#4074B9` | every icon SVG in the manual | a flat icon colour, never a band |
+
+White clears AA at the top stop and stays above the large-text floor at the
+bottom, so `--on-brand-text-shadow` carries body copy over the lower half. The
+gradient and its compensation are both tokens and travel together;
+`test/contrast.test.mjs` pins them, so changing either is deliberate.
+
+**The interactive colours are the gradient stops themselves.** Not tints derived
+from them. `--color-link-text` is the dark stop at 5.38:1 on the page, which is
+what body-copy links need. `--color-link` is the light stop at 3.22:1, used only
+where 3:1 is the bar: borders, chevrons, icons, hover fills. The filled primary
+is the dark stop with a white label at 5.82:1.
 
 **There is a filled primary button.** The marketing site has none: its primary
 CTA is an App Store badge, which works only when the conversion is leaving for

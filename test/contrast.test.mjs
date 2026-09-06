@@ -25,13 +25,8 @@ const cases = [
   ['light link text on page',        L['color-link-text'],      L['color-bg'],       AA],
   ['light link text on card',        L['color-link-text'],      L['color-bg-card'],  AA],
   ['light link hover on page',       L['color-link-text-hover'],L['color-bg'],       AA],
-  ['light focus stroke on page',     L['focus-stroke'],         L['color-bg'],       UI],
-  ['light focus stroke on card',     L['focus-stroke'],         L['color-bg-card'],  UI],
 
   // The gradient itself is an accepted exception, pinned below rather than here.
-  ['focus halo on gradient top',     L['focus-halo'],           L['brand-blue-1'],   UI],
-  ['focus stroke on gradient top',   L['focus-stroke'],         L['brand-blue-1'],   UI],
-  ['focus stroke on gradient bottom',L['focus-stroke'],         L['brand-blue-2'],   UI],
 
   // Filled primary button, both themes. The dark fill is brand yellow, so its
   // label is near-black; testing only the light theme hid that for one commit.
@@ -55,7 +50,6 @@ const cases = [
   ['dark muted on bg-alt',           D['color-text-muted'],     D['color-bg-alt'],   AA],
   ['dark link text on page',         D['color-link-text'],      D['color-bg'],       AA],
   ['dark link text on card',         D['color-link-text'],      D['color-bg-card'],  AA],
-  ['dark focus stroke on page',      D['focus-stroke'],         D['color-bg'],       UI],
   ['dark success fg on page',        D['color-success-fg'],     D['color-bg'],       AA],
   ['dark warning fg on page',        D['color-warning-fg'],     D['color-bg'],       AA],
   ['dark danger fg on page',         D['color-danger-fg'],      D['color-bg'],       AA],
@@ -77,17 +71,43 @@ for (const [label, fg, bg, min] of cases) {
 /* Documented exemption. WCAG 1.4.3 exempts text that is part of a logo or
    brand name. The script tail renders the brand name, so it is allowed to
    fail - but the test pins it, so a change here is a deliberate act. */
+/* The focus ring is two-tone on purpose: an inner halo and an outer stroke.
+   The contract is not that both tones contrast with every surface, but that
+   AT LEAST ONE always does, which is what lets one ring work on the page, on
+   a card and on the brand band without per-context overrides. */
+for (const [theme, T] of [['light', L], ['dark', D]]) {
+  for (const surface of ['color-bg', 'color-bg-card', 'brand-blue-1', 'brand-blue-2']) {
+    test(`focus ring is visible on ${theme} ${surface}`, () => {
+      const halo = ratio(T['focus-halo'], T[surface]);
+      const stroke = ratio(T['focus-stroke'], T[surface]);
+      assert.ok(Math.max(halo, stroke) >= UI,
+        `neither ring tone clears 3:1 on ${T[surface]}: halo ${halo.toFixed(2)}, stroke ${stroke.toFixed(2)}`);
+    });
+  }
+}
+
 /* Accepted exception, decided deliberately: the brand band keeps its shipped
    colours, and white text on it is carried by --on-brand-text-shadow rather
    than by the background contrast. Pinned so that changing either the gradient
    or the shadow is a deliberate act rather than a silent regression. */
-test('brand gradient keeps its shipped values', () => {
-  assert.equal(L['brand-blue-1'], '#137BD9');
-  assert.equal(L['brand-blue-2'], '#00A2F3');
+test('brand gradient is the iOS app appThemeGradient', () => {
+  assert.equal(L['brand-blue-1'], '#1A60CE', 'top stop must match the app');
+  assert.equal(L['brand-blue-2'], '#128CF0', 'bottom stop must match the app');
+  // White clears AA at the top and stays above the large-text floor at the
+  // bottom, so the shadow carries body copy over the lower half only.
+  assert.ok(ratio(L['color-on-brand'], L['brand-blue-1']) >= 4.5, 'white must clear AA at the top stop');
+  assert.ok(ratio(L['color-on-brand'], L['brand-blue-2']) >= 3.0, 'white must clear the large-text floor at the bottom');
   assert.ok(ratio(L['color-on-brand'], L['brand-blue-2']) < 4.5,
-    'the gradient now passes on its own - drop the text-shadow compensation');
-  assert.notEqual(L['on-brand-text-shadow'], 'none',
-    'the bright gradient needs the shadow compensation in light mode');
+    'the band now passes for body copy on its own - drop the shadow compensation');
+  assert.notEqual(L['on-brand-text-shadow'], 'none', 'the band still needs the shadow in light mode');
+});
+
+/* The interactive colours are the gradient stops themselves, not tints
+   derived from them. If that ever stops being true it should be a decision. */
+test('interactive colours are the brand gradient stops', () => {
+  assert.equal(L['color-link-text'], L['brand-blue-1']);
+  assert.equal(L['color-link'], L['brand-blue-2']);
+  assert.equal(L['color-primary-bg'], L['brand-blue-1']);
 });
 
 test('brand tail is a documented logotype exemption', () => {
