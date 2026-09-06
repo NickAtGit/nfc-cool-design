@@ -550,7 +550,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 .nav-link:hover { color: var(--nav-fg-active); background: var(--nav-fill-active); }
 .nav-link.is-active { color: var(--nav-fg-active); background: var(--nav-fill-active); }
 .nav-icon { inline-size: 1.15rem; block-size: 1.15rem; flex-shrink: 0; }
-.nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-count {
    margin-inline-start: auto;
    font-size: var(--text-3xs);
@@ -621,6 +621,10 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    align-items: stretch;
    gap: var(--space-5);
    inline-size: var(--nav-width);
+   /* It is a flex item inside .app-shell. Without this it shrinks below its
+      own width when the page is tight, squeezing every link until the label
+      collapses under its icon. */
+   flex-shrink: 0;
    block-size: 100%;
    padding: var(--space-5) var(--space-4);
    background: var(--nav-side-bg);

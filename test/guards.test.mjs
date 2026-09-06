@@ -52,6 +52,25 @@ for (const f of AUTHORED) {
   });
 }
 
+/* The sidebar is a flex item. If it can shrink, every link is squeezed until
+   its label collapses under the icon. */
+test('the sidebar refuses to shrink inside the app shell', () => {
+  const css = read('src/components.css');
+  const rule = css.slice(css.indexOf('[data-nav="side"] {'), css.indexOf('}', css.indexOf('[data-nav="side"] {')));
+  assert.match(rule, /flex-shrink:\s*0/, 'the sidebar must not shrink below --nav-width');
+});
+
+/* text-overflow only applies to a single line. */
+test('a truncating label also prevents wrapping', () => {
+  const css = read('src/components.css');
+  for (const sel of ['.nav-label']) {
+    const rule = css.slice(css.indexOf(sel + ' {'), css.indexOf('}', css.indexOf(sel + ' {')));
+    if (!/text-overflow:\s*ellipsis/.test(rule)) continue;
+    assert.match(rule, /white-space:\s*nowrap/,
+      `${sel} sets text-overflow but not white-space: nowrap, so it wraps instead of truncating`);
+  }
+});
+
 /* A display toggle must out-rank any element-selector rule that also sets
    display on the same nodes, or both states render at once. */
 test('the theme logo toggle out-ranks the .nav-brand img rule', () => {
