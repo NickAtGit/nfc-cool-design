@@ -76,7 +76,7 @@ Four other definitions exist and none of them is canonical:
 | `#137BD9 → #00A2F3` | the website until now | same family, lighter; white fails at the bottom |
 | `#00A2F3 → #137BD9` | `NFC_Gradient.png` in the manual | the same colours mirrored; reads as oriented for a square logo frame, not a wide band |
 | `#3878D1 → #45A1ED` | the dashboard, auth pages and all six emails | the manual's two flat *palette swatches* ramped together, which is not the brand gradient |
-| `#4074B9` | every icon SVG in the manual | a flat icon colour, never a band |
+| `#4074B9` | every icon SVG in the manual | **retired.** Not a brand colour. Icons reused from the manual take `--color-link` or `currentColor` |
 
 White clears AA at the top stop and stays above the large-text floor at the
 bottom, so `--on-brand-text-shadow` carries body copy over the lower half. The
