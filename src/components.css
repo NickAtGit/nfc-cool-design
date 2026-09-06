@@ -66,12 +66,15 @@
    nfc.cool had no filled button at all - its primary CTA was a store badge,
    which only works when the conversion is "leave for the App Store". */
 .btn-primary {
-   --btn-bg: var(--color-link-text);
-   --btn-fg: var(--color-on-brand);
-   --btn-border: var(--color-link-text);
-   --btn-bg-hover: var(--color-link-text-hover);
-   --btn-fg-hover: var(--color-on-brand);
-   --btn-border-hover: var(--color-link-text-hover);
+   /* The fill and its label are their own token pair, not the link colour.
+      In dark mode the interactive colour is brand yellow, and a yellow fill
+      needs a near-black label, not the near-white one links sit on. */
+   --btn-bg: var(--color-primary-bg);
+   --btn-fg: var(--color-primary-fg);
+   --btn-border: var(--color-primary-bg);
+   --btn-bg-hover: var(--color-primary-bg-hover);
+   --btn-fg-hover: var(--color-primary-fg);
+   --btn-border-hover: var(--color-primary-bg-hover);
 }
 /* Outlined. This is nfc.cool's shipped .landing-cta-button, unchanged. */
 .btn-secondary { /* inherits the .btn defaults */ }
@@ -110,11 +113,14 @@
    --btn-border-hover: var(--color-on-brand);
 }
 .on-brand .btn-primary {
-   --btn-bg: var(--color-on-brand);
-   --btn-fg: var(--color-link-text);
-   --btn-border: var(--color-on-brand);
-   --btn-bg-hover: var(--color-on-brand);
-   --btn-fg-hover: var(--color-link-text-hover);
+   /* Theme-aware inversion. In dark mode the brand band collapses to the page
+      background, so a white-filled button would be a white slab on a dark
+      page: there, on-brand primary is simply the normal primary. */
+   --btn-bg: var(--btn-onbrand-bg);
+   --btn-fg: var(--btn-onbrand-fg);
+   --btn-border: var(--btn-onbrand-bg);
+   --btn-bg-hover: var(--btn-onbrand-bg);
+   --btn-fg-hover: var(--btn-onbrand-fg);
 }
 
 /* Loading state - the button keeps its width so the row does not reflow. */
@@ -400,6 +406,10 @@ a.card-interactive:hover { color: inherit; transform: translateY(var(--lift-3));
    font-size: var(--text-hero); line-height: var(--leading-hero);
    letter-spacing: var(--tracking-hero);
    color: var(--color-on-brand); margin: 0 0 var(--space-4);
+   /* The brand band keeps its shipped bright blue, on which white measures
+      2.81:1 at the bottom stop. This shadow is what carries the text, and it
+      is a token so the two travel together. See docs/GUIDELINE.md. */
+   text-shadow: var(--on-brand-text-shadow);
 }
 .hero-strip h1 { font-size: var(--text-display); line-height: var(--leading-display); }
 

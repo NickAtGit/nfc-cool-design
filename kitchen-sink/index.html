@@ -225,57 +225,61 @@
   </p>
 
 
-  <!-- ============================ DECISION ============================ -->
-  <h2 class="ks-h2" id="decision" style="margin-top:var(--space-8)">Decision needed: the blue band</h2>
+  <!-- ============================ DECIDED ============================ -->
+  <h2 class="ks-h2" id="decision" style="margin-top:var(--space-8)">The blue band, and why it stays</h2>
   <p class="ks-lede">
-    The blue band at the top of every page fades from a medium blue down to a bright cyan.
-    <b>White text on that bright cyan is hard to read.</b> The standard asks for 4.5; the bottom of the
-    band measures 2.81. The site already compensates without saying so: every hero headline carries a
-    dark shadow behind it, and every subtitle is set to slightly see-through white.
-    Below are the three ways out, side by side, with real text on each.
-    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Light mode only. In dark mode
-    the band deliberately collapses to the page colour, so none of this applies there.</span>
+    <b>Decided: the gradient does not change.</b> <code class="ks-code">#137BD9 &rarr; #00A2F3</code> are the
+    NFC<em class="brand-tail">.cool</em> <b>app icon's</b> colours, so the band matches the icon on the
+    App Store and on a home screen. They are brand identity, not a styling choice.
+  </p>
+  <p class="ks-lede">
+    White text on the lower stop measures 2.81, below the 4.5 the standard asks for. Since the colour
+    cannot move, the text is carried instead: <code class="ks-code">--on-brand-text-shadow</code> is now a
+    token rather than a shadow sprinkled onto individual headings, so it travels with the gradient.
+    Both values are pinned by a test, so changing either one has to be deliberate.
   </p>
 
   <div class="ks-compare">
     <div class="ks-opt">
-      <div class="ks-opt-head">A · What ships today</div>
+      <div class="ks-opt-head">Shipping: brand blue + shadow token</div>
       <div class="ks-opt-band ks-band-live">
         <h4>Tap it. It works.</h4>
         <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
         <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
       </div>
-      <div class="ks-opt-foot"><b>2.81 at the bottom.</b> Needs a shadow behind the headline and a
-        see-through subtitle to stay legible. Nothing changes on the site.</div>
+      <div class="ks-opt-foot"><b>The icon's colours, unchanged.</b> Legibility comes from the shadow
+        token, not from moving the brand.</div>
     </div>
 
     <div class="ks-opt">
-      <div class="ks-opt-head">B · Deepen the blue</div>
+      <div class="ks-opt-head">Rejected: deepen the blue</div>
       <div class="ks-opt-band ks-band-deep">
         <h4>Tap it. It works.</h4>
         <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
         <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
       </div>
-      <div class="ks-opt-foot"><b>4.63 everywhere.</b> Same hue, both ends a step deeper. No shadow, no
-        see-through text, full-strength white. The top is imperceptibly different; the bottom is a
-        visibly richer blue.</div>
+      <div class="ks-opt-foot"><b>Passes on its own at 4.63.</b> Rejected: it no longer matches the app
+        icon, which is the whole point of the band.</div>
     </div>
 
     <div class="ks-opt">
-      <div class="ks-opt-head">C · Keep the blue, add a veil</div>
+      <div class="ks-opt-head">Rejected: keep the blue, add a veil</div>
       <div class="ks-opt-band ks-band-scrim">
         <h4>Tap it. It works.</h4>
         <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
         <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.5)">Learn more</span>
       </div>
-      <div class="ks-opt-foot"><b>Passes where text sits.</b> The exact brand blue is untouched; a faint
-        dark veil fades in toward the bottom. Costs one extra layer on every hero.</div>
+      <div class="ks-opt-foot"><b>Also keeps the exact blue.</b> Rejected as the more invasive of the two
+        ways to keep it: an extra compositing layer on every hero, where a shadow on the text does.</div>
     </div>
   </div>
   <div class="ks-basis">
-    <b>How to choose.</b> Look at the three bands, not the numbers. B is the honest fix and is what the
-    package ships today. C is right if the exact brand blue is non-negotiable. A is right only if you
-    would rather not change the site's appearance at all.
+    <b>The rule this sets.</b> Never darken a brand colour to pass a contrast check. Brand values are
+    fixed by the app icon and the store listings; carry the text instead, with a shadow, a scrim, or a
+    different foreground. Only non-brand colours are free to move.
+    <span class="ks-note" style="display:block;margin-top:var(--space-2)">Light mode only. In dark mode
+    the band deliberately collapses to the page colour and the shadow token becomes
+    <code>none</code>.</span>
   </div>
 
   <!-- ============================ FOUNDATIONS ============================ -->

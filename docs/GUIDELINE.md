@@ -36,15 +36,19 @@ Editing those outputs by hand is a drift bug and `npm test` fails on it.
    already in the ramp.
 3. **Four breakpoints.** `sm 600`, `md 768`, `lg 900`, `xl 1200`. `min-width`
    uses the value, `max-width` uses the value minus one. Nothing else.
-4. **Every colour token exists in both themes.** A token defined only in light
+4. **Never darken a brand colour to pass a contrast check.** Brand values are
+   fixed by the app icon and the store listings. Carry the text instead: a
+   shadow, a scrim, or a different foreground. Only non-brand colours are free
+   to move.
+5. **Every colour token exists in both themes.** A token defined only in light
    silently inherits the wrong value in dark.
-5. **Contrast is a test, not a review note.** Body text 4.5:1, non-text
+6. **Contrast is a test, not a review note.** Body text 4.5:1, non-text
    indicators and large text 3:1, asserted for every pair in
    `test/contrast.test.mjs`.
-6. **Dark mode is `[data-theme]`, resolved before first paint.** One
+7. **Dark mode is `[data-theme]`, resolved before first paint.** One
    `localStorage` key, one attribute, one synchronous head script. Never
    `prefers-color-scheme` in a component rule.
-7. **Logical properties everywhere.** `margin-inline`, `inset-inline-start`,
+8. **Logical properties everywhere.** `margin-inline`, `inset-inline-start`,
    `border-inline-start`. Arabic is a shipping locale, not a future problem.
 
 ---
@@ -61,12 +65,16 @@ bar. The second carries actual link text, where 4.5:1 is. On the live site one
 token does both jobs at 3.99:1, and its hover state is *lighter* at 2.60:1, so
 hovering a link today makes it harder to read.
 
-**The gradient carries white body copy.** Both stops were darkened within the
-same hue until white clears 4.5:1 across the band. The live gradient measures
-4.32:1 at the top and 2.81:1 at the bottom, which is why every hero headline
-carries a `text-shadow` and every subtitle is set to 92% white. That
-compensation is no longer needed and should be deleted when the site adopts
-this.
+**The brand gradient is fixed, and the shadow is how it is carried.**
+`#137BD9 → #00A2F3` are the NFC.cool **app icon's** colours, so the band matches
+the icon on the App Store and on a home screen. They are brand identity, not a
+styling choice, and must not be darkened for contrast.
+
+White on the lower stop measures 2.81:1, so the text is carried by
+`--on-brand-text-shadow` instead. That is a deliberate, accepted exception, and
+the shadow is a token so it travels with the gradient rather than being
+sprinkled per heading. `test/contrast.test.mjs` pins both values, so changing
+either one fails the suite and has to be an explicit decision.
 
 **There is a filled primary button.** The marketing site has none: its primary
 CTA is an App Store badge, which works only when the conversion is leaving for

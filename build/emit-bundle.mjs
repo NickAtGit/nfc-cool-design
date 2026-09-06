@@ -6,9 +6,18 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const files = ['src/tokens.css', 'src/brands/nfccool.css', 'src/components.css', 'src/archetypes.css'];
-const out = `/* @nfccool/design v${version} - generated bundle, do not edit.\n   Source: github.com/FlineDev/nfc-cool-design */\n\n`
-  + files.map(f => `/* ===== ${f} ===== */\n` + readFileSync(join(root, f), 'utf8')).join('\n');
+/* Two bundles, because not every consumer wants the component layer.
+   A page that already owns a full set of components (the public card page)
+   takes the palette only; adopting L3/L4 there is a separate step, and
+   loading them early would collide on .modal, .overlay and .alert-*. */
+const BUNDLES = {
+  'design-tokens.css': ['src/tokens.css', 'src/brands/nfccool.css'],
+  'design.css': ['src/tokens.css', 'src/brands/nfccool.css', 'src/components.css', 'src/archetypes.css'],
+};
 mkdirSync(join(root, 'dist'), { recursive: true });
-writeFileSync(join(root, 'dist/design.css'), out);
-console.log(`wrote dist/design.css (${out.length} bytes) from ${files.length} layers`);
+for (const [name, files] of Object.entries(BUNDLES)) {
+  const out = `/* @nfccool/design v${version} - generated bundle, do not edit.\n   Layers: ${files.join(', ')} */\n\n`
+    + files.map(f => `/* ===== ${f} ===== */\n` + readFileSync(join(root, f), 'utf8')).join('\n');
+  writeFileSync(join(root, 'dist', name), out);
+  console.log(`wrote dist/${name} (${out.length} bytes) from ${files.length} layers`);
+}

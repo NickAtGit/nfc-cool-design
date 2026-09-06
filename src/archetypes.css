@@ -121,7 +121,9 @@ a.feature-card:hover { color: inherit; transform: translateY(var(--lift-3)); box
    letter-spacing: var(--tracking-display);
    color: var(--color-text); margin: 0 0 var(--space-8);
 }
-.on-brand .section-title, .hero-band .section-title, .feature-banner .section-title { color: var(--color-on-brand); }
+.on-brand .section-title, .hero-band .section-title, .feature-banner .section-title {
+   color: var(--color-on-brand); text-shadow: var(--on-brand-text-shadow);
+}
 .eyebrow {
    font-size: var(--text-3xs); font-weight: 700;
    text-transform: uppercase; letter-spacing: var(--tracking-eyebrow);
@@ -216,6 +218,7 @@ a.feature-card:hover { color: inherit; transform: translateY(var(--lift-3)); box
    font-size: var(--text-display); line-height: var(--leading-heading);
    letter-spacing: var(--tracking-display);
    color: var(--color-on-brand); margin: 0 0 var(--space-4);
+   text-shadow: var(--on-brand-text-shadow);
 }
 .trust-line { font-size: var(--text-xs); color: var(--color-on-brand); opacity: 0.85; font-variant-numeric: tabular-nums; }
 .trust-line .stars { color: var(--color-accent); margin-inline-end: 0.4em; letter-spacing: 0.05em; }

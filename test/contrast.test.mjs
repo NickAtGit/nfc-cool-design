@@ -28,16 +28,16 @@ const cases = [
   ['light focus stroke on page',     L['focus-stroke'],         L['color-bg'],       UI],
   ['light focus stroke on card',     L['focus-stroke'],         L['color-bg-card'],  UI],
 
-  // The brand gradient must carry white body copy at both stops.
-  ['white on gradient top',          L['color-on-brand'],       L['brand-blue-1'],   AA],
-  ['white on gradient bottom',       L['color-on-brand'],       L['brand-blue-2'],   AA],
+  // The gradient itself is an accepted exception, pinned below rather than here.
   ['focus halo on gradient top',     L['focus-halo'],           L['brand-blue-1'],   UI],
   ['focus stroke on gradient top',   L['focus-stroke'],         L['brand-blue-1'],   UI],
   ['focus stroke on gradient bottom',L['focus-stroke'],         L['brand-blue-2'],   UI],
 
-  // Filled primary button.
-  ['primary button label',           L['color-on-brand'],       L['color-link-text'], AA],
-  ['primary button hover label',     L['color-on-brand'],       L['color-link-text-hover'], AA],
+  // Filled primary button, both themes. The dark fill is brand yellow, so its
+  // label is near-black; testing only the light theme hid that for one commit.
+  ['light primary button label',       L['color-primary-fg'], L['color-primary-bg'],       AA],
+  ['light primary button hover label', L['color-primary-fg'], L['color-primary-bg-hover'], AA],
+  ['light primary on brand band',      L['btn-onbrand-fg'],   L['btn-onbrand-bg'],         AA],
 
   // Semantic tones as text on the surfaces they appear on.
   ['light success fg on page',       L['color-success-fg'],     L['color-bg'],       AA],
@@ -61,6 +61,9 @@ const cases = [
   ['dark danger fg on page',         D['color-danger-fg'],      D['color-bg'],       AA],
   ['dark info fg on page',           D['color-info-fg'],        D['color-bg'],       AA],
   ['dark ios pill label',            D['platform-ios-fg'],      D['color-bg-card'],  AA],
+  ['dark primary button label',        D['color-primary-fg'], D['color-primary-bg'],       AA],
+  ['dark primary button hover label',  D['color-primary-fg'], D['color-primary-bg-hover'], AA],
+  ['dark primary on brand band',       D['btn-onbrand-fg'],   D['btn-onbrand-bg'],         AA],
   ['dark android pill label',        D['platform-android-fg'],  D['color-bg-card'],  AA],
 ];
 
@@ -74,6 +77,19 @@ for (const [label, fg, bg, min] of cases) {
 /* Documented exemption. WCAG 1.4.3 exempts text that is part of a logo or
    brand name. The script tail renders the brand name, so it is allowed to
    fail - but the test pins it, so a change here is a deliberate act. */
+/* Accepted exception, decided deliberately: the brand band keeps its shipped
+   colours, and white text on it is carried by --on-brand-text-shadow rather
+   than by the background contrast. Pinned so that changing either the gradient
+   or the shadow is a deliberate act rather than a silent regression. */
+test('brand gradient keeps its shipped values', () => {
+  assert.equal(L['brand-blue-1'], '#137BD9');
+  assert.equal(L['brand-blue-2'], '#00A2F3');
+  assert.ok(ratio(L['color-on-brand'], L['brand-blue-2']) < 4.5,
+    'the gradient now passes on its own - drop the text-shadow compensation');
+  assert.notEqual(L['on-brand-text-shadow'], 'none',
+    'the bright gradient needs the shadow compensation in light mode');
+});
+
 test('brand tail is a documented logotype exemption', () => {
   const r = ratio(L['color-brand-tail'], L['color-bg']);
   assert.ok(r < 4.5, 'brand tail now passes AA - update the exemption note in archetypes.css');

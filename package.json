@@ -5,7 +5,11 @@
   "license": "UNLICENSED",
   "private": false,
   "type": "module",
-  "files": ["src", "dist", "docs"],
+  "files": [
+    "src",
+    "dist",
+    "docs"
+  ],
   "exports": {
     "./tokens.css": "./src/tokens.css",
     "./brands/nfccool.css": "./src/brands/nfccool.css",
@@ -13,7 +17,8 @@
     "./archetypes.css": "./src/archetypes.css",
     "./email.css": "./src/email.css",
     "./design.css": "./dist/design.css",
-    "./tokens.json": "./src/tokens.json"
+    "./tokens.json": "./src/tokens.json",
+    "./design-tokens.css": "./dist/design-tokens.css"
   },
   "scripts": {
     "build": "node build/emit-css.mjs && node build/emit-bundle.mjs",
