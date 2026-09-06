@@ -52,6 +52,24 @@ for (const f of AUTHORED) {
   });
 }
 
+/* A display toggle must out-rank any element-selector rule that also sets
+   display on the same nodes, or both states render at once. */
+test('the theme logo toggle out-ranks the .nav-brand img rule', () => {
+  const css = read('src/components.css');
+  const spec = sel => {
+    const ids = (sel.match(/#[\w-]+/g) || []).length;
+    const cls = (sel.match(/\.[\w-]+|\[[^\]]+\]|:[\w-]+/g) || []).length;
+    const els = (sel.match(/(^|[\s>+~])[a-z]+/g) || []).length;
+    return ids * 100 + cls * 10 + els;
+  };
+  const base = spec('.nav-brand img');
+  for (const sel of ['.nav-brand .nav-logo-on-light', '.nav-brand .nav-logo-on-dark']) {
+    assert.ok(css.includes(sel + ' {'), `${sel} must exist`);
+    assert.ok(spec(sel) > base,
+      `${sel} (${spec(sel)}) must out-rank .nav-brand img (${base})`);
+  }
+});
+
 /* The wordmark is Latin and must never reorder inside RTL text. */
 test('the wordmark is isolated left-to-right', () => {
   const css = read('src/archetypes.css');

@@ -515,11 +515,15 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 /* The wordmark is artwork, not text, so the nav ships both inks and swaps
    them on the theme. Named for the background they sit on rather than their
    own colour, because "the black logo" is ambiguous the moment there are two
-   themes. Both are in the markup, so the swap needs no JS and cannot flash. */
-.nav-logo-on-light { display: block; }
-.nav-logo-on-dark { display: none; }
-[data-theme="dark"] .nav-logo-on-light { display: none; }
-[data-theme="dark"] .nav-logo-on-dark { display: block; }
+   themes. Both are in the markup, so the swap needs no JS and cannot flash.
+
+   These are scoped to .nav-brand deliberately: a bare .nav-logo-on-dark is
+   (0,1,0) and loses to the .nav-brand img rule above at (0,1,1), which set
+   display:block and showed both logos at once. */
+.nav-brand .nav-logo-on-light { display: block; }
+.nav-brand .nav-logo-on-dark { display: none; }
+[data-theme="dark"] .nav-brand .nav-logo-on-light { display: none; }
+[data-theme="dark"] .nav-brand .nav-logo-on-dark { display: block; }
 
 .nav-list {
    display: flex;
