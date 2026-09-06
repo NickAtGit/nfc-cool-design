@@ -23,9 +23,12 @@
    Buttons
    ============================================================ */
 .btn {
+   /* One blue per button. The border and the label both take the dark stop:
+      pairing the light stop's border with the dark stop's text put two
+      different blues on a single control. */
    --btn-bg: transparent;
    --btn-fg: var(--color-link-text);
-   --btn-border: var(--color-link);
+   --btn-border: var(--color-link-text);
    --btn-bg-hover: var(--color-link-light);
    --btn-fg-hover: var(--color-link-text-hover);
    --btn-border-hover: var(--color-link-text-hover);

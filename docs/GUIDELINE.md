@@ -86,8 +86,18 @@ gradient and its compensation are both tokens and travel together;
 **The interactive colours are the gradient stops themselves.** Not tints derived
 from them. `--color-link-text` is the dark stop at 5.38:1 on the page, which is
 what body-copy links need. `--color-link` is the light stop at 3.22:1, used only
-where 3:1 is the bar: borders, chevrons, icons, hover fills. The filled primary
-is the dark stop with a white label at 5.82:1.
+where 3:1 is the bar: borders, chevrons, icons, hover fills. One control uses one
+blue: an outlined button takes the dark stop for both its border and its label.
+
+**The filled primary is the light stop with a near-black label**, `#128CF0` with
+`#0D1117` at 5.44:1. White on that fill is 3.48:1 and a 15px label needs 4.5, so
+the label changed rather than the colour.
+
+**Its hover brightens rather than darkens.** With a dark label a brighter fill
+*gains* contrast, 5.44 to 5.99. Darkening would pull the other way. This is the
+opposite of the usual reflex, so `test/contrast.test.mjs` pins the direction in
+both themes. The result is that both themes read the same way: a bright fill with
+a near-black label, blue by day and brand yellow by night.
 
 **There is a filled primary button.** The marketing site has none: its primary
 CTA is an App Store badge, which works only when the conversion is leaving for

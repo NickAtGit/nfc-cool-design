@@ -105,9 +105,27 @@ test('brand gradient is the iOS app appThemeGradient', () => {
 /* The interactive colours are the gradient stops themselves, not tints
    derived from them. If that ever stops being true it should be a decision. */
 test('interactive colours are the brand gradient stops', () => {
-  assert.equal(L['color-link-text'], L['brand-blue-1']);
-  assert.equal(L['color-link'], L['brand-blue-2']);
-  assert.equal(L['color-primary-bg'], L['brand-blue-1']);
+  assert.equal(L['color-link-text'], L['brand-blue-1'], 'link text is the dark stop');
+  assert.equal(L['color-link'], L['brand-blue-2'], 'the interactive hue is the light stop');
+  assert.equal(L['color-primary-bg'], L['brand-blue-2'], 'the filled primary is the light stop');
+});
+
+/* The filled primary reads the same way in both themes: a bright fill with a
+   near-black label. Hover brightens, so the label gains contrast rather than
+   losing it - the opposite of the usual darken-on-hover reflex. */
+test('the filled primary brightens on hover in both themes', () => {
+  for (const [theme, T] of [['light', L], ['dark', D]]) {
+    const rest = ratio(T['color-primary-fg'], T['color-primary-bg']);
+    const hover = ratio(T['color-primary-fg'], T['color-primary-bg-hover']);
+    assert.ok(hover >= rest,
+      `${theme}: hover drops the label from ${rest.toFixed(2)} to ${hover.toFixed(2)}`);
+  }
+});
+
+/* The fill has to be distinguishable from the surface behind it. */
+test('the filled primary reads against a card', () => {
+  assert.ok(ratio(L['color-primary-bg'], L['color-bg-card']) >= 3.0,
+    'the light primary fill must clear 3:1 against a white card');
 });
 
 test('brand tail is a documented logotype exemption', () => {
