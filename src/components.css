@@ -9,12 +9,40 @@
 /* ============================================================
    Focus - one ring, every surface
    ============================================================ */
+/* Visually hidden, still announced. Needed wherever an icon or a logo carries
+   the meaning and a text equivalent has to exist for a screen reader. */
+.sr-only {
+   position: absolute;
+   inline-size: 1px;
+   block-size: 1px;
+   padding: 0;
+   margin: -1px;
+   overflow: hidden;
+   clip-path: inset(50%);
+   white-space: nowrap;
+   border: 0;
+}
+
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
    outline: none;
    box-shadow: var(--focus-ring);
    border-radius: var(--radius-sm);
 }
-.on-brand :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+.on-brand /* Visually hidden, still announced. Needed wherever an icon or a logo carries
+   the meaning and a text equivalent has to exist for a screen reader. */
+.sr-only {
+   position: absolute;
+   inline-size: 1px;
+   block-size: 1px;
+   padding: 0;
+   margin: -1px;
+   overflow: hidden;
+   clip-path: inset(50%);
+   white-space: nowrap;
+   border: 0;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
    --focus-halo: var(--color-on-brand);
    --focus-stroke: var(--color-text);
 }
@@ -482,7 +510,16 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 }
 
 .nav-brand { display: inline-flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
-.nav-brand img { block-size: 1.75rem; inline-size: auto; }
+.nav-brand img { block-size: 1.75rem; inline-size: auto; display: block; }
+
+/* The wordmark is artwork, not text, so the nav ships both inks and swaps
+   them on the theme. Named for the background they sit on rather than their
+   own colour, because "the black logo" is ambiguous the moment there are two
+   themes. Both are in the markup, so the swap needs no JS and cannot flash. */
+.nav-logo-on-light { display: block; }
+.nav-logo-on-dark { display: none; }
+[data-theme="dark"] .nav-logo-on-light { display: none; }
+[data-theme="dark"] .nav-logo-on-dark { display: block; }
 
 .nav-list {
    display: flex;
@@ -602,6 +639,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 [data-nav="side"].is-collapsed .nav-label,
 [data-nav="side"].is-collapsed .nav-count,
 [data-nav="side"].is-collapsed .nav-section,
+[data-nav="side"].is-collapsed .nav-brand img,
 [data-nav="side"].is-collapsed .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (min-width: 768px) and (max-width: 899px) {
@@ -610,6 +648,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    [data-nav="side"] .nav-label,
    [data-nav="side"] .nav-count,
    [data-nav="side"] .nav-section,
+   [data-nav="side"] .nav-brand img,
    [data-nav="side"] .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 

@@ -3,7 +3,7 @@
    Artifact CSP admits, and adds the prefers-color-scheme layer the artifact
    host needs for viewers whose theme is "system" (an un-stamped root).
    Usage: node build/emit-artifact.mjs <output.html> */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -40,9 +40,12 @@ const style = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'))
   .replace(/@font-face\s*\{[^}]*\}\s*/g, '');
 
 // the artifact cannot fetch a sibling file, so images become data URIs
-for (const name of ['AppStore', 'GooglePlay']) {
-  const b64 = readFileSync(join(root, `kitchen-sink/images/${name}.svg`)).toString('base64');
-  body = body.replaceAll(`src="images/${name}.svg"`, `src="data:image/svg+xml;base64,${b64}"`);
+const MIME = { svg: 'image/svg+xml', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg' };
+for (const file of readdirSync(join(root, 'kitchen-sink/images'))) {
+  const ext = file.split('.').pop().toLowerCase();
+  if (!MIME[ext]) continue;
+  const b64 = readFileSync(join(root, 'kitchen-sink/images', file)).toString('base64');
+  body = body.replaceAll(`src="images/${file}"`, `src="data:${MIME[ext]};base64,${b64}"`);
 }
 
 // the artifact cannot fetch a sibling file, so the behaviour script is inlined
