@@ -232,7 +232,8 @@
    transition: transform var(--transition), box-shadow var(--transition);
 }
 .card-interactive:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
-a.card-interactive:hover { color: inherit; transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+a.card, a.card-interactive { color: var(--color-text); }
+a.card-interactive:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
 .card-flush { padding: 0; overflow: hidden; }
 
 .panel {

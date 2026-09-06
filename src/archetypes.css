@@ -84,14 +84,18 @@
    transition: transform var(--transition), box-shadow var(--transition);
 }
 .feature-card:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
-a.feature-card:hover { color: inherit; transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+/* A card may be a link, but only the affordance is a link - the copy inside
+   it is still text. Without this the card's contents inherit the anchor
+   colour and the title renders blue. */
+a.feature-card, a.blog-card { color: var(--color-text); }
+a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
 /* Script numeral watermark. Decorative only: always aria-hidden. */
 .feature-num {
    position: absolute; inset-block-start: var(--space-3); inset-inline-end: var(--space-5);
    font-family: var(--font-script); font-size: 2.5rem; font-weight: 700;
    color: var(--color-accent); line-height: 1; pointer-events: none;
 }
-.feature-title { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-base); margin: 0; }
+.feature-title { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-base); margin: 0; color: var(--color-text); }
 .feature-desc { font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--color-text-secondary); margin: 0; }
 @media (max-width: 599px) {
    .feature-list { grid-template-columns: 1fr; }
@@ -281,7 +285,7 @@ a.feature-card:hover { color: inherit; transform: translateY(var(--lift-3)); box
    text-transform: uppercase; letter-spacing: var(--tracking-label);
    color: var(--color-text-muted);
 }
-.blog-card-title { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-md); line-height: var(--leading-snug); margin: 0; }
+.blog-card-title { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-md); line-height: var(--leading-snug); margin: 0; color: var(--color-text); }
 .blog-card-summary {
    font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--color-text-secondary); margin: 0;
    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;

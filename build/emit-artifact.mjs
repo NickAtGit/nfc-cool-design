@@ -39,6 +39,12 @@ let body = html.slice(html.indexOf('<body>') + 6, html.lastIndexOf('</body>'));
 const style = html.slice(html.indexOf('<style>') + 7, html.indexOf('</style>'))
   .replace(/@font-face\s*\{[^}]*\}\s*/g, '');
 
+// the artifact cannot fetch a sibling file, so images become data URIs
+for (const name of ['AppStore', 'GooglePlay']) {
+  const b64 = readFileSync(join(root, `kitchen-sink/images/${name}.svg`)).toString('base64');
+  body = body.replaceAll(`src="images/${name}.svg"`, `src="data:image/svg+xml;base64,${b64}"`);
+}
+
 // the artifact cannot fetch a sibling file, so the behaviour script is inlined
 body = body.replace(
   '<script type="module" src="../src/nav.js"></script>',

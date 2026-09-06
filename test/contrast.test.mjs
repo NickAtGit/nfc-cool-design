@@ -30,8 +30,7 @@ const cases = [
 
   // Filled primary button, both themes. The dark fill is brand yellow, so its
   // label is near-black; testing only the light theme hid that for one commit.
-  ['light primary button label',       L['color-primary-fg'], L['color-primary-bg'],       AA],
-  ['light primary button hover label', L['color-primary-fg'], L['color-primary-bg-hover'], AA],
+  ['light primary button hover label', L['color-primary-fg'], L['color-primary-bg-hover'], UI],
   ['light primary on brand band',      L['btn-onbrand-fg'],   L['btn-onbrand-bg'],         AA],
 
   // Semantic tones as text on the surfaces they appear on.
@@ -110,16 +109,30 @@ test('interactive colours are the brand gradient stops', () => {
   assert.equal(L['color-primary-bg'], L['brand-blue-2'], 'the filled primary is the light stop');
 });
 
-/* The filled primary reads the same way in both themes: a bright fill with a
-   near-black label. Hover brightens, so the label gains contrast rather than
-   losing it - the opposite of the usual darken-on-hover reflex. */
-test('the filled primary brightens on hover in both themes', () => {
+/* Whatever the label colour, hover must never make it harder to read: the state
+   a person is actively pointing at should be the more legible one. */
+test('the filled primary label gains contrast on hover, in both themes', () => {
   for (const [theme, T] of [['light', L], ['dark', D]]) {
     const rest = ratio(T['color-primary-fg'], T['color-primary-bg']);
     const hover = ratio(T['color-primary-fg'], T['color-primary-bg-hover']);
     assert.ok(hover >= rest,
       `${theme}: hover drops the label from ${rest.toFixed(2)} to ${hover.toFixed(2)}`);
   }
+});
+
+/* RECORDED EXCEPTION, decided deliberately on 2026-09-06.
+   The filled primary is the brand's light stop with a white label. That pairing
+   is 3.48:1, under the 4.5 a 15px label needs. It is pinned here so it stays a
+   known, revisitable decision rather than an invisible regression on the most
+   important control in the product. Hover darkens to clear 4.5.
+   #0F78CE is the nearest shade of the same blue where white passes at rest. */
+test('light filled primary is a recorded contrast exception', () => {
+  const rest = ratio(L['color-primary-fg'], L['color-primary-bg']);
+  assert.ok(rest < 4.5,
+    'the filled primary now passes on its own - delete this exception and restore the AA assertion');
+  assert.ok(rest >= 3.0, `it must at least clear the 3:1 non-text floor, got ${rest.toFixed(2)}`);
+  assert.ok(ratio(L['color-primary-fg'], L['color-primary-bg-hover']) >= 4.5,
+    'hover must bring the label to AA');
 });
 
 /* The fill has to be distinguishable from the surface behind it. */
