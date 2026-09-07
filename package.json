@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "The NFC.cool design system: tokens, components and marketing archetypes shared across every NFC.cool web presence.",
   "license": "UNLICENSED",
-  "private": false,
+  "private": true,
   "type": "module",
   "files": [
     "src",
@@ -22,6 +22,7 @@
     "./nav.js": "./src/nav.js"
   },
   "scripts": {
+    "prepare": "npm run build",
     "build": "node build/emit-css.mjs && node build/emit-bundle.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
     "test": "node --test test/*.test.mjs"

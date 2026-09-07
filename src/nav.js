@@ -1,13 +1,18 @@
 /* Navigation behaviour for @nfccool/design.
  *
  * Progressive enhancement: the markup works without this file, it just does
- * not collapse. Wire it once per page:
+ * not collapse. The file is an ES module (it uses export and import.meta), so
+ * a classic script tag cannot load it. Wire it once per page:
  *
- *   import { initNav } from '/assets/design/nav.js';
+ *   <script type="module" src="/assets/design/nav.js"></script>
+ *
+ * which self-initialises on DOMContentLoaded. To control the timing yourself,
+ * opt out with ?no-auto and call initNav() from your own module:
+ *
+ *   import { initNav } from '/assets/design/nav.js?no-auto';
  *   initNav();
  *
- * from a module script, or drop the file in with a plain script tag, which
- * self-initialises on DOMContentLoaded.
+ * Doing both initialises the nav twice, and every toggle then cancels itself.
  *
  * Expected markup:
  *   <nav class="nav" data-nav="bar" id="site-nav">

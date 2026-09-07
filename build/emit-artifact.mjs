@@ -14,10 +14,11 @@ const r = f => readFileSync(join(root, f), 'utf8');
 
 const html = r('kitchen-sink/index.html');
 const tokens = JSON.parse(r('src/tokens.json'));
-const layers = ['src/tokens.css', 'src/brands/nfccool.css', 'src/components.css', 'src/archetypes.css']
+const brand = tokens.defaultBrand;
+const layers = ['src/tokens.css', `src/brands/${brand}.css`, 'src/components.css', 'src/archetypes.css']
   .map(f => `/* ===== ${f} ===== */\n` + r(f)).join('\n');
 
-const dark = Object.entries(tokens.brands.nfccool.dark)
+const dark = Object.entries(tokens.brands[brand].dark)
   .filter(([k]) => !k.startsWith('$')).map(([k, v]) => `      --${k}: ${v};`).join('\n');
 const systemDark = `
 /* Viewer theme "system" leaves the root un-stamped, so the dark palette has to
@@ -26,7 +27,7 @@ const systemDark = `
    :root:not([data-theme="light"]) {
 ${dark}
       --brand-gradient:
-         radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
+         radial-gradient(ellipse 85% 55% at 50% 50%, var(--brand-glow) 0%, transparent 70%),
          linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
    }
    :root:not([data-theme="light"]) .hero-band::before,

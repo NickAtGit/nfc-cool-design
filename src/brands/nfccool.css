@@ -28,6 +28,8 @@
    --elev-media: 0 30px 60px -20px rgba(0, 30, 70, 0.35), 0 8px 24px -8px rgba(0, 0, 0, 0.25);
    --brand-blue-1: #1A60CE;
    --brand-blue-2: #128CF0;
+   --brand-glow: transparent;
+   --brand-glow-radial: transparent;
    --color-link: #128CF0;
    --color-link-hover: #1A60CE;
    --color-link-text: #1A60CE;
@@ -94,6 +96,8 @@
    --elev-media: 0 30px 60px -20px rgba(255, 199, 0, 0.28), 0 8px 24px -8px rgba(255, 199, 0, 0.16);
    --brand-blue-1: #161B22;
    --brand-blue-2: #161B22;
+   --brand-glow: rgba(255, 199, 0, 0.10);
+   --brand-glow-radial: rgba(255, 199, 0, 0.08);
    --color-link: #FFC700;
    --color-link-hover: #FFD93D;
    --color-link-text: #FFC700;
@@ -135,11 +139,12 @@
    --platform-android-bg: rgba(61, 220, 132, 0.16);
    --platform-android-border: rgba(61, 220, 132, 0.32);
 
-   /* The gradient collapses to the page background plus a faint accent
-      radial, so brand bands blend into the page instead of forming a
-      dark slab. This is nfc.cool's existing dark-mode behaviour. */
+   /* The gradient collapses to the page background plus a faint glow in
+      the brand's own --brand-glow, so brand bands blend into the page
+      instead of forming a dark slab. This is nfc.cool's existing dark-mode
+      behaviour, parameterised so a second brand glows in its own accent. */
    --brand-gradient:
-      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 85% 55% at 50% 50%, var(--brand-glow) 0%, transparent 70%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
-   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 0, 0.08) 0%, var(--color-bg) 60%);
+   --brand-gradient-radial: radial-gradient(at 50% 50%, var(--brand-glow-radial) 0%, var(--color-bg) 60%);
 }

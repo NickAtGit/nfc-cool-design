@@ -28,24 +28,6 @@
    box-shadow: var(--focus-ring);
    border-radius: var(--radius-sm);
 }
-.on-brand /* Visually hidden, still announced. Needed wherever an icon or a logo carries
-   the meaning and a text equivalent has to exist for a screen reader. */
-.sr-only {
-   position: absolute;
-   inline-size: 1px;
-   block-size: 1px;
-   padding: 0;
-   margin: -1px;
-   overflow: hidden;
-   clip-path: inset(50%);
-   white-space: nowrap;
-   border: 0;
-}
-
-:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-   --focus-halo: var(--color-on-brand);
-   --focus-stroke: var(--color-text);
-}
 
 /* ============================================================
    Buttons

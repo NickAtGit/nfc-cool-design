@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { join } from 'node:path';
 
 const read = f => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const AUTHORED = ['src/components.css', 'src/archetypes.css'];
@@ -131,3 +132,85 @@ test('no authored layer references an undefined token', () => {
   }
   assert.deepEqual([...missing], [], `undefined token(s): ${[...missing].join(', ')}`);
 });
+
+/* ------------------------------------------------------------------
+   Guards added after the 2026-09-07 review.
+   ------------------------------------------------------------------ */
+import { readdirSync } from 'node:fs';
+const ROOT = new URL('..', import.meta.url).pathname;
+
+/* One selector, one rule per scope. A pasted block that re-opens a selector
+   overrides the first silently, and the eye reads the first one. */
+function ruleKeys(css) {
+  const clean = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const scope = [], keys = [];
+  let buf = '';
+  for (const ch of clean) {
+    if (ch === '{') {
+      const prelude = buf.replace(/\s+/g, ' ').trim();
+      if (!prelude.startsWith('@')) keys.push([...scope, prelude].join(' '));
+      scope.push(prelude);
+      buf = '';
+    } else if (ch === '}') { scope.pop(); buf = ''; }
+    else if (ch === ';') buf = '';
+    else buf += ch;
+  }
+  return keys;
+}
+for (const f of AUTHORED) {
+  test(`${f} opens each selector once per scope`, () => {
+    const seen = new Set(), dupes = [];
+    for (const k of ruleKeys(read(f))) { if (seen.has(k)) dupes.push(k); seen.add(k); }
+    assert.deepEqual(dupes, [], `selector opened twice:\n${dupes.map(s => '  ' + s).join('\n')}`);
+  });
+}
+
+/* The two focus tones come from the brand layer and nowhere else. A component
+   that re-tints them breaks "one ring, every surface": in dark mode a white
+   halo next to a near-white stroke is one colour, and the ring goes flat. */
+for (const f of AUTHORED) {
+  test(`${f} does not re-tint the focus ring`, () => {
+    const hits = read(f).split('\n')
+      .map((l, i) => [i + 1, l])
+      .filter(([, l]) => /--focus-(halo|stroke)\s*:/.test(l));
+    assert.deepEqual(hits, [], `focus tone set outside the brand layer:\n${hits.map(([n, l]) => `  ${f}:${n} ${l.trim()}`).join('\n')}`);
+  });
+}
+
+/* Consumers install from a git URL or a link path, never from a registry
+   tarball, so anything an export points at is either in git or built on
+   install by the prepare script. */
+test('every export target is in git or built by the prepare script', () => {
+  const pkg = JSON.parse(read('package.json'));
+  const tracked = new Set(execFileSync('git', ['ls-files'], { cwd: ROOT }).toString().split('\n'));
+  const built = Object.values(pkg.exports).map(p => p.replace(/^\.\//, '')).filter(p => !tracked.has(p));
+  if (built.length === 0) return;
+  assert.match(pkg.scripts?.prepare ?? '', /\bbuild\b/,
+    `${built.join(', ')} are not tracked, so an install must build them: add "prepare": "npm run build"`);
+});
+
+/* UNLICENSED grants nobody anything, so the package must not be publishable. */
+test('an UNLICENSED package is marked private', () => {
+  const pkg = JSON.parse(read('package.json'));
+  if (pkg.license !== 'UNLICENSED') return;
+  assert.equal(pkg.private, true, 'set "private": true, or choose a licence');
+});
+
+/* The generators read tokens.json and nothing else. A colour or a brand id
+   inside a generator is inherited by every brand the file is run for. */
+const GENERATORS = readdirSync(join(ROOT, 'build')).filter(f => f.endsWith('.mjs')).map(f => `build/${f}`);
+const pkgName = JSON.parse(read('package.json')).name;
+for (const f of GENERATORS) {
+  test(`${f} carries no colour literal`, () => {
+    const hits = read(f).split('\n')
+      .map((l, i) => [i + 1, l])
+      .filter(([, l]) => /#[0-9a-fA-F]{3,8}\b/.test(l) || /\brgba?\(/.test(l));
+    assert.deepEqual(hits, [], `literal colour in a generator:\n${hits.map(([n, l]) => `  ${f}:${n} ${l.trim()}`).join('\n')}`);
+  });
+  test(`${f} names no brand`, () => {
+    const hits = read(f).replaceAll(pkgName, '').split('\n')
+      .map((l, i) => [i + 1, l])
+      .filter(([, l]) => /\bnfccool\b/.test(l));
+    assert.deepEqual(hits, [], `brand id hard-coded in a generator:\n${hits.map(([n, l]) => `  ${f}:${n} ${l.trim()}`).join('\n')}`);
+  });
+}

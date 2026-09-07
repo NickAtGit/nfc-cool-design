@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const t = JSON.parse(readFileSync(join(root, 'src/tokens.json'), 'utf8'));
-const b = t.brands.nfccool, p = t.primitives;
+const b = t.brands[t.defaultBrand], p = t.primitives;
 
 /* SiteKit's TokenCSSGenerator only knows this fixed set of keys and maps
    camelCase -> --kebab-case. Everything else in our system ships via the

@@ -70,7 +70,7 @@ ${block(p.motion, '')}
 
 /* ---- L2 brand ---- */
 function brandCSS(id, b) {
-  const isDefault = id === 'nfccool';
+  const isDefault = id === t.defaultBrand;
   const lightSel = isDefault ? `:root, [data-brand="${id}"]` : `[data-brand="${id}"]`;
   const darkSel = isDefault
     ? `[data-theme="dark"], [data-brand="${id}"][data-theme="dark"]`
@@ -90,13 +90,14 @@ ${block(b.light, '')}
 ${darkSel} {
 ${block(b.dark, '')}
 
-   /* The gradient collapses to the page background plus a faint accent
-      radial, so brand bands blend into the page instead of forming a
-      dark slab. This is nfc.cool's existing dark-mode behaviour. */
+   /* The gradient collapses to the page background plus a faint glow in
+      the brand's own --brand-glow, so brand bands blend into the page
+      instead of forming a dark slab. This is nfc.cool's existing dark-mode
+      behaviour, parameterised so a second brand glows in its own accent. */
    --brand-gradient:
-      radial-gradient(ellipse 85% 55% at 50% 50%, rgba(255, 199, 0, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 85% 55% at 50% 50%, var(--brand-glow) 0%, transparent 70%),
       linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
-   --brand-gradient-radial: radial-gradient(at 50% 50%, rgba(255, 199, 0, 0.08) 0%, var(--color-bg) 60%);
+   --brand-gradient-radial: radial-gradient(at 50% 50%, var(--brand-glow-radial) 0%, var(--color-bg) 60%);
 }
 `;
 }
@@ -129,7 +130,7 @@ function emailCSS(b) {
 
 const outputs = [['src/tokens.css', l1]];
 for (const [id, b] of Object.entries(t.brands)) outputs.push([`src/brands/${id}.css`, brandCSS(id, b)]);
-outputs.push(['src/email.css', emailCSS(t.brands.nfccool)]);
+outputs.push(['src/email.css', emailCSS(t.brands[t.defaultBrand])]);
 
 let drift = false;
 for (const [rel, content] of outputs) {
