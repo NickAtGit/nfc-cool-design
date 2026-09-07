@@ -117,6 +117,9 @@
    --btn-fg: var(--color-on-brand);
    --btn-border: var(--color-danger-fg);
    --btn-bg-hover: var(--color-danger-fg);
+   /* The hover label has to be set here too: without it the outlined danger
+      variant above wins, and its red label vanishes into this red fill. */
+   --btn-fg-hover: var(--color-on-brand);
    --btn-border-hover: var(--color-danger-fg);
 }
 

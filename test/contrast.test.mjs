@@ -161,3 +161,60 @@ test('brand tail is a documented logotype exemption', () => {
   const r = ratio(L['color-brand-tail'], L['color-bg']);
   assert.ok(r < 4.5, 'brand tail now passes AA - update the exemption note in archetypes.css');
 });
+
+/* A button is one component re-skinned by local custom properties, so a
+   variant that sets a fill and forgets the matching label inherits a label
+   from whichever sibling variant came last in the file. Resolve the real
+   cascade for every variant and check that hover never paints the label
+   harder to read than rest, in both themes. */
+const componentsCSS = readFileSync(new URL('../src/components.css', import.meta.url), 'utf8');
+function buttonParams(context, classes) {
+  const clean = componentsCSS.replace(/\/\*[\s\S]*?\*\//g, '');
+  const matched = [];
+  let order = 0;
+  for (const m of clean.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    for (const sel of m[1].split(',').map(s => s.trim())) {
+      const parts = sel.split(/\s+/);
+      if (parts.length > 2 || !parts.every(p => /^(\.[\w-]+)+$/.test(p))) continue;
+      const [ctx, compound] = parts.length === 2 ? parts : [null, parts[0]];
+      if (ctx && !context.includes(ctx.slice(1))) continue;
+      const cls = compound.slice(1).split('.');
+      if (!cls.every(c => classes.includes(c))) continue;
+      matched.push({ spec: cls.length + (ctx ? 1 : 0), order: order++, decl: m[2] });
+    }
+  }
+  matched.sort((a, b) => a.spec - b.spec || a.order - b.order);
+  const params = {};
+  for (const { decl } of matched)
+    for (const d of decl.matchAll(/(--btn-[\w-]+)\s*:\s*([^;]+);/g)) params[d[1]] = d[2].trim();
+  return params;
+}
+const resolve = (value, params, T) => {
+  const m = /^var\((--[\w-]+)\)$/.exec(value ?? '');
+  if (!m) return /^#[0-9a-fA-F]{6}$/.test(value ?? '') ? value : null;
+  return m[1] in params ? resolve(params[m[1]], params, T) : resolve(T[m[1].slice(2)], params, T);
+};
+const VARIANTS = [
+  ['outlined', [], ['btn']],
+  ['filled primary', [], ['btn', 'btn-primary']],
+  ['ghost', [], ['btn', 'btn-ghost']],
+  ['outlined danger', [], ['btn', 'btn-danger']],
+  ['filled danger', [], ['btn', 'btn-danger', 'btn-primary']],
+  ['outlined on brand band', ['on-brand'], ['btn']],
+  ['filled primary on brand band', ['on-brand'], ['btn', 'btn-primary']],
+];
+for (const [label, context, classes] of VARIANTS) {
+  test(`${label} button: hover never makes the label harder to read`, () => {
+    const p = buttonParams(context, classes);
+    for (const [theme, T] of [['light', L], ['dark', D]]) {
+      const fg = resolve(p['--btn-fg'], p, T), bg = resolve(p['--btn-bg'], p, T);
+      const fgHover = resolve(p['--btn-fg-hover'], p, T), bgHover = resolve(p['--btn-bg-hover'], p, T);
+      // A transparent or translucent hover fill: the surface behind decides.
+      if (!fgHover || !bgHover) continue;
+      const rest = fg && bg ? ratio(fg, bg) : UI;
+      const hover = ratio(fgHover, bgHover);
+      assert.ok(hover >= rest,
+        `${theme}: label ${fgHover} on hover fill ${bgHover} is ${hover.toFixed(2)}:1, at rest it was ${rest.toFixed(2)}:1`);
+    }
+  });
+}
