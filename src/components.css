@@ -647,6 +647,8 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 
 /* drawer */
 @media (max-width: 767px) {
+   /* The button that opens the drawer only exists at drawer widths. */
+   .nav-toggle[data-nav-open] { display: inline-flex; }
    [data-nav="side"] {
       position: fixed;
       inset-block: 0;

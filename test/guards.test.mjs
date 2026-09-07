@@ -257,3 +257,12 @@ for (const f of AUTHORED) {
     assert.deepEqual(missing, [], `animated but never calmed under reduced motion:\n${missing.map(s => '  ' + s).join('\n')}`);
   });
 }
+
+/* Below md the side nav is an off-canvas drawer, opened by a button that
+   names it with data-nav-open. That button has to be visible there, or the
+   drawer can never be opened on a phone. */
+test('the drawer trigger is displayed below md', () => {
+  const hit = scopedRules(read('src/components.css')).find(r =>
+    /max-width: 767px/.test(r.scope) && /\[data-nav-open\]/.test(r.selector) && /display:\s*inline-flex/.test(r.decl));
+  assert.ok(hit, 'a .nav-toggle[data-nav-open] rule with display: inline-flex must sit inside @media (max-width: 767px)');
+});
