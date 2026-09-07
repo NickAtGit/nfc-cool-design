@@ -277,3 +277,15 @@ test('the sidebar collapse toggle is scoped to its own nav', () => {
   assert.ok(js.includes("nav.querySelector('[data-nav-collapse]')"), 'expected nav.querySelector for the toggle');
   assert.match(js, /STORE_KEY\}?[:.]\$\{nav\.id\}|STORE_KEY \+ .*nav\.id/, 'the stored state must be keyed by nav id');
 });
+
+/* From md to lg the sidebar is a stacked rail: each label sits under its icon,
+   so an iPad keeps readable destinations without paying for the full width.
+   Only the person's own collapse takes the labels away. */
+test('the md to lg rail keeps its labels, stacked under the icons', () => {
+  const rail = scopedRules(read('src/components.css'))
+    .filter(r => /min-width: 768px\) and \(max-width: 899px/.test(r.scope));
+  const hidden = rail.filter(r => /\.nav-label/.test(r.selector) && /clip-path|position:\s*absolute/.test(r.decl));
+  assert.deepEqual(hidden.map(r => r.selector), [], 'the rail must not visually hide .nav-label');
+  assert.ok(rail.some(r => /\.nav-link\b/.test(r.selector) && /flex-direction:\s*column/.test(r.decl)),
+    'the rail link must stack the icon over the label');
+});

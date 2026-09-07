@@ -478,11 +478,12 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
      bar    xl and up   inline row
             below xl    burger + drop panel
      side   lg and up   full sidebar with labels
-            md to lg    icon rail, labels hidden but still announced
+            md to lg    stacked rail, each label under its icon
             below md    off-canvas drawer + scrim
 
-   .is-collapsed forces the rail at any width, so a person can collapse
-   the sidebar themselves. It is also what lets one page show every mode.
+   .is-collapsed forces the icon-only rail at any width, so a person can
+   collapse the sidebar themselves. It is also what lets one page show the
+   full and the collapsed mode side by side.
    ============================================================ */
 .nav {
    --nav-fg: var(--color-text-secondary);
@@ -626,7 +627,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    color: var(--color-text-muted);
 }
 
-/* rail: icons only, labels still in the accessibility tree */
+/* collapsed rail: icons only, labels still in the accessibility tree */
 [data-nav="side"].is-collapsed { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
 [data-nav="side"].is-collapsed .nav-link { justify-content: center; padding-inline: 0; }
 [data-nav="side"].is-collapsed .nav-label,
@@ -635,10 +636,26 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 [data-nav="side"].is-collapsed .nav-brand img,
 [data-nav="side"].is-collapsed .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+/* stacked rail: each label sits under its icon, so an iPad keeps readable
+   destinations without paying for the full width. Counts, section labels and
+   the logo step aside; only the person's own collapse takes the labels away. */
 @media (min-width: 768px) and (max-width: 899px) {
-   [data-nav="side"] { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
-   [data-nav="side"] .nav-link { justify-content: center; padding-inline: 0; }
-   [data-nav="side"] .nav-label,
+   [data-nav="side"] { inline-size: var(--nav-rail-stacked); padding-inline: var(--space-2); }
+   [data-nav="side"] .nav-link {
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-1);
+      text-align: center;
+   }
+   [data-nav="side"] .nav-icon { inline-size: 1.5rem; block-size: 1.5rem; }
+   [data-nav="side"] .nav-label {
+      font-size: var(--text-2xs);
+      line-height: var(--leading-snug);
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+   }
    [data-nav="side"] .nav-count,
    [data-nav="side"] .nav-section,
    [data-nav="side"] .nav-brand img,
