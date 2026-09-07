@@ -188,6 +188,30 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
 }
 .faq-item[open] summary::after { transform: rotate(180deg); }
 .faq-item .faq-body { margin: 0; padding: 0 var(--space-6) var(--space-6); color: var(--color-text-secondary); line-height: var(--leading-body); }
+/* A details element shows its content in one frame. The answer instead fades
+   in and settles down from just above its resting place, so the card reads as
+   unfolding rather than jumping. One motion token, so it moves in step with
+   the chevron and the card lift. */
+.faq-item[open] .faq-body { animation: faq-reveal var(--transition) both; }
+@keyframes faq-reveal { from { opacity: 0; translate: 0 calc(-1 * var(--space-2)); } }
+/* Where the browser can animate the content box of a details element, the
+   answer also slides shut instead of vanishing, and the fade rides on the
+   same transition so both directions match. Elsewhere closing stays instant,
+   which is what a details element does anyway. */
+@supports (interpolate-size: allow-keywords) {
+   .faq-item { interpolate-size: allow-keywords; }
+   .faq-item::details-content {
+      block-size: 0; opacity: 0; overflow: hidden;
+      transition: block-size var(--transition), opacity var(--transition),
+                  content-visibility var(--transition) allow-discrete;
+   }
+   .faq-item[open]::details-content { block-size: auto; opacity: 1; }
+   .faq-item[open] .faq-body { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+   .faq-item[open] .faq-body { animation: none; }
+   .faq-item::details-content { transition: none; }
+}
 
 /* ============================================================
    Newsletter

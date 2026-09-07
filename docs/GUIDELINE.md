@@ -160,8 +160,10 @@ not the card". That numeral is genuinely decorative and always `aria-hidden`,
 so it is fine, but the technique is not a contrast strategy.
 
 **Motion stays small.** One duration, one gesture, three lift distances. No
-scroll animation and no reveal-on-scroll. Under `prefers-reduced-motion` all
-three lift tokens collapse to zero.
+scroll animation and no reveal-on-scroll. The FAQ answer unfolding when a
+person opens its card is the one entrance animation, and it runs on the same
+duration. Under `prefers-reduced-motion` all three lift tokens collapse to zero
+and the unfold is switched off.
 
 ---
 

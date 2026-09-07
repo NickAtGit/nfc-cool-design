@@ -214,3 +214,46 @@ for (const f of GENERATORS) {
     assert.deepEqual(hits, [], `brand id hard-coded in a generator:\n${hits.map(([n, l]) => `  ${f}:${n} ${l.trim()}`).join('\n')}`);
   });
 }
+
+/* Motion in the authored layers. */
+function scopedRules(css) {
+  const clean = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const scope = [], out = [];
+  let buf = '';
+  for (let i = 0; i < clean.length; i++) {
+    const ch = clean[i];
+    if (ch === '{') {
+      const prelude = buf.replace(/\s+/g, ' ').trim();
+      if (!prelude.startsWith('@')) {
+        const end = clean.indexOf('}', i);
+        out.push({ scope: scope.join(' '), selector: prelude, decl: clean.slice(i + 1, end) });
+      }
+      scope.push(prelude); buf = '';
+    } else if (ch === '}') { scope.pop(); buf = ''; }
+    else if (ch === ';') buf = '';
+    else buf += ch;
+  }
+  return out;
+}
+
+/* The FAQ answer is revealed by a native details element, which shows it in
+   one frame. The archetype animates the reveal so opening a card reads as
+   motion, not as a jump. */
+test('the FAQ answer animates when its card opens', () => {
+  const rules = scopedRules(read('src/archetypes.css'));
+  const open = rules.filter(r => r.scope === '' && /\.faq-item\[open\]\s+\.faq-body/.test(r.selector));
+  assert.ok(open.some(r => /\banimation(-name)?\s*:/.test(r.decl)),
+    '.faq-item[open] .faq-body must declare an animation');
+});
+
+/* Every animation an authored layer starts is switched off or slowed under
+   prefers-reduced-motion, in the same file, by a rule on the same selector. */
+for (const f of AUTHORED) {
+  test(`${f} honours prefers-reduced-motion for every animation`, () => {
+    const rules = scopedRules(read(f));
+    const animated = rules.filter(r => !/prefers-reduced-motion/.test(r.scope) && /\banimation(-name)?\s*:/.test(r.decl));
+    const calmed = rules.filter(r => /prefers-reduced-motion: reduce/.test(r.scope) && /\banimation(-duration)?\s*:/.test(r.decl));
+    const missing = animated.filter(a => !calmed.some(c => c.selector === a.selector)).map(a => a.selector);
+    assert.deepEqual(missing, [], `animated but never calmed under reduced motion:\n${missing.map(s => '  ' + s).join('\n')}`);
+  });
+}
