@@ -10,7 +10,7 @@ owns.
 ```bash
 npm run build   # regenerate CSS from src/tokens.json
 npm test        # contrast, literal, breakpoint, parity and drift guards
-open kitchen-sink/index.html
+open site/index.html   # the guideline, one page per section
 ```
 
 `src/tokens.json` is the source of truth. `src/tokens.css`, `src/brands/*.css`

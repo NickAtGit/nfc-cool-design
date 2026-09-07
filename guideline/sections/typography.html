@@ -1,0 +1,43 @@
+<p class="ks-lede">
+  One family, Titillium Web, at three weights, with Caveat as the script accent.
+  The ramp below is the whole named ladder.
+</p>
+<div class="ks-demo" id="ks-type"></div>
+<div class="ks-basis">
+  <b>Two tracking directions.</b> They are the system's signature and they are tokens: negative on
+  display sizes (<code>--tracking-hero</code>, <code>--tracking-display</code>), positive on uppercase
+  micro-labels (<code>--tracking-label</code>, <code>--tracking-eyebrow</code>). Arabic resets tracking
+  to normal, because it is a connected script.
+</div>
+
+<h3 class="ks-h3">The wordmark</h3>
+<div class="ks-demo">
+  <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700;margin-bottom:var(--space-5)">
+    NFC<em class="brand-tail">.cool</em> Tools
+  </p>
+  <p style="font-family:var(--font-heading);font-size:var(--text-subhead);font-weight:600;margin-bottom:var(--space-3)">
+    &#1575;&#1602;&#1585;&#1571; &#1608;&#1575;&#1603;&#1578;&#1576; &#1576;&#1591;&#1575;&#1602;&#1575;&#1578; NFC &#1605;&#1593; <span class="brand-name">NFC<em class="brand-tail">.cool</em></span> &#1593;&#1604;&#1609; &#1607;&#1575;&#1578;&#1601;&#1603;
+  </p>
+  <p style="font-size:var(--text-sm);color:var(--color-text-secondary)">
+    Read and write NFC tags with <span class="brand-name">NFC<em class="brand-tail">.cool</em></span> on your phone.
+  </p>
+</div>
+<div class="ks-basis">
+  <b>Basis.</b> The wordmark is a logotype and always reads left to right, including mid-sentence in an
+  Arabic heading. <code>.brand-name</code> sets <code>direction: ltr</code> and
+  <code>unicode-bidi: isolate</code> <b>unconditionally</b>, not under <code>[dir="rtl"]</code>, so a
+  consumer that ships no RTL stylesheet still cannot get it wrong. Without the isolation the script
+  <code>.cool</code> tail jumps ahead of <code>NFC</code> and the tail's tuck margins invert.
+  <span class="ks-note" style="display:block;margin-top:var(--space-2)">Hit <b>RTL</b> in the bar. The
+  Arabic line reverses; the wordmark inside it does not. A test pins the rule.</span>
+  <br>
+  Per Brand Manual V1 page 10, the tail is the brand yellow and both elements carry their designated
+  shadows. On a light page the "NFC" half takes the heading colour rather than the manual's white,
+  which is the correct adaptation: white is specified for the logo on the band.
+</div>
+
+<h3 class="ks-h3">Tracking, shown</h3>
+<div class="ks-demo">
+  <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700;letter-spacing:var(--tracking-display)">Display, negative tracking</p>
+  <p style="font-size:var(--text-2xs);font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow);color:var(--color-link-text);margin-top:var(--space-3)">Micro-label, positive tracking</p>
+</div>

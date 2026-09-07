@@ -235,12 +235,14 @@ differ, that is a gap in layer 1, not a brand override.
 ## Verifying
 
 ```bash
-npm run build     # regenerate every layer and the bundle
+npm run build     # regenerate every layer, the bundle and the guideline site
 npm test          # contrast, literals, breakpoints, token parity, drift
-open kitchen-sink/index.html
+open site/index.html
 ```
 
-The kitchen sink renders every token, component and archetype with the decision
-behind it, and measures contrast live from the resolved custom properties, so it
-cannot disagree with the system. Review it in both themes, in both directions,
-and at each of the four breakpoints.
+The guideline site renders every token, component and archetype with the
+decision behind it, one section per page behind the system's own sidebar, and
+measures contrast live from the resolved custom properties, so it cannot
+disagree with the system. Its sources are `guideline/sections/*.html`; the
+shell around them is `build/guideline.mjs`. Review it in both themes, in both
+directions, and at each of the four breakpoints.

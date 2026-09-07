@@ -1,0 +1,35 @@
+
+<h3 class="ks-h3">Space scale</h3>
+<div class="ks-demo" id="ks-space"></div>
+<div class="ks-basis">
+  <b>A 4px grid</b> that keeps <code>--space-5: 1.25rem</code> (20px), off an 8px grid on purpose:
+  it is the signature card-grid gap, and every grid on the site is spaced by it.
+</div>
+
+<h3 class="ks-h3">Radius</h3>
+<div class="ks-demo ks-row" id="ks-radius"></div>
+<div class="ks-basis">
+  <b>Six radii.</b> <code>--radius-md</code> (10px) matches the App Store badge corner, which is why
+  buttons use it.
+</div>
+
+<h3 class="ks-h3">Elevation</h3>
+<div class="ks-demo ks-row" style="gap:var(--space-6)" id="ks-elev"></div>
+<div class="ks-basis">
+  <b>Four steps</b>, plus <code>--elev-media</code>, the house treatment for product renders: a cool
+  blue-tinted double shadow by day that becomes a warm accent glow at night. Toggle the theme to see
+  it invert.
+</div>
+
+<h3 class="ks-h3">Motion</h3>
+<div class="ks-demo ks-row">
+  <div class="card card-interactive" style="width:9rem">Hover: lift 2</div>
+  <a class="card card-interactive" href="#" style="width:9rem">Linked: lift 3</a>
+  <button class="btn">Hover: lift 1</button>
+</div>
+<div class="ks-basis">
+  <b>Deliberately tiny.</b> One duration (<code>--transition: .2s ease</code>), one gesture, a hover
+  lift in three tiers, and one entrance: the FAQ answer unfolds when its card opens. No scroll
+  animation and no reveal-on-scroll. Under <code>prefers-reduced-motion</code> the lifts collapse to
+  <code>0</code> and the unfold is switched off.
+</div>

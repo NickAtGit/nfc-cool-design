@@ -1,0 +1,40 @@
+<div class="ks-demo is-plain">
+  <div class="grid-cards" style="margin-bottom:var(--space-6)">
+    <div class="card"><b>Card</b><p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-2)">Resting elevation, hairline border.</p></div>
+    <div class="card card-interactive"><b>Interactive card</b><p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-2)">Hover me.</p></div>
+  </div>
+  <div class="panel" style="margin-bottom:var(--space-6)">
+    <div class="panel-header"><h3 class="panel-title">Panel</h3><span class="pill pill-success">Active</span></div>
+    <div class="panel-body">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Name</th><th>Assigned</th><th>Visibility</th><th class="num">Taps</th></tr></thead>
+          <tbody>
+            <tr><td>Sales team card</td><td>Alex</td><td><span class="pill pill-info">Public</span></td><td class="num">1,284</td></tr>
+            <tr><td>Conference card</td><td>Unassigned</td><td><span class="pill">Private</span></td><td class="num">312</td></tr>
+            <tr><td>Support card</td><td>Jordan</td><td><span class="pill pill-warning">Draft</span></td><td class="num">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel-footer"><button class="btn btn-secondary btn-sm">Cancel</button><button class="btn btn-primary btn-sm">Save</button></div>
+  </div>
+  <div class="card">
+    <div class="empty-state">
+      <p class="empty-state-title">No cards yet</p>
+      <p>Create your first card and assign it to a teammate.</p>
+      <button class="btn btn-primary">Create a card</button>
+    </div>
+  </div>
+  <div class="ks-row" style="margin-top:var(--space-6)">
+    <span class="status-dot is-yes">✓</span><span class="status-dot is-no">✕</span>
+    <span class="status-dot is-limited">!</span><span class="status-dot">–</span>
+    <span class="ks-note">Pricing-table status markers</span>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>One card recipe.</b> Hairline border, <code>--radius-lg</code>, resting <code>--elev-0</code>,
+  hover lift to <code>--elev-1</code>. Table, panel, empty state and status markers share the pricing
+  table's tinted header and its 1.6rem status pills, so the product UI inherits a shape the brand
+  already owns.
+</div>

@@ -1,0 +1,39 @@
+<p class="ks-lede">Every state, on both themes.</p>
+<div class="ks-demo">
+  <div style="display:grid;gap:var(--space-5);max-width:26rem">
+    <div class="field">
+      <label class="field-label" for="f1">Email address <span class="required">*</span></label>
+      <input class="input" id="f1" type="email" placeholder="you@example.com">
+      <p class="field-hint">We send one email a month. Unsubscribe any time.</p>
+    </div>
+    <div class="field">
+      <label class="field-label" for="f2">Card name</label>
+      <input class="input" id="f2" value="Invalid value" aria-invalid="true">
+      <p class="field-error">That name is already taken in this organisation.</p>
+    </div>
+    <div class="field">
+      <label class="field-label" for="f3">Visibility</label>
+      <select class="select" id="f3"><option>Public</option><option>Private</option></select>
+    </div>
+    <div class="field">
+      <label class="field-label" for="f4">Notes</label>
+      <textarea class="textarea" id="f4" placeholder="Optional"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label" for="f5">Disabled</label>
+      <input class="input" id="f5" value="Read only" disabled>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" id="f6" checked><label for="f6">Show my company logo on the card</label>
+    </div>
+    <div class="input-group">
+      <input class="input" type="email" placeholder="Newsletter signup" aria-label="Email">
+      <button class="btn btn-primary">Subscribe</button>
+    </div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>Sixteen pixels, always.</b> Inputs are <code>--text-body</code> because anything smaller makes iOS
+  Safari zoom the page on focus. Focus is the newsletter form's <code>:focus-within</code> ring,
+  generalised to every control, and the field border is its own token so a boundary reads on a card.
+</div>

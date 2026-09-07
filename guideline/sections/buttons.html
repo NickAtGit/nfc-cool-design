@@ -1,0 +1,92 @@
+<p class="ks-lede">
+  One component parameterised by six local custom properties, so the same element re-skins by context
+  instead of forking into a variant per surface.
+</p>
+
+<h3 class="ks-h3">Tiers</h3>
+<div class="ks-demo ks-row">
+  <button class="btn btn-primary">Primary</button>
+  <button class="btn btn-secondary">Secondary</button>
+  <button class="btn btn-ghost">Ghost</button>
+  <button class="btn btn-danger">Danger</button>
+  <button class="btn btn-danger btn-primary">Danger, filled</button>
+</div>
+<div class="ks-basis">
+  <b>Five tiers, one component.</b> The filled primary is the action a surface exists for: Save,
+  Invite, Save Contact. The outlined tier is secondary, ghost is tertiary, and danger is outlined
+  until it is the one destructive action on the surface, when it fills. Store badges stay the
+  marketing hero's CTA; a filled button is for work, not for leaving to the store.
+</div>
+
+<h3 class="ks-h3">Primary fill</h3>
+<div class="ks-demo is-plain">
+  <div class="ks-fills">
+    <div class="ks-fill-opt">
+      <div class="ks-fill-band" style="background:var(--brand-gradient)"><span>the band, for reference</span></div>
+    </div>
+    <div class="ks-fill-opt">
+      <button class="btn btn-primary">Subscribe</button>
+      <p><code>#128CF0</code> light stop<br>
+        white label &middot; <b class="ks-exempt">3.48:1, recorded exception</b><br>
+        hover <code>#0F76CA</code> &middot; <b class="ks-pass">4.70:1</b></p>
+    </div>
+    <div class="ks-fill-opt">
+      <button class="btn">Cancel</button>
+      <p>outlined, same blue<br>border 3.48:1 (a boundary needs 3)<br>ink label <b class="ks-pass">15.43:1</b></p>
+    </div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>One blue, used as an area.</b> The filled tier fills with <code>#128CF0</code> and the outlined
+  tier borders with the same value, so they read as one family. White on that fill is 3.48:1, under the
+  4.5 a 15px label needs; it is a deliberate decision, pinned in the contrast suite with its date so it
+  stays revisitable rather than becoming an invisible regression.
+  <br><br>
+  <b>Hover darkens to <code>#0F76CA</code></b>, which lifts the label to 4.70:1, so the state a person
+  is actively pointing at is the compliant one. The test does not pin a direction, it pins the outcome:
+  hover must never make the label harder to read. In dark mode, where the primary is brand yellow with
+  a near-black label, that same rule makes hover brighten instead.
+  <br><br>
+  <b>If it is ever revisited,</b> <code>#0F78CE</code> is the nearest shade of this blue where a white
+  label clears 4.5 at rest.
+</div>
+
+<h3 class="ks-h3">Sizes and states</h3>
+<div class="ks-demo">
+  <div class="ks-row" style="margin-bottom:var(--space-4)">
+    <button class="btn btn-primary btn-sm">Small</button>
+    <button class="btn btn-primary">Medium</button>
+    <button class="btn btn-primary btn-lg">Large</button>
+    <button class="btn btn-primary btn-pill">Pill</button>
+  </div>
+  <div class="ks-row">
+    <button class="btn btn-primary" disabled>Disabled</button>
+    <button class="btn btn-primary" data-loading="true">Loading</button>
+    <button class="btn btn-secondary" disabled>Disabled outline</button>
+    <button class="btn btn-primary btn-block" style="max-width:14rem">Block</button>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>One blue on a button.</b> Blue as an <i>area</i> is the light stop; blue as <i>text</i> is the
+  dark stop. On a button the blue is always a fill or a border and never the label, so Save and Cancel
+  border and fill in the same <code>#128CF0</code>. Cancel's label is ink rather than blue: a blue label
+  beside a blue border is two blues on one control, and the light stop is only 3.48:1 as text anyway. A
+  border is a UI boundary, so 3:1 applies and it clears at 3.48. Ghost has no border, so its label
+  carries the affordance and takes the dark stop, like an inline link.
+  <br><br>
+  <b>Every state is defined</b>, including <code>:focus-visible</code>: tab through them.
+</div>
+
+<h3 class="ks-h3">On a brand band</h3>
+<div class="ks-demo is-flush">
+  <div class="hero-strip on-brand" style="padding-block:var(--space-8)">
+    <div class="container ks-row">
+      <button class="btn btn-primary">Primary, inverted</button>
+      <button class="btn">Secondary, inverted</button>
+    </div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>One mechanism.</b> Adding <code>.on-brand</code> re-points the button's local properties and the
+  focus ring. No new classes, no duplicated rules.
+</div>

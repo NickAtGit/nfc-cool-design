@@ -1,0 +1,73 @@
+<p class="ks-lede">
+  Two themes, and the mode flip: interactive elements are brand blue in light mode and brand
+  yellow in dark. Yellow is never text on a light surface.
+</p>
+
+<h3 class="ks-h3">Surfaces</h3>
+<div class="ks-swatch-grid" data-swatches="color-bg,color-bg-alt,color-bg-card,color-border,color-border-light,color-code-bg"></div>
+<div class="ks-basis">
+  <b>One real step.</b> <code>--color-bg-alt</code> sits one step below <code>--color-bg</code>, so the
+  alternating section rhythm reads, and muted text still clears 4.5:1 on it.
+</div>
+
+<h3 class="ks-h3">Text</h3>
+<div class="ks-scroll"><table class="ks-table" data-contrast='[
+  ["--color-text","--color-bg","Body text on page",4.5],
+  ["--color-text","--color-bg-card","Body text on card",4.5],
+  ["--color-text-secondary","--color-bg","Secondary text",4.5],
+  ["--color-text-muted","--color-bg","Muted text on page",4.5],
+  ["--color-text-muted","--color-bg-alt","Muted text on alt surface",4.5]]'></table></div>
+<div class="ks-basis">
+  <b>Three levels of ink.</b> Text, secondary and muted, and all three clear 4.5:1 on every surface
+  they appear on, including the alt surface.
+</div>
+
+<h3 class="ks-h3">Interactive</h3>
+<div class="ks-scroll"><table class="ks-table" data-contrast='[
+  ["--color-link-text","--color-bg","Link text on page",4.5],
+  ["--color-link-text","--color-bg-card","Link text on card",4.5],
+  ["--color-link-text-hover","--color-bg","Link text, hovered",4.5],
+  ["--focus-stroke","--color-bg","Focus ring outer stroke",3],
+  ["--focus-stroke","--color-bg-card","Focus ring on a card",3]]'></table></div>
+<div class="ks-basis">
+  <b>Two roles for blue.</b> <code>--color-link</code> is the light stop, for borders, chevrons, icons
+  and hover fills, where 3:1 is the bar. <code>--color-link-text</code> is the dark stop, 5.38:1, for
+  anything that is text, and its hover darkens rather than lightens, so hovering a link never makes
+  it harder to read.
+</div>
+
+<h3 class="ks-h3">Brand</h3>
+<div class="ks-swatch-grid" data-swatches="color-accent,color-accent-hover,brand-blue-1,brand-blue-2,color-brand-tail"></div>
+<div class="ks-scroll"><table class="ks-table" data-contrast='[
+  ["--color-on-brand","--brand-blue-1","White on gradient, top stop",4.5],
+  ["--color-on-brand","--brand-blue-2","White on gradient, bottom stop",4.5],
+  ["--color-brand-tail","--color-bg","Script tail on page (logotype)",4.5]]'></table></div>
+<div class="ks-basis">
+  <b>The band.</b> The gradient is the iOS app's <code>appThemeGradient</code>, dark at the top and light
+  at the bottom, so the web band matches what the product renders. White clears AA at the top stop and
+  holds above the 3:1 large-text floor at the bottom; <code>--on-brand-text-shadow</code> carries body
+  copy over the lower half. Brand Manual V1, page 10, requires the designated shadows on the logo in any
+  case, so the band and the shadow travel together.
+  <br><br>
+  The script tail is marked <b>exempt</b>: WCAG 1.4.3 exempts text that is part of a logo or brand
+  name, and this renders the brand name. It is one token so the call can be revisited, and the pattern
+  is never copied onto ordinary text.
+</div>
+
+<h3 class="ks-h3">Semantic tones</h3>
+<div class="ks-row" style="margin-bottom:var(--space-4)">
+  <span class="pill pill-success">Success</span>
+  <span class="pill pill-warning">Warning</span>
+  <span class="pill pill-danger">Danger</span>
+  <span class="pill pill-info">Info</span>
+  <span class="pill">Neutral</span>
+</div>
+<div class="ks-scroll"><table class="ks-table" data-contrast='[
+  ["--color-success-fg","--color-bg","Success text",4.5],
+  ["--color-warning-fg","--color-bg","Warning text",4.5],
+  ["--color-danger-fg","--color-bg","Danger text",4.5],
+  ["--color-info-fg","--color-bg","Info text",4.5]]'></table></div>
+<div class="ks-basis">
+  <b>One ramp per tone.</b> Foreground, background and border for success, warning, danger, info and
+  neutral, and every pill, alert and status marker draws from the same five.
+</div>

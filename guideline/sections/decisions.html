@@ -1,0 +1,98 @@
+<p class="ks-lede">
+  This guideline renders every token, component and marketing archetype in the system, as it ships.
+  Each specimen carries a short note on the decision it encodes. Contrast ratios are measured live in
+  your browser from the computed values, so the page cannot disagree with the system.
+</p>
+<p class="ks-lede">
+  Toggle <b>Dark</b> and <b>RTL</b> in the header, and resize the window: the breakpoint readout tells
+  you which of the four is active. Everything else in this guideline is built on the decisions below.
+</p>
+
+<div class="ks-scroll">
+  <table class="ks-table ks-decisions">
+    <thead><tr><th>Question</th><th>Decision</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td>Brand blue</td>
+          <td><b>The iOS app's <code>appThemeGradient</code></b><br><code>#1A60CE &rarr; #128CF0</code></td>
+          <td>The web band matches what the product renders.</td></tr>
+      <tr><td>How many gradients</td>
+          <td><b>One</b></td>
+          <td>It is the band. It is never ramped across a button; filled buttons are solid.</td></tr>
+      <tr><td>Interactive colour</td>
+          <td><b>The two stops themselves</b></td>
+          <td>No derived tints. Dark stop for text (5.38:1), light stop for borders and icons (3.22:1).</td></tr>
+      <tr><td>Light vs dark</td>
+          <td><b>Keep the mode flip</b></td>
+          <td>Blue is interactive by day, brand yellow by night. Yellow is never text on a light surface.</td></tr>
+      <tr><td>Primary button</td>
+          <td><b>Filled, with the outline as secondary</b></td>
+          <td>Store badges stay the marketing hero's CTA. Solid fill, never a gradient.</td></tr>
+      <tr><td>Page headers</td>
+          <td><b>Three tiers</b></td>
+          <td>Gradient hero, gradient strip, quiet header. A band never sits above a data table.</td></tr>
+      <tr><td>Navigation</td>
+          <td><b>One component, two modes</b></td>
+          <td>The sidebar follows the theme, so the console carries no second dark surface family.</td></tr>
+      <tr><td>Typeface</td>
+          <td><b>Titillium everywhere</b></td>
+          <td>Momento Marks takes the skeleton, not the typeface; its own face comes later.</td></tr>
+      <tr><td>Ink Black</td>
+          <td><code>#212529</code></td>
+          <td>The one value Brand Manual V1 is unambiguous about.</td></tr>
+      <tr><td>Button blue</td>
+          <td><b>The light stop</b> <code>#128CF0</code>, filled and outlined alike</td>
+          <td>Blue is an area on a button, never the label. White label on the fill (3.48:1, a recorded exception); ink label on the outline. Hover darkens to 4.70:1.</td></tr>
+      <tr><td>Brand yellow</td>
+          <td><code>#FFC700</code></td>
+          <td>The Secondary Logo SVG's value in Brand Manual V1. Never text on a light surface.</td></tr>
+      <tr><td>Focus ring</td>
+          <td><b>Two-tone, one ring</b></td>
+          <td>An inner halo and an outer stroke, both from the brand layer. At least one clears 3:1 on every surface, including the band.</td></tr>
+      <tr><td>Motion</td>
+          <td><b>One duration, one gesture</b></td>
+          <td>A hover lift in three tiers, and the FAQ answer unfolding. Nothing moves on scroll.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="ks-h3">Brand yellow</h3>
+<p class="ks-lede">
+  <code class="ks-code">#FFC700</code>, the Secondary Logo SVG's value in Brand Manual V1. The logo is
+  the source the wordmark is derived from, so it arbitrates.
+</p>
+<div class="ks-yellows">
+  <div class="ks-yellow" style="--y:var(--color-accent)">
+    <p class="ks-opt-head" style="border:0;padding-inline:0">On a light surface</p>
+    <p style="font-family:var(--font-heading);font-size:var(--text-title);font-weight:700">NFC<em class="brand-tail">.cool</em></p>
+    <p style="font-family:var(--font-script);font-size:2.5rem;font-weight:700;color:var(--color-accent);line-height:1;text-shadow:var(--on-brand-text-shadow)">01</p>
+    <p class="ks-note">Logotype tail and decorative watermark only. 1.45:1, so never body text.</p>
+  </div>
+  <div class="ks-yellow" style="background:var(--color-bg);border-color:var(--color-border)">
+    <p class="ks-opt-head" style="border:0;padding-inline:0">As the interactive colour, dark mode</p>
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">
+      Switch the theme in the bar. Yellow becomes the link and the filled primary at
+      <b>11.06:1</b>, which is the whole reason the mode flip works.
+    </p>
+    <div class="ks-row"><button class="btn btn-primary">Subscribe</button><a href="#">An inline link</a></div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>Where it may appear.</b> In light mode the yellow is only ever the wordmark tail and the numeral
+  watermark: the tail is permitted as a logotype under WCAG 1.4.3, the watermark because it is
+  decorative and always <code>aria-hidden</code>. It measures 1.45:1 on the page, so it is never
+  text. In dark mode it becomes the interactive colour outright, at 11.06:1.
+</div>
+
+<h3 class="ks-h3">Tone of voice</h3>
+<p class="ks-lede">
+  From Brand Manual V1, page 4. Six paired constraints, each naming the failure mode on the other side.
+  These govern copy in the system the way the tokens govern colour.
+</p>
+<div class="ks-voice">
+  <div><b>Tech-Savvy</b><span>but not Complex</span></div>
+  <div><b>User-Friendly</b><span>but not Oversimplified</span></div>
+  <div><b>Efficient</b><span>but not Rigid</span></div>
+  <div><b>Joyful</b><span>but not Superficial</span></div>
+  <div><b>Community-Oriented</b><span>but not Exclusive</span></div>
+  <div><b>Supportive</b><span>but not Intrusive</span></div>
+</div>

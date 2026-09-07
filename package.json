@@ -23,7 +23,8 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs",
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-guideline.mjs",
+    "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
     "test": "node --test test/*.test.mjs"
   }
