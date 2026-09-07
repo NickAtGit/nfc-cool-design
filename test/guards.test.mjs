@@ -266,3 +266,14 @@ test('the drawer trigger is displayed below md', () => {
     /max-width: 767px/.test(r.scope) && /\[data-nav-open\]/.test(r.selector) && /display:\s*inline-flex/.test(r.decl));
   assert.ok(hit, 'a .nav-toggle[data-nav-open] rule with display: inline-flex must sit inside @media (max-width: 767px)');
 });
+
+/* A page may hold several side navs (the guideline does: its own sidebar and
+   the boxed examples on the Navigation page). Each collapse toggle belongs to
+   the nav it sits in, and each nav remembers its own state. */
+test('the sidebar collapse toggle is scoped to its own nav', () => {
+  const js = read('src/nav.js');
+  assert.ok(!js.includes("document.querySelector('[data-nav-collapse]')"),
+    'the toggle must be looked up inside the nav, not on the document');
+  assert.ok(js.includes("nav.querySelector('[data-nav-collapse]')"), 'expected nav.querySelector for the toggle');
+  assert.match(js, /STORE_KEY\}?[:.]\$\{nav\.id\}|STORE_KEY \+ .*nav\.id/, 'the stored state must be keyed by nav id');
+});

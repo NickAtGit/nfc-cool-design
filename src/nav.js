@@ -112,16 +112,18 @@ function initSide(nav) {
   // Leaving the drawer band should not strand an open drawer.
   mqDrawer().addEventListener('change', (e) => { if (!e.matches) close(); });
 
-  const collapse = document.querySelector('[data-nav-collapse]');
+  // Scoped to this nav: a page may hold several, and each remembers its own state.
+  const collapse = nav.querySelector('[data-nav-collapse]');
   if (collapse) {
+    const key = `${STORE_KEY}:${nav.id}`;
     let saved = null;
-    try { saved = localStorage.getItem(STORE_KEY); } catch { /* private mode */ }
+    try { saved = localStorage.getItem(key); } catch { /* private mode */ }
     if (saved === '1') nav.classList.add('is-collapsed');
     collapse.setAttribute('aria-expanded', String(!nav.classList.contains('is-collapsed')));
     collapse.addEventListener('click', () => {
       const collapsed = nav.classList.toggle('is-collapsed');
       collapse.setAttribute('aria-expanded', String(!collapsed));
-      try { localStorage.setItem(STORE_KEY, collapsed ? '1' : '0'); } catch { /* private mode */ }
+      try { localStorage.setItem(key, collapsed ? '1' : '0'); } catch { /* private mode */ }
     });
   }
 }
