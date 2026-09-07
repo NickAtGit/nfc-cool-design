@@ -90,8 +90,6 @@
   .ks-table th { font-size:var(--text-3xs); text-transform:uppercase;
     letter-spacing:var(--tracking-label); color:var(--color-text-muted); }
   .ks-table td:first-child { font-family:var(--font-mono); white-space:nowrap; }
-  .ks-chip { display:inline-block; inline-size:2.5rem; block-size:1.5rem;
-    border-radius:var(--radius-sm); border:1px solid var(--color-border); vertical-align:middle; }
   .ks-pass { font-weight:700; color:var(--color-success-fg); }
   .ks-fail { font-weight:700; color:var(--color-danger-fg); }
   .ks-exempt { font-weight:700; color:var(--color-warning-fg); }
@@ -109,17 +107,6 @@
   .ks-bar-fill { block-size:0.75rem; max-inline-size:100%; flex-shrink:1; background:var(--color-link); border-radius:var(--radius-sm); }
 
   .ks-note { font-size:var(--text-2xs); color:var(--color-text-muted); margin-block-start:var(--space-2); }
-  .ks-flag {
-    display:inline-block; font-size:var(--text-3xs); font-weight:700; text-transform:uppercase;
-    letter-spacing:var(--tracking-label); padding:0.1rem 0.4rem; border-radius:var(--radius-sm);
-    background:var(--color-warning-bg); color:var(--color-warning-fg);
-    border:1px solid var(--color-warning-border); margin-inline-start:var(--space-2);
-  }
-  .ks-flag.is-new { background:var(--color-info-bg); color:var(--color-info-fg); border-color:var(--color-info-border); }
-  .ks-flag.is-kept { background:var(--color-success-bg); color:var(--color-success-fg); border-color:var(--color-success-border); }
-
-
-
   /* ---------- narrow screens ---------- */
   .ks-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; margin-block-end:var(--space-3); }
   .ks-scroll .ks-table { min-width:34rem; }
@@ -170,7 +157,6 @@
 
 
   .ks-decisions td { vertical-align:top; }
-  .ks-decisions tr.is-open td { background:var(--color-warning-bg); }
   .ks-yellows { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
   @media (min-width:768px) { .ks-yellows { grid-template-columns:1fr 1fr; } }
   .ks-yellow { border:1px solid var(--color-border); border-radius:var(--radius-lg);
@@ -188,30 +174,9 @@
   .ks-fill-band { height:2.5rem; border-radius:var(--radius-md); display:grid; place-items:center;
     color:#fff; font-size:var(--text-3xs); }
 
-  /* gradient comparison */
-  .ks-grads { display:grid; grid-template-columns:1fr; gap:var(--space-5); }
-  @media (min-width:900px) { .ks-grads { grid-template-columns:1fr 1fr; } }
-  .ks-grad { margin:0; border:1px solid var(--color-border); border-radius:var(--radius-lg);
-    overflow:hidden; background:var(--color-bg-card); }
-  .ks-grad figcaption { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs);
-    border-bottom:1px solid var(--color-border); display:flex; flex-wrap:wrap; gap:var(--space-2);
-    align-items:center; }
-  .ks-grad figcaption code { font-family:var(--font-mono); font-size:0.9em; color:var(--color-text-muted); }
-  .ks-grad-band { padding:var(--space-8) var(--space-5); color:#fff; }
-  .ks-grad-band h4 { font-family:var(--font-heading); font-size:var(--text-subhead); font-weight:600;
-    line-height:1.1; letter-spacing:var(--tracking-display); margin-bottom:var(--space-2); }
-  .ks-grad-band p { font-size:var(--text-sm); line-height:1.5; margin-bottom:var(--space-4); }
-  .ks-grad-band h4 { text-shadow:0 1px 1px rgba(0,0,0,.55); }
-  .ks-grad-band p { color:rgba(255,255,255,.92); }
-  .ks-grad-stats { width:100%; border-collapse:collapse; font-size:var(--text-3xs); }
-  .ks-grad-stats td { padding:var(--space-2) var(--space-4); border-top:1px solid var(--color-border-light);
-    font-variant-numeric:tabular-nums; }
-  .ks-grad-stats td:first-child { color:var(--color-text-muted); }
-  .ks-grad-stats td:nth-child(2) { font-family:var(--font-mono); }
-  /* label used by the yellow comparison cards */
+  /* label used by the yellow cards */
   .ks-opt-head { padding:var(--space-3) var(--space-4); font-size:var(--text-2xs); font-weight:700;
     text-transform:uppercase; letter-spacing:var(--tracking-label); border-bottom:1px solid var(--color-border); }
-    background:linear-gradient(180deg,rgba(4,40,70,0) 0%,rgba(4,40,70,.34) 100%); }
 
   /* stand-in artwork so the demo has no external dependencies */
   .ks-art { aspect-ratio:4/3; background:var(--brand-gradient); display:grid; place-items:center;
@@ -237,27 +202,23 @@
 <div class="ks-page">
 
   <h1 style="font-family:var(--font-heading);font-size:var(--text-display);letter-spacing:var(--tracking-display);line-height:var(--leading-display);margin-bottom:var(--space-4)">
-    Every element, with its basis
+    Every element, as decided
   </h1>
   <p class="ks-lede">
-    This page renders every token, component and marketing archetype in the system.
-    Each specimen carries a <b>basis note</b> saying which tokens it consumes, where it came from,
-    and what decision it encodes. Contrast ratios are measured live in your browser from the
-    actual computed values, so they stay honest if a token changes.
+    This page renders every token, component and marketing archetype in the system, as it ships.
+    Each specimen carries a short note on the decision it encodes. Contrast ratios are measured
+    live in your browser from the computed values, so the page cannot disagree with the system.
   </p>
   <p class="ks-lede">
     Toggle <b>Dark</b> and <b>RTL</b> in the bar above, and resize the window: the breakpoint
-    readout tells you which of the four is active. Badges mark what is
-    <span class="ks-flag is-kept">kept</span> from the live nfc.cool site,
-    <span class="ks-flag is-new">new</span> in this system, and
-    <span class="ks-flag">changed</span> from what ships today.
+    readout tells you which of the four is active.
   </p>
 
 
   <!-- ============================ DECISIONS ============================ -->
   <h2 class="ks-h2" id="decisions">Decisions</h2>
   <p class="ks-lede">
-    What is settled, and what is still open. Everything below this section is built on these.
+    Everything below this section is built on these.
   </p>
 
   <div class="ks-scroll">
@@ -266,7 +227,7 @@
       <tbody>
         <tr><td>Brand blue</td>
             <td><b>The iOS app's <code>appThemeGradient</code></b><br><code>#1A60CE &rarr; #128CF0</code></td>
-            <td>Four other blues retired. The web band matches what the product renders.</td></tr>
+            <td>The web band matches what the product renders.</td></tr>
         <tr><td>How many gradients</td>
             <td><b>One</b></td>
             <td>It is the band. It is never ramped across a button; filled buttons are solid.</td></tr>
@@ -284,72 +245,33 @@
             <td>Gradient hero, gradient strip, quiet header. A band never sits above a data table.</td></tr>
         <tr><td>Navigation</td>
             <td><b>One component, two modes</b></td>
-            <td>Sidebar follows the theme, superseding the 2026-09-02 spec's fixed dark console.</td></tr>
+            <td>The sidebar follows the theme, so the console carries no second dark surface family.</td></tr>
         <tr><td>Typeface</td>
             <td><b>Titillium everywhere</b></td>
             <td>Momento Marks takes the skeleton, not the typeface; its own face comes later.</td></tr>
         <tr><td>Ink Black</td>
             <td><code>#212529</code></td>
-            <td>The one value Brand Manual V1 is unambiguous about. Already correct everywhere.</td></tr>
+            <td>The one value Brand Manual V1 is unambiguous about.</td></tr>
         <tr><td>Button blue</td>
             <td><b>The light stop</b> <code>#128CF0</code>, filled and outlined alike</td>
             <td>Blue is an area on a button, never the label. White label on the fill (3.48:1, a recorded exception); ink label on the outline. Hover darkens to 4.70:1.</td></tr>
         <tr><td>Brand yellow</td>
             <td><code>#FFC700</code></td>
-            <td>The Secondary Logo SVG's value, over the <code>#FFC709</code> the website shipped. Never text on a light surface.</td></tr>
+            <td>The Secondary Logo SVG's value in Brand Manual V1. Never text on a light surface.</td></tr>
+        <tr><td>Focus ring</td>
+            <td><b>Two-tone, one ring</b></td>
+            <td>An inner halo and an outer stroke, both from the brand layer. At least one clears 3:1 on every surface, including the band.</td></tr>
+        <tr><td>Motion</td>
+            <td><b>One duration, one gesture</b></td>
+            <td>A hover lift in three tiers, and the FAQ answer unfolding. Nothing moves on scroll.</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h3 class="ks-h3">The one blue gradient</h3>
-  <div class="ks-grads">
-    <figure class="ks-grad" data-top="#1A60CE" data-bottom="#128CF0">
-      <figcaption><b>Brand gradient</b> <code>--brand-gradient</code> <span class="ks-flag is-kept">canonical</span></figcaption>
-      <div class="ks-grad-band">
-        <h4>Tap it. It works.</h4>
-        <p>Read and write every common NFC tag from your phone, with no account and no setup.</p>
-        <span class="btn" style="--btn-fg:#fff;--btn-border:rgba(255,255,255,.55)">Get the app</span>
-      </div>
-      <table class="ks-grad-stats"></table>
-    </figure>
-    <div>
-      <div class="ks-basis" style="margin-top:0">
-        <b>Why this one.</b> It is what the iOS app renders, and it is the darkest of the five that were
-        in circulation, so white clears AA at the top stop and stays above the 3.0 large-text floor at the
-        bottom. Every retired alternative dropped below 3.0 before its band ended.
-        <br><br>
-        <b>The shadow stays, and it is not a hack.</b> Brand Manual V1, page 10, on the secondary logo:
-        the "NFC" element in white and ".cool" in the brand's yellow, and <i>"both elements should always
-        be used with the designated shadows."</i> <code>--on-brand-text-shadow</code> is a brand
-        requirement that also happens to carry body copy over the lower half of the band.
-      </div>
-    </div>
-  </div>
-
-  <h4 class="ks-h3" style="font-size:var(--text-base)">Retired, and where they still live</h4>
-  <div class="ks-scroll">
-    <table class="ks-table">
-      <thead><tr><th>Blue</th><th>Was</th><th>Still in</th></tr></thead>
-      <tbody>
-        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#137BD9,#00A2F3)"></span> <code>#137BD9 &rarr; #00A2F3</code></td>
-            <td>the website band</td><td>nfc-cool-website <code>Theme/css/theme.css</code></td></tr>
-        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#00A2F3,#137BD9)"></span> <code>#00A2F3 &rarr; #137BD9</code></td>
-            <td>the manual's gradient asset</td><td><code>NFC_Gradient.png</code>, mirrored; likely drawn for a square logo frame</td></tr>
-        <tr><td><span class="ks-chip" style="background:linear-gradient(90deg,#3878D1,#45A1ED)"></span> <code>#3878D1 &rarr; #45A1ED</code></td>
-            <td>two flat palette swatches ramped together</td><td>dashboard, auth pages, all six email templates</td></tr>
-        <tr><td><span class="ks-chip" style="background:#169DFE"></span> <code>#169dfe</code> flat</td>
-            <td>the card page CTA</td><td>the brand's highest-traffic button</td></tr>
-        <tr><td><span class="ks-chip" style="background:#4074B9"></span> <code>#4074B9</code> flat</td>
-            <td>never a brand colour</td><td>every icon SVG in the manual; recolour to <code>currentColor</code></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3 class="ks-h3">Brand yellow <span class="ks-flag is-kept">decided</span></h3>
+  <h3 class="ks-h3">Brand yellow</h3>
   <p class="ks-lede">
-    <code class="ks-code">#FFC700</code>, the Secondary Logo SVG's value in Brand Manual V1, chosen over
-    the <code class="ks-code">#FFC709</code> the website had been shipping. The logo is the source the
-    wordmark is derived from, so it arbitrates.
+    <code class="ks-code">#FFC700</code>, the Secondary Logo SVG's value in Brand Manual V1. The logo is
+    the source the wordmark is derived from, so it arbitrates.
   </p>
   <div class="ks-yellows">
     <div class="ks-yellow" style="--y:var(--color-accent)">
@@ -368,16 +290,10 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> The two candidates were nine units apart on one channel, which is drift rather than
-    intent, and both measure 1.45:1 on the page background so contrast could not decide it. In light mode
-    the yellow is only ever the wordmark tail and the numeral watermark - the tail permitted as a
-    logotype under WCAG 1.4.3, the watermark because it is decorative and always
-    <code>aria-hidden</code>. In dark mode it becomes the interactive colour outright at 11.06:1.
-    <br><br>
-    <b>One asset was deliberately left alone:</b>
-    <code>Theme/images/nfc-the-cool-way-to-connect-black.svg</code> still fills with
-    <code>#ffc709</code>. It is brand artwork rather than a token, the difference is imperceptible, and
-    recolouring supplied artwork is not a systems decision to make unasked.
+    <b>Where it may appear.</b> In light mode the yellow is only ever the wordmark tail and the numeral
+    watermark: the tail is permitted as a logotype under WCAG 1.4.3, the watermark because it is
+    decorative and always <code>aria-hidden</code>. It measures 1.45:1 on the page, so it is never
+    text. In dark mode it becomes the interactive colour outright, at 11.06:1.
   </div>
 
   <h3 class="ks-h3">Tone of voice</h3>
@@ -402,7 +318,7 @@
     mechanics and toggle button are written once and shared.
   </p>
 
-  <h3 class="ks-h3">Mode: bar <span class="ks-flag is-kept">kept</span></h3>
+  <h3 class="ks-h3">Mode: bar</h3>
   <div class="ks-navbox">
     <nav class="nav" data-nav="bar" id="ks-bar" aria-label="Site">
       <a class="nav-brand" href="#"><img class="nav-logo-on-light" src="images/nfc-secondary-logo-black.webp" alt="NFC.cool" width="600" height="148"><img class="nav-logo-on-dark" src="images/nfc-secondary-logo-white.webp" alt="NFC.cool" width="600" height="148"></a>
@@ -424,16 +340,14 @@
     </nav>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> This is the shipped nfc.cool header: sticky, translucent over the content it scrolls
-    past, with a hairline rule and a utility cluster on the end. It collapses to a burger and a drop
-    panel below <code>xl</code>, matching today's 1199px. What is new is that the burger is markup with a
-    real <code>aria-expanded</code> and <code>aria-controls</code>, rather than a button
-    <code>theme.js</code> injects at runtime.
+    <b>The site header.</b> Sticky, translucent over the content it scrolls past, with a hairline rule
+    and a utility cluster on the end. It collapses to a burger and a drop panel below <code>xl</code>.
+    The burger is markup with a real <code>aria-expanded</code> and <code>aria-controls</code>.
     <span class="ks-note" style="display:block;margin-top:var(--space-2)">Narrow the window past 1200px
     to collapse it. The example is contained in its box, so it does not stick.</span>
   </div>
 
-  <h3 class="ks-h3">Mode: side, full <span class="ks-flag is-new">new</span></h3>
+  <h3 class="ks-h3">Mode: side, full</h3>
   <div class="ks-navbox">
     <div class="ks-shell">
       <nav class="nav" data-nav="side" id="ks-side" aria-label="Console">
@@ -493,19 +407,12 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-new">new</span>, and it replaces nothing, because the dashboard
-    has no responsive navigation at all today: a single <code>.topnav</code> with
-    <code>flex-wrap: wrap</code> and zero media queries, so the links simply wrap onto more lines as the
-    screen narrows.
-    <br><br>
-    <b>This supersedes a written decision.</b> The 2026-09-02 spec chose Direction B with a permanently
-    dark <code>#161B22</code> sidebar. The sidebar now follows the theme instead, so the console obeys one
-    palette rather than carrying a second dark surface family that has to be kept in contrast on its own.
-    <br><br>
-    Three modes, all on the existing four breakpoints, so no new breakpoint enters the system:
-    full with labels at <code>lg</code> and up, icon rail from <code>md</code> to <code>lg</code>, and an
-    off-canvas drawer with a scrim below <code>md</code>. <code>.is-collapsed</code> is a real feature,
-    not a demo trick: it is how a person collapses the sidebar themselves, and the choice persists.
+    <b>The console sidebar.</b> Three modes on the existing four breakpoints, so no new breakpoint enters
+    the system: full with labels at <code>lg</code> and up, an icon rail from <code>md</code> to
+    <code>lg</code>, and an off-canvas drawer with a scrim below <code>md</code>.
+    <code>.is-collapsed</code> is how a person collapses the sidebar themselves, and the choice
+    persists. The sidebar follows the theme: the console obeys one palette rather than carrying a
+    second dark surface family that has to be kept in contrast on its own.
     <span class="ks-note" style="display:block;margin-top:var(--space-2)">Below 768px the first example
     becomes a drawer. Use the burger in its header to open it.</span>
   </div>
@@ -513,17 +420,15 @@
   <!-- ============================ FOUNDATIONS ============================ -->
   <h2 class="ks-h2">1. Colour</h2>
   <p class="ks-lede">
-    Two themes. The mode flip is deliberate and preserved: interactive elements are brand blue
-    in light mode and brand yellow in dark. Yellow is never text on a light surface.
+    Two themes, and the mode flip: interactive elements are brand blue in light mode and brand
+    yellow in dark. Yellow is never text on a light surface.
   </p>
 
   <h3 class="ks-h3">Surfaces</h3>
   <div class="ks-swatch-grid" data-swatches="color-bg,color-bg-alt,color-bg-card,color-border,color-border-light,color-code-bg"></div>
   <div class="ks-basis">
-    <b>Basis.</b> <code>--color-bg-alt</code> is <span class="ks-flag">changed</span>: on the live site it is
-    <i>identical</i> to <code>--color-bg</code> in both themes, so the alternating section rhythm is a no-op
-    maintained by nine CSS rules. It now carries a real one-step value, and the muted text token was
-    nudged so it still clears 4.5:1 on that darker surface.
+    <b>One real step.</b> <code>--color-bg-alt</code> sits one step below <code>--color-bg</code>, so the
+    alternating section rhythm reads, and muted text still clears 4.5:1 on it.
   </div>
 
   <h3 class="ks-h3">Text</h3>
@@ -534,9 +439,8 @@
     ["--color-text-muted","--color-bg","Muted text on page",4.5],
     ["--color-text-muted","--color-bg-alt","Muted text on alt surface",4.5]]'></table></div>
   <div class="ks-basis">
-    <b>Basis.</b> Values inherited from the live site, except <code>--color-text-muted</code>, which moved
-    from <code>#686F76</code> to <code>#666D74</code> so it survives the new <code>--color-bg-alt</code>.
-    A two-point nudge, invisible in use.
+    <b>Three levels of ink.</b> Text, secondary and muted, and all three clear 4.5:1 on every surface
+    they appear on, including the alt surface.
   </div>
 
   <h3 class="ks-h3">Interactive</h3>
@@ -547,12 +451,10 @@
     ["--focus-stroke","--color-bg","Focus ring outer stroke",3],
     ["--focus-stroke","--color-bg-card","Focus ring on a card",3]]'></table></div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag">changed</span>, and this fixes three measured failures on the live site.
-    <code>--color-link</code> stays <code>#137BD9</code> as the <i>interactive hue</i> for borders, chevrons and
-    hover fills. A new <code>--color-link-text</code> carries actual link text, because <code>#137BD9</code>
-    measures <b>3.99:1</b> and inline links in prose are body copy. The live hover colour
-    <code>#00A2F3</code> is <b>2.60:1</b>, meaning hovering a link today makes it <i>less</i> readable;
-    <code>--color-link-text-hover</code> darkens instead.
+    <b>Two roles for blue.</b> <code>--color-link</code> is the light stop, for borders, chevrons, icons
+    and hover fills, where 3:1 is the bar. <code>--color-link-text</code> is the dark stop, 5.38:1, for
+    anything that is text, and its hover darkens rather than lightens, so hovering a link never makes
+    it harder to read.
   </div>
 
   <h3 class="ks-h3">Brand</h3>
@@ -562,16 +464,15 @@
     ["--color-on-brand","--brand-blue-2","White on gradient, bottom stop",4.5],
     ["--color-brand-tail","--color-bg","Script tail on page (logotype)",4.5]]'></table></div>
   <div class="ks-basis">
-    <b>Basis.</b> The gradient is <span class="ks-flag">changed</span>. On the live site it runs
-    <code>#137BD9 → #00A2F3</code>, where white text measures <b>4.32:1</b> at the top and
-    <b>2.81:1</b> at the bottom, below even the 3:1 large-text floor. That is why every hero headline
-    carries <code>text-shadow: 0 1px 1px rgba(0,0,0,.55)</code> and every subtitle is set to
-    <code>rgba(255,255,255,.92)</code>: the site is compensating for a failure. Both stops were darkened
-    within the same hue until white clears 4.5:1 across the whole band, and the compensation can go.
+    <b>The band.</b> The gradient is the iOS app's <code>appThemeGradient</code>, dark at the top and light
+    at the bottom, so the web band matches what the product renders. White clears AA at the top stop and
+    holds above the 3:1 large-text floor at the bottom; <code>--on-brand-text-shadow</code> carries body
+    copy over the lower half. Brand Manual V1, page 10, requires the designated shadows on the logo in any
+    case, so the band and the shadow travel together.
     <br><br>
-    The script tail is expected to fail and is marked <b>exempt</b>: WCAG 1.4.3 exempts text that is part
-    of a logo or brand name, and this renders the brand name. It is one token so the call can be revisited,
-    but the pattern must never be copied onto ordinary text.
+    The script tail is marked <b>exempt</b>: WCAG 1.4.3 exempts text that is part of a logo or brand
+    name, and this renders the brand name. It is one token so the call can be revisited, and the pattern
+    is never copied onto ordinary text.
   </div>
 
   <h3 class="ks-h3">Semantic tones</h3>
@@ -588,26 +489,22 @@
     ["--color-danger-fg","--color-bg","Danger text",4.5],
     ["--color-info-fg","--color-bg","Info text",4.5]]'></table></div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-new">new</span>. The live site has one
-    <code>--color-success</code> and a single inline <code>#DC2626</code>; the pricing pills each invent
-    their own green, red, amber and orange. business_card_service has three unrelated alert systems with
-    three different green/red pairs. This is one ramp of foreground, background and border per tone.
+    <b>One ramp per tone.</b> Foreground, background and border for success, warning, danger, info and
+    neutral, and every pill, alert and status marker draws from the same five.
   </div>
 
   <!-- ============================ TYPE ============================ -->
   <h2 class="ks-h2">2. Typography</h2>
   <p class="ks-lede">
     One family, Titillium Web, at three weights, with Caveat as the script accent.
-    The ramp below collapses roughly fourteen unique <code class="ks-code">clamp()</code> expressions
-    from the live stylesheets into a named ladder.
+    The ramp below is the whole named ladder.
   </p>
   <div class="ks-demo" id="ks-type"></div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span> - every size is a value already in use, just named.
-    The two tracking directions are the system's real signature and are now tokens:
-    negative on display sizes (<code>--tracking-hero</code>, <code>--tracking-display</code>),
-    positive on uppercase micro-labels (<code>--tracking-label</code>, <code>--tracking-eyebrow</code>).
-    Arabic resets tracking to normal, because it is a connected script.
+    <b>Two tracking directions.</b> They are the system's signature and they are tokens: negative on
+    display sizes (<code>--tracking-hero</code>, <code>--tracking-display</code>), positive on uppercase
+    micro-labels (<code>--tracking-label</code>, <code>--tracking-eyebrow</code>). Arabic resets tracking
+    to normal, because it is a connected script.
   </div>
 
   <h3 class="ks-h3">The wordmark</h3>
@@ -648,25 +545,23 @@
   <h3 class="ks-h3">Space scale</h3>
   <div class="ks-demo" id="ks-space"></div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-new">new</span> - the live site has no spacing scale at all.
-    A 4px grid, but it deliberately keeps <code>--space-5: 1.25rem</code> (20px), which is off an 8px grid
-    and is nfc.cool's signature card-grid gap. Dropping it would re-space every grid on the site
-    for no gain.
+    <b>A 4px grid</b> that keeps <code>--space-5: 1.25rem</code> (20px), off an 8px grid on purpose:
+    it is the signature card-grid gap, and every grid on the site is spaced by it.
   </div>
 
   <h3 class="ks-h3">Radius</h3>
   <div class="ks-demo ks-row" id="ks-radius"></div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span> - nfc.cool's existing six, unchanged.
-    <code>--radius-md</code> (10px) matches the App Store badge corner, which is why buttons use it.
+    <b>Six radii.</b> <code>--radius-md</code> (10px) matches the App Store badge corner, which is why
+    buttons use it.
   </div>
 
   <h3 class="ks-h3">Elevation</h3>
   <div class="ks-demo ks-row" style="gap:var(--space-6)" id="ks-elev"></div>
   <div class="ks-basis">
-    <b>Basis.</b> Six ad-hoc shadows in the shipped CSS become four steps.
-    <code>--elev-media</code> is the house treatment for product renders: a cool blue-tinted double shadow
-    by day that becomes a warm accent glow at night. Toggle the theme to see it invert.
+    <b>Four steps</b>, plus <code>--elev-media</code>, the house treatment for product renders: a cool
+    blue-tinted double shadow by day that becomes a warm accent glow at night. Toggle the theme to see
+    it invert.
   </div>
 
   <h3 class="ks-h3">Motion</h3>
@@ -676,10 +571,10 @@
     <button class="btn">Hover: lift 1</button>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span>. The vocabulary is deliberately tiny:
-    one duration (<code>--transition: .2s ease</code>) and one gesture, a hover lift, in three tiers.
-    No scroll animation, no reveal-on-scroll, no entrance choreography. Under
-    <code>prefers-reduced-motion</code> all three lift tokens collapse to <code>0</code>.
+    <b>Deliberately tiny.</b> One duration (<code>--transition: .2s ease</code>), one gesture, a hover
+    lift in three tiers, and one entrance: the FAQ answer unfolds when its card opens. No scroll
+    animation and no reveal-on-scroll. Under <code>prefers-reduced-motion</code> the lifts collapse to
+    <code>0</code> and the unfold is switched off.
   </div>
 
   <!-- ============================ BUTTONS ============================ -->
@@ -698,15 +593,13 @@
     <button class="btn btn-danger btn-primary">Danger, filled</button>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> The filled primary is <span class="ks-flag is-new">new</span> and it is the single
-    biggest gap being closed. <b>The live nfc.cool site has no filled button anywhere</b> - its real
-    primary CTA is an App Store badge, which works only when the conversion is "leave for the store".
-    It has no answer for Save, Invite, Delete, or the card page's Save Contact.
-    business_card_service filled that vacuum with <b>five</b> different button designs across five surfaces.
-    The outlined tier is the shipped <code>.landing-cta-button</code>, unchanged.
+    <b>Five tiers, one component.</b> The filled primary is the action a surface exists for: Save,
+    Invite, Save Contact. The outlined tier is secondary, ghost is tertiary, and danger is outlined
+    until it is the one destructive action on the surface, when it fills. Store badges stay the
+    marketing hero's CTA; a filled button is for work, not for leaving to the store.
   </div>
 
-  <h3 class="ks-h3">Primary fill <span class="ks-flag is-kept">decided</span></h3>
+  <h3 class="ks-h3">Primary fill</h3>
   <div class="ks-demo is-plain">
     <div class="ks-fills">
       <div class="ks-fill-opt">
@@ -714,17 +607,13 @@
       </div>
       <div class="ks-fill-opt">
         <button class="btn btn-primary">Subscribe</button>
-        <p><code>#128CF0</code> light stop &middot; <b>chosen</b><br>
+        <p><code>#128CF0</code> light stop<br>
           white label &middot; <b class="ks-exempt">3.48:1, recorded exception</b><br>
           hover <code>#0F76CA</code> &middot; <b class="ks-pass">4.70:1</b></p>
       </div>
       <div class="ks-fill-opt">
         <button class="btn">Cancel</button>
         <p>outlined, same blue<br>border 3.48:1 (a boundary needs 3)<br>ink label <b class="ks-pass">15.43:1</b></p>
-      </div>
-      <div class="ks-fill-opt">
-        <button class="btn" style="--btn-bg:#1A60CE;--btn-fg:#fff;--btn-border:#1A60CE">Subscribe</button>
-        <p><code>#1A60CE</code> dark stop &middot; rejected<br>white label 5.82:1, read as too heavy</p>
       </div>
     </div>
   </div>
@@ -766,11 +655,7 @@
     border is a UI boundary, so 3:1 applies and it clears at 3.48. Ghost has no border, so its label
     carries the affordance and takes the dark stop, like an inline link.
     <br><br>
-    <b>Basis.</b> Every state is defined, including <code>:focus-visible</code> - tab through them.
-    On business_card_service the primary CTA has <code>:hover</code>, <code>:focus</code> and
-    <code>:active</code> all forced back to the resting state with <code>!important</code>, so the most
-    important button in the product has <i>no</i> visible keyboard focus. That is the worst accessibility
-    defect across the three properties and this replaces it.
+    <b>Every state is defined</b>, including <code>:focus-visible</code>: tab through them.
   </div>
 
   <h3 class="ks-h3">On a brand band</h3>
@@ -783,14 +668,13 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> Adding <code>.on-brand</code> re-points the button's local properties. No new classes,
-    no duplicated rules - this is the mechanism nfc.cool already uses for its on-gradient CTA,
-    generalised to the filled tier and to focus rings.
+    <b>One mechanism.</b> Adding <code>.on-brand</code> re-points the button's local properties and the
+    focus ring. No new classes, no duplicated rules.
   </div>
 
   <!-- ============================ FORMS ============================ -->
   <h2 class="ks-h2">5. Form controls</h2>
-  <p class="ks-lede">The layer neither marketing site has. Every state, on both themes.</p>
+  <p class="ks-lede">Every state, on both themes.</p>
   <div class="ks-demo">
     <div style="display:grid;gap:var(--space-5);max-width:26rem">
       <div class="field">
@@ -825,12 +709,9 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-new">new</span>. Focus generalises the newsletter form's
-    <code>:focus-within</code> ring, which is already the nicest interaction on the site.
-    Inputs are <code>--text-body</code> (16px) deliberately: anything smaller makes iOS Safari
-    zoom the page on focus. This replaces business_card_service's three input systems, including
-    the raw <code class="ks-code">{{ form.as_p }}</code> default with its 4px radius in a codebase
-    where every other input is 30px or 10px.
+    <b>Sixteen pixels, always.</b> Inputs are <code>--text-body</code> because anything smaller makes iOS
+    Safari zoom the page on focus. Focus is the newsletter form's <code>:focus-within</code> ring,
+    generalised to every control, and the field border is its own token so a boundary reads on a card.
   </div>
 
   <!-- ============================ SURFACES / DATA ============================ -->
@@ -870,11 +751,10 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> The card recipe is <span class="ks-flag is-kept">kept</span> verbatim from
-    <code>.landing-feature-card</code>: hairline border, <code>--radius-lg</code>, resting
-    <code>--elev-0</code>, hover lift to <code>--elev-1</code>. Table, panel, empty state and status
-    markers are <span class="ks-flag is-new">new</span>, built from the pricing table's L-shaped tinted
-    header and its 1.6rem status pills so the product UI inherits a shape the brand already owns.
+    <b>One card recipe.</b> Hairline border, <code>--radius-lg</code>, resting <code>--elev-0</code>,
+    hover lift to <code>--elev-1</code>. Table, panel, empty state and status markers share the pricing
+    table's tinted header and its 1.6rem status pills, so the product UI inherits a shape the brand
+    already owns.
   </div>
 
   <!-- ============================ FEEDBACK ============================ -->
@@ -890,16 +770,14 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-new">new</span>, and it collapses three separate alert systems
-    in business_card_service - one in CSS, one in the dashboard template, one built inline in JavaScript -
-    each with its own green and red.
+    <b>One alert per tone</b>, from the same ramp as the pills, and a skeleton for anything still loading.
   </div>
 
   <!-- ============================ HEADERS ============================ -->
   <h2 class="ks-h2">8. The three header tiers</h2>
   <p class="ks-lede">
-    The live site opens every page with the same full-bleed gradient hero. That is right for a landing
-    page and wrong above a data table, so the one treatment becomes three intensities chosen by surface.
+    One treatment in three intensities, chosen by surface. A gradient band is right for a landing page
+    and wrong above a data table.
   </p>
 
   <div class="ks-demo is-flush" style="margin-bottom:var(--space-3)">
@@ -930,10 +808,9 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> Tier 1 is the shipped <code>.page-hero</code>. Tier 2 is
-    <span class="ks-flag is-new">new</span> for blog, feature and secondary pages that currently pay the
-    full hero cost. Tier 3 is <span class="ks-flag is-new">new</span> and is what makes the system usable
-    on the dashboard and the card page, where a gradient band above the fold is marketing intruding on work.
+    <b>Which tier where.</b> Tier 1 for marketing landing pages. Tier 2 for blog, feature and secondary
+    pages, which do not need the full hero. Tier 3 for the dashboard and the card page, where a gradient
+    band above the fold would be marketing intruding on work.
   </div>
 
   <!-- ============================ ARCHETYPES ============================ -->
@@ -960,12 +837,9 @@
     </div></section>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span>. The Caveat numeral watermark is one of the
-    system's strongest signatures. It is always <code>aria-hidden</code> and
-    <code>pointer-events: none</code>, so it is genuinely decorative and the accent colour is fine there.
-    The live CSS carries a comment saying its text-shadow exists so "axe measures the glyph against the
-    shadow, not the card" - that is satisfying a checker, not a reader, and the guideline says so
-    explicitly so nobody copies the trick onto real text.
+    <b>The numeral watermark</b> is one of the system's strongest signatures. It is always
+    <code>aria-hidden</code> and <code>pointer-events: none</code>, so it is genuinely decorative and the
+    accent colour is fine there. The pattern is never copied onto real text.
   </div>
 
   <h3 class="ks-h3">Feature banner</h3>
@@ -1025,9 +899,8 @@
     </div></section>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span>, including the 4px accent stripe on the card's
-    top edge and the pill-within-a-pill input group. The submit button is now the filled primary
-    rather than an outline, which is the one change: this is a real action, not a navigation.
+    <b>The signature bits</b> are the 4px accent stripe on the card's top edge and the pill-within-a-pill
+    input group. The submit is the filled primary, because subscribing is an action, not a navigation.
   </div>
 
   <h3 class="ks-h3">Blog cards</h3>
@@ -1055,9 +928,8 @@
     </div></section>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span>. Store badges stay the marketing primary CTA
-    and keep their dark artwork even on the gradient - the official badges carry their own authority,
-    and the live CSS says exactly that in a comment.
+    <b>Store badges are the marketing primary CTA</b> and keep their own dark artwork even on the
+    gradient. The official badges carry their own authority.
   </div>
 
   <!-- ============================ PROSE ============================ -->
@@ -1074,9 +946,8 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> <span class="ks-flag is-kept">kept</span>, one change: inline links use
-    <code>--color-link-text</code>, not <code>--color-link</code>. Prose links are body copy and need
-    4.5:1; the shipped value gives 3.99:1.
+    <b>Inline links use <code>--color-link-text</code></b>, not <code>--color-link</code>. Prose links are
+    body copy and need 4.5:1.
   </div>
 
   <h2 class="ks-h2">11. Overlay</h2>
@@ -1090,8 +961,8 @@
     </div>
   </div>
   <div class="ks-basis">
-    <b>Basis.</b> One modal that becomes a bottom sheet below <code>sm</code>, replacing three separate
-    implementations. Narrow the window past 600px to see it change.
+    <b>One modal</b> that becomes a bottom sheet below <code>sm</code>. Narrow the window past 600px to
+    see it change.
   </div>
 
   <p class="ks-note" style="margin-top:var(--space-11)">
@@ -1220,36 +1091,13 @@
   window.addEventListener('resize', bp);
 
 
-  /* --- gradient comparison --- */
-  function renderGrads() {
-    document.querySelectorAll('.ks-grad').forEach(fig => {
-      const top = fig.dataset.top, bot = fig.dataset.bottom;
-      const band = fig.querySelector('.ks-grad-band');
-      band.style.background = `linear-gradient(180deg, ${top} 0%, ${bot} 100%)`;
-      const midHex = (a, b) => {
-        const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16);
-        const m = s => Math.round((((A >> s) & 255) + ((B >> s) & 255)) / 2);
-        return '#' + [m(16), m(8), m(0)].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
-      };
-      const flat = top.toUpperCase() === bot.toUpperCase();
-      const rows = flat ? [['Flat', top]]
-        : [['Top', top], ['Middle', midHex(top, bot)], ['Bottom', bot]];
-      fig.querySelector('.ks-grad-stats').innerHTML = rows.map(([label, hex]) => {
-        const r = ratio('#FFFFFF', hex);
-        const verdict = r >= 4.5 ? '<span class="ks-pass">AA</span>'
-          : r >= 3 ? '<span class="ks-exempt">large only</span>' : '<span class="ks-fail">FAIL</span>';
-        return `<tr><td>${label}</td><td>${hex}</td><td>${r.toFixed(2)}:1</td><td>${verdict}</td></tr>`;
-      }).join('');
-    });
-  }
-
   /* Every specimen link is href="#", which would jump the page to the top on
      each click. The demo is the one place that matters; a real consumer's nav
      links go somewhere. */
   document.querySelectorAll('a[href="#"]').forEach(a =>
     a.addEventListener('click', e => e.preventDefault()));
 
-  renderTables(); renderType(); renderGrads(); bp();
+  renderTables(); renderType(); bp();
 })();
 </script>
 <script type="module" src="../src/nav.js"></script>
