@@ -6,9 +6,10 @@
   "private": true,
   "type": "module",
   "files": [
-    "src",
+    "consumers.json",
     "dist",
-    "docs"
+    "docs",
+    "src"
   ],
   "exports": {
     "./tokens.css": "./src/tokens.css",
@@ -23,9 +24,11 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-guideline.mjs",
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
     "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "sync": "node build/sync-consumers.mjs",
+    "sync:check": "node build/sync-consumers.mjs --check"
   }
 }

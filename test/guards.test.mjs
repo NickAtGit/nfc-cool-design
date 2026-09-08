@@ -289,3 +289,95 @@ test('the md to lg rail keeps its labels, stacked under the icons', () => {
   assert.ok(rail.some(r => /\.nav-link\b/.test(r.selector) && /flex-direction:\s*column/.test(r.decl)),
     'the rail link must stack the icon over the label');
 });
+
+/* WebKit ignores line-height on a single-line text input and uses the font's
+   natural line box instead. Size an .input and a .select by leading alone and
+   the two stand at different heights in Safari while measuring identically in
+   Chrome -- a bug invisible on the machine it is written on. The defence is
+   that all three controls are sized by ONE declaration and nothing later
+   re-sizes just one of them. */
+test('one declaration sizes the input, the textarea and the select', () => {
+  const rules = scopedRules(read('src/components.css'));
+  const SIZING = /(^|;|\s)(padding(-block|-top|-bottom)?|block-size|height|min-height|font-size|line-height)\s*:/;
+  const shared = rules.filter(r => /^\.input,\s*\.textarea,\s*\.select$/.test(r.selector.trim()));
+  assert.equal(shared.length, 1, 'expected exactly one shared sizing rule for the three controls');
+
+  const offenders = [];
+  for (const r of rules) {
+    const sel = r.selector.trim();
+    if (sel === '.input, .textarea, .select') continue;
+    // A textarea is genuinely multi-line: it owns min-height and resize.
+    // (?![\w-]) and not \b: a hyphen is a word boundary, so \b matched
+    // .input-group, which is a wrapper and sizes itself legitimately.
+    const targetsOne = /^\.(input|select)(?![\w-])/.test(sel) && !/,/.test(sel);
+    if (targetsOne && SIZING.test(r.decl)) offenders.push(`${sel} { ${r.decl.trim()} }`);
+  }
+  assert.deepEqual(offenders, [], `a control re-sized on its own:\n  ${offenders.join('\n  ')}`);
+});
+
+/* A line box that does not fit its content box cannot be centred in it: it
+   starts at the top and overflows the bottom, so the text reads low. If the
+   shared control rule ever declares a height, the content box must clear both
+   the declared line box AND the font's natural one, which is what WebKit will
+   use for a text input whatever the leading says. */
+test('a declared control height leaves room for the line box', () => {
+  const tokens = JSON.parse(read('src/tokens.json'));
+  const prim = tokens.primitives ?? tokens;
+  const rule = scopedRules(read('src/components.css'))
+    .find(r => r.selector.trim() === '.input, .textarea, .select');
+  const height = /(?:^|;)\s*(?:block-size|height)\s*:/.test(rule.decl);
+  if (!height) {
+    // No height declared: the box wraps its own line box, so it always fits.
+    // The leading must then stay near the typeface's natural line box, or the
+    // WebKit input and the select diverge. Titillium's natural leading is 1.52.
+    const leading = parseFloat(String(prim.leading?.['leading-normal'] ?? prim['leading-normal'] ?? '1.55'));
+    assert.ok(Math.abs(leading - 1.52) < 0.1,
+      `--leading-normal ${leading} is too far from Titillium's natural 1.52; ` +
+      'a text input will not match a select in WebKit');
+    return;
+  }
+  assert.fail('a height was declared: assert here that content box >= max(line box, natural line box)');
+});
+
+/* A vendored copy is a copy, and a copy drifts. business_card_service was
+   1216 bytes behind the bundle with nothing anywhere to say so, because the
+   guideline's instruction was a manual `cp`. `npm run build` now ends by
+   syncing, and this fails if a consumer that IS on this machine has fallen
+   behind. A consumer that is absent is skipped rather than failed, so the
+   suite still passes on a runner that has only this repo checked out. */
+test('every vendoring consumer on this machine has the current bundle', async () => {
+  const { drift, plan } = await import('../build/sync-consumers.mjs');
+  const present = plan().filter(p => p.present);
+  if (!present.length) return; // nothing to check here
+  assert.deepEqual(drift().map(p => p.dst), [],
+    'vendored CSS is behind dist/. Run: npm run sync');
+});
+
+/* The manifest is the only place that knows who vendors what, so it has to
+   stay honest about the difference: a consumer that installs from npm cannot
+   drift and must not be listed as one that copies files. */
+test('the consumer manifest names a real path and real files for each entry', () => {
+  const { consumers } = JSON.parse(read('consumers.json'));
+  assert.ok(Object.keys(consumers).length, 'expected at least one vendoring consumer');
+  for (const [name, spec] of Object.entries(consumers)) {
+    assert.ok(spec.root, `${name} needs a root`);
+    assert.ok(spec.why, `${name} needs a why: the next person has to know if copying is still right`);
+    for (const from of Object.keys(spec.files)) {
+      assert.match(from, /^dist\//, `${name} must vendor a BUILT file, not an authored layer (${from})`);
+    }
+  }
+});
+
+/* Adopting the package is the consuming project's decision. A build run in
+   THIS repo must never scatter a design bundle into a checkout that does not
+   already vendor one -- business_card_service's main branch links its own
+   dashboard.css and has no design.css at all, so an eager sync would have left
+   an untracked bundle sitting in it. */
+test('sync refreshes a vendored file but never creates one', () => {
+  const src = read('build/sync-consumers.mjs');
+  assert.match(src, /--adopt/, 'expected an explicit --adopt path for first-time vendoring');
+  assert.match(src, /if \(!existsSync\(p\.dst\)\)[\s\S]{0,200}?if \(!adopt\)/,
+    'a missing destination must be skipped unless --adopt is passed');
+  assert.match(src, /\.filter\(p => p\.present && existsSync\(p\.dst\)\)/,
+    'drift() must only consider files that are already vendored');
+});

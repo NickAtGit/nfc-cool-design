@@ -39,6 +39,12 @@ const cases = [
   ['light danger fg on page',        L['color-danger-fg'],      L['color-bg'],       AA],
   ['light info fg on page',          L['color-info-fg'],        L['color-bg'],       AA],
   ['light neutral fg on page',       L['color-neutral-fg'],     L['color-bg'],       AA],
+  // The neutral pill and status dot: their label sits on the neutral tint, not
+  // on the bare card, which is the surface that nearly failed.
+  ['light neutral label on its own tint', L['color-neutral-fg'], '#F4F4F5',            AA],
+  ['dark neutral label on its own tint',  D['color-neutral-fg'], '#2C3138',            AA],
+  ['light filled danger label',      L['color-danger-on'],      L['color-danger-fg'], AA],
+  ['dark filled danger label',       D['color-danger-on'],      D['color-danger-fg'], AA],
   ['light ios pill label',           L['platform-ios-fg'],      L['color-bg-card'],  AA],
   ['light android pill label',       L['platform-android-fg'],  L['color-bg-card'],  AA],
 
@@ -215,6 +221,50 @@ for (const [label, context, classes] of VARIANTS) {
       const hover = ratio(fgHover, bgHover);
       assert.ok(hover >= rest,
         `${theme}: label ${fgHover} on hover fill ${bgHover} is ${hover.toFixed(2)}:1, at rest it was ${rest.toFixed(2)}:1`);
+    }
+  });
+}
+
+/* The hover-never-worse rule above is relative: it cannot catch a label that
+   was unreadable at rest AND on hover. This is the absolute floor. Every
+   button label clears 4.5:1 on its own fill, in both themes, except the two
+   exceptions this system has written down and pinned above. */
+const BUTTON_EXCEPTIONS = new Map([
+  // The filled primary at rest: 3.48:1, decided 2026-09-06, pinned in its own
+  // test, and hover darkens to 4.70. Dark mode has no exception.
+  ['filled primary/light/rest', 3.0],
+  // On the brand band the label is carried by --on-brand-text-shadow, which is
+  // a Brand Manual requirement in its own right. Pinned by the gradient test.
+  ['outlined on brand band/light/rest', 3.0],
+  ['outlined on brand band/light/hover', 3.0],
+]);
+const SURFACE = { 'outlined danger': 'color-bg-card', 'filled danger': 'color-bg-card',
+  'outlined on brand band': 'brand-blue-2', 'filled primary on brand band': 'brand-blue-2' };
+/* Paint a translucent fill onto the surface behind it, so a tinted hover is
+   measured as it actually renders. */
+const composite = (value, surface) => {
+  const m = /^rgba\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)\s*\)$/i.exec(value ?? '');
+  if (!m) return value;
+  const a = +m[4], base = parseInt(surface.replace('#', ''), 16);
+  const s = [base >> 16 & 255, base >> 8 & 255, base & 255];
+  const out = [+m[1], +m[2], +m[3]].map((c, i) => Math.round(a * c + (1 - a) * s[i]));
+  return '#' + out.map(c => c.toString(16).padStart(2, '0')).join('');
+};
+for (const [label, context, classes] of VARIANTS) {
+  test(`${label} button: the label is readable on its own fill`, () => {
+    const p = buttonParams(context, classes);
+    for (const [theme, T] of [['light', L], ['dark', D]]) {
+      const surface = T[SURFACE[label] ?? 'color-bg'];
+      for (const state of ['rest', 'hover']) {
+        const fg = resolve(p[state === 'rest' ? '--btn-fg' : '--btn-fg-hover'], p, T);
+        const bgRaw = p[state === 'rest' ? '--btn-bg' : '--btn-bg-hover'];
+        const bg = composite(resolve(bgRaw, p, T) ?? surface, surface) ?? surface;
+        if (!fg || !/^#[0-9a-fA-F]{6}$/.test(bg)) continue;
+        const min = BUTTON_EXCEPTIONS.get(`${label}/${theme}/${state}`) ?? AA;
+        const r = ratio(fg, bg);
+        assert.ok(r >= min,
+          `${theme} ${state}: ${fg} on ${bg} is ${r.toFixed(2)}:1, needs ${min}:1`);
+      }
     }
   });
 }

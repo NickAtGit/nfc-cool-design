@@ -118,6 +118,74 @@ the store. It has no answer for Save, Invite, Delete or Save Contact, and
 business_card_service filled that vacuum with five different button designs.
 Store badges remain the marketing hero's primary CTA.
 
+**No control sits on top of the media it acts on.** A thumbnail's ✕, hung off
+its corner, is the one control with nowhere to come from: it is smaller than the
+smallest button, rounder than the roundest radius, and positioned with
+`top`/`right`, which Rule 8 does not allow. It also covers the artwork the
+person is trying to judge. The actions for a piece of media belong in the
+**header row of the block that owns it** — the same `justify-content:
+space-between` row a page header already uses for its actions — or, where one
+block holds two thumbnails and a single header could not say which it meant, in
+each slot's own action row. business_card_service's `.mark-clear` was the whole
+population of this anti-pattern and was removed on 2026-09-08.
+
+**A destructive action has two volumes, and the quiet one is the default when
+it shares a row.** Full `.danger` — a red border and a red label — is right when
+the action stands alone and the person came to do it. Beside the control it
+undoes, it is wrong: "Remove" next to "Replace" at equal weight reads as its
+peer, and the red one is the loudest thing in the row when it is the one you
+rarely want. The quiet tier keeps the word and drops the box, and takes its
+border and colour back the moment a pointer or the keyboard arrives. Its resting
+label still owes 4.5:1 — quiet means no border, not grey text: a hint colour on
+a control is a contrast failure, not a style.
+
+**A form control's height must not depend on its line-height.** WebKit ignores
+`line-height` on a single-line text input and uses the font's natural line box
+instead; every other engine honours it. Size an `.input` and a `.select` by
+leading alone and the two stand at different heights in Safari while measuring
+identically in Chrome, which is a bug you cannot see on the machine you are
+building on. Either declare the height, or keep `--leading-normal` at the
+typeface's own natural leading, which is why 1.55 is safe for Titillium's 1.52
+and why moving it is not a free change. The rule this system follows is that
+`.input`, `.textarea` and `.select` are sized by **one shared declaration** and
+nothing later gives any of them a different padding, height, font size or
+leading; `test/guards.test.mjs` asserts it.
+
+**A line box that does not fit its content box cannot be centred in it.** It
+starts at the top of the content box and overflows the bottom, so the text
+reads low. This is the failure a fixed height invites: a control 42px tall with
+12px of padding leaves 16px of content box, and a 16px font at 1.55 needs 24.8.
+Whenever a height is declared, the content box has to be at least the line box,
+and at least the font's natural line box too, because WebKit will use that one
+for a text input whatever the leading says. The symptom is subtle enough to be
+mistaken for a font problem: it presents as a select whose label sits a pixel
+low, because a select's box is the widest and emptiest place to notice it.
+
+**`:focus-visible` matches a mouse click on a `<select>`.** It is not a
+Chrome bug: a select stays keyboard-operable once focused, so the UA is right
+to indicate focus. It does mean `:focus-visible` cannot express "ring on Tab,
+nothing on click" for a dropdown, which a button gets for free because a button
+does not keep focus on click at all. A select also stays focused after you pick
+from it, so a focus ring outlives the choice and sits glowing on a control
+nobody is looking at. Where that matters, record the modality on the root
+(`data-focus="pointer" | "key"`, set from `pointerdown` and a `Tab` keydown) and
+let the pointer state colour on `:hover` only. Do not reach for it on text
+fields: you need to see where you are typing.
+
+**Selected is a brand fill, not ink.** Blue as an area is the light stop, so a
+chosen filter capsule fills with the same value the filled button does and the
+two read as one control family; in dark that flips to the brand yellow with a
+near-black label, the same mode flip everything else makes. An ink fill makes
+the one selected thing on a page look switched off.
+
+**A colour literal that must not follow the theme is allowlisted, not
+forgotten.** Rule 1 forbids literals outside layer 2, but a handful genuinely
+cannot be tokens: a white label on a colour the *customer* picked, the two
+fixed grounds a logo preview exists to demonstrate, and a vendor's own control
+such as Apple's `#007AFF`. Those are listed with their reason in the consuming
+project's guard test, so a new literal fails the build instead of quietly
+joining them.
+
 **One nav component, two modes.** A nav is a list of destinations plus a
 utility cluster laid out along an axis, and the axis is the only thing the mode
 changes: `data-nav="bar"` for the marketing header, `data-nav="side"` for the
@@ -187,8 +255,11 @@ Vendor the CSS into `Theme/css/` and regenerate the theme token block:
 
 ```bash
 node build/emit-sitekit-theme.mjs > /path/to/nfc-cool-website/Theme/tokens-block.yaml
-node build/emit-bundle.mjs
+npm run build
 ```
+
+The site does not consume the package yet, so it has no `consumers.json` entry.
+Add one when it does, and the sync and the drift guard cover it for free.
 
 Two things to know:
 
@@ -202,9 +273,40 @@ Two things to know:
 ### business_card_service (Django, no npm at all)
 
 ```bash
-node build/emit-bundle.mjs   # writes dist/design.css
-cp dist/design.css /path/to/business_card_service/web/static/stylesheets/
+npm run build    # regenerates every layer AND pushes it to every consumer
 ```
+
+Do not copy the bundle by hand. `consumers.json` records who vendors what, and
+`build/sync-consumers.mjs` writes it there as the last step of `npm run build`,
+so a change to the system reaches its consumers in the same breath that
+produced it. `npm run sync` does it alone; `npm run sync:check` fails without
+writing, which is what CI should run.
+
+**Why this exists.** A vendored copy is a copy, and a copy drifts silently:
+on 2026-09-07 business_card_service was 1216 bytes behind `dist/`, with nothing
+anywhere to say so, because the instruction here used to be a manual `cp`.
+`npm test` now fails if a consumer present on the machine has fallen behind.
+
+Three things the sync deliberately does **not** do:
+
+- **It never creates a vendored file**, only refreshes one that is already
+  there. Adopting the package is the consuming project's decision, taken with
+  `npm run sync -- --adopt`. Without that rule a build in this repo would drop
+  an untracked bundle into a checkout that does not use one — which is exactly
+  what business_card_service's `main` is, since it still links its own
+  `dashboard.css`.
+- **It does not fail on an absent consumer.** The suite still passes on a
+  runner that has only this repo checked out. `NFCCOOL_DESIGN_CONSUMER_ROOT`
+  points the resolver somewhere other than this repo's parent.
+- **It does not know which branch is checked out.** A vendored file lives in a
+  working tree, so what sync refreshes is whatever that tree currently holds.
+  While an adoption is in progress on a branch, that is the branch this
+  refreshes — the manifest's `why` says so for each consumer, and keeping it
+  honest is part of the entry.
+
+A consumer that installs from npm — MomentoMarks — is deliberately **not** in
+the manifest. It resolves the package itself and cannot drift, so listing it
+would imply a copy that does not exist.
 
 Link it once in `web/home/templates/base.html`, `web/templates/base_error.html`
 and `web/vcard_profile/templates/my_profile.html`. Those three templates are

@@ -113,13 +113,16 @@
    --btn-border-hover: var(--color-danger-fg);
 }
 .btn-danger.btn-primary {
+   /* The label is its own token, not --color-on-brand: in dark mode the danger
+      fill is a LIGHT red, where a near-white label measures 2.25:1. It takes a
+      near-black label there, the same flip the filled primary makes. */
    --btn-bg: var(--color-danger-fg);
-   --btn-fg: var(--color-on-brand);
+   --btn-fg: var(--color-danger-on);
    --btn-border: var(--color-danger-fg);
    --btn-bg-hover: var(--color-danger-fg);
    /* The hover label has to be set here too: without it the outlined danger
       variant above wins, and its red label vanishes into this red fill. */
-   --btn-fg-hover: var(--color-on-brand);
+   --btn-fg-hover: var(--color-danger-on);
    --btn-border-hover: var(--color-danger-fg);
 }
 
@@ -196,6 +199,24 @@
    border-color: var(--color-link);
    box-shadow: 0 0 0 4px var(--color-link-light);
 }
+/* A dropdown keeps focus after you pick from it, so its ring outlives the
+   choice and sits on a control nobody is looking at any more. :focus-visible
+   cannot filter that out: it matches a plain mouse click on a select, because
+   a select stays keyboard-operable once focused -- a button does not keep
+   focus at all, which is why buttons never show this. So the modality is
+   recorded on the root instead, and only a pointer-driven focus is quietened.
+   This is additive on purpose: with nothing setting data-focus the ring above
+   still fires for every focus, so a consumer that does not opt in loses no
+   affordance. Text fields are deliberately excluded -- you need to see where
+   you are typing. */
+:root[data-focus="pointer"] .select:focus {
+   border-color: var(--field-border);
+   box-shadow: none;
+}
+:root[data-focus="pointer"] .select:focus:hover {
+   border-color: var(--color-text-secondary);
+}
+
 .input[aria-invalid="true"], .textarea[aria-invalid="true"], .select[aria-invalid="true"] {
    border-color: var(--color-danger-fg);
 }

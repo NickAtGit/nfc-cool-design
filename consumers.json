@@ -1,0 +1,13 @@
+{
+  "$note": "Who vendors this package's built CSS, and where. A consumer that installs from npm (MomentoMarks) is not listed: it gets the package itself and cannot drift. A path that does not exist on this machine is skipped, not an error, so the build works on a CI runner with no siblings. Roots resolve against this repo's parent directory unless absolute; NFCCOOL_DESIGN_CONSUMER_ROOT overrides that parent. Sync UPDATES a vendored file that is already there and never creates one: a consumer adopts the package deliberately, with --adopt, not as a side effect of someone running a build.",
+  "consumers": {
+    "business_card_service": {
+      "root": "business_card_service",
+      "why": "Django, no npm at all: the bundle is copied into staticfiles and linked from the templates. Adoption is IN PROGRESS as of 2026-09-07 and lives on the design/card-page-on-design-system branch, where both files are still untracked; main's console links its own dashboard.css and does not consume the package. Until that branch lands this entry only refreshes the copies when that branch is the one checked out.",
+      "files": {
+        "dist/design.css": "web/static/stylesheets/design.css",
+        "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css"
+      }
+    }
+  }
+}
