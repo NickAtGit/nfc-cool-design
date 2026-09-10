@@ -30,6 +30,10 @@ const mqDrawer = () => window.matchMedia('(max-width: 767px)');
 
 function setExpanded(toggle, panel, open) {
   toggle.setAttribute('aria-expanded', String(open));
+  // The burger ships both icons and swaps them on this class, so the class and
+  // aria-expanded are the same fact told twice -- to the eye and to a screen
+  // reader. Set together here so they can never disagree.
+  toggle.classList.toggle('is-open', open);
   panel.hidden = !open;
 }
 
@@ -78,7 +82,7 @@ function initSide(nav) {
     if (scrim) { scrim.remove(); scrim = null; }
     document.body.style.removeProperty('overflow');
     document.querySelectorAll(`[data-nav-open="${nav.id}"]`)
-      .forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      .forEach((b) => { b.setAttribute('aria-expanded', 'false'); b.classList.remove('is-open'); });
     if (lastFocus) { lastFocus.focus(); lastFocus = null; }
   }
 
@@ -90,7 +94,7 @@ function initSide(nav) {
     scrim.className = 'nav-scrim';
     scrim.addEventListener('click', close);
     nav.parentNode.insertBefore(scrim, nav);
-    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    if (trigger) { trigger.setAttribute('aria-expanded', 'true'); trigger.classList.add('is-open'); }
     const first = nav.querySelector('a, button');
     if (first) first.focus();
   }
