@@ -235,6 +235,86 @@ and the unfold is switched off.
 
 ---
 
+## Narrow viewports
+
+Settled 2026-09-10, working through the business console on a 340px screen. Every
+one of these started as "the phone layout is cramped" and turned out to be a rule
+that holds at every width.
+
+**A control has one height.** 42px, buttons and fields alike. A narrow screen is
+not a reason to shrink a control, and a touch target is not a reason to invent a
+new number: the console had a 32px `select-inline` with no small-screen override,
+so its filter rows were the hardest things on the page to hit, and the fix was to
+stop overriding the height rather than to add a 44px one. The same pass found a
+40px hex field, the only 40px control in that file, sitting 2px short of the
+swatch beside it. If a component sets its own height, that is the bug.
+
+**The gutter grows on a narrow screen. It never shrinks.** The instinct is to
+claw back width by tightening the page edge, and it is backwards: content flush
+to the frame is what reads as cramped, more than any density inside it. Take the
+space off card padding instead. The page needs its frame more than a card needs
+its inset.
+
+**A list's right edge comes from a fixed trailing control, not from shared
+tracks.** Rows are independent grids, so nothing lines up between them however
+carefully the widths inside one are picked. Subgrid looks like the answer and was
+tried first: make the list the grid, let each row inherit its tracks. It does not
+survive contact, because the parent's tracks are only as good as the items that
+size them, and in a list every child spans the full width -- the toolbar, the
+header row, the rows themselves. Nothing occupies column two on its own, so its
+`auto` track gets sized by those spanning items and comes out arbitrary; measured
+once at 161px of empty space with a pill floating in it. What actually gives a
+list its edge is the trailing control being a fixed size, 32px for a row menu,
+with each marker pushed against it by `justify-self: end`. That needs no shared
+tracks at all, and it is the right edge people read down.
+
+**Any track holding a form control wants `minmax(0, 1fr)`.** A bare `1fr` is
+`minmax(auto, 1fr)`, and that `auto` floor is the item's min-content size. A
+number input left to size itself asks for about 327px at 32px bold, so the track
+refuses to shrink, the grid overflows its own box, and whatever sits after it is
+pushed outside. The element's own computed width still reads as correct, which is
+what makes this one hard to see.
+
+**`overflow: hidden` turns an overflow into a disappearance.** Added for rounded
+corners on a grouped control, it silently ate the `+` button off the end of a
+stepper for a whole afternoon. It hides the symptom, not the cause: if something
+is missing from a container that clips, suspect the track sizing before the
+markup.
+
+**Never join values with a middot.** `A · B · C` is not a layout. It cannot align
+between rows, it strands its separators when a value is missing, and it is one of
+the surest signs of a generated interface. Values get columns, or their own line,
+or they leave.
+
+**Mark exceptions, not defaults.** A badge reading the expected state on nine rows
+out of ten is wallpaper, and it makes the tenth row harder to see, not easier. Put
+everything that wants attention in one column and leave that column empty on the
+ordinary rows: a list is then read by running down a single edge. A role is not a
+status, so the two share the column but not the voice, muted text against a pill.
+
+**Draw glyphs, do not type them.** Titillium Web has no chevron, no midline
+ellipsis, no ballot tick, no minus sign. Each one falls back to a different system
+face at a different weight and baseline, which is exactly the mismatched look a
+type system exists to prevent. Chevrons, dots, ticks and bars come from borders,
+`box-shadow` or an inline SVG, and then they inherit `currentColor` and work in
+both themes for free.
+
+**A hover-only affordance is not an affordance.** Touch has no hover, and
+`:focus-visible` is a keyboard heuristic that does not reliably match a tap. A
+disclosure needs `:hover`, `:focus` and `:focus-visible`, all three, because each
+answers a different input. An absolutely positioned bubble also needs somewhere to
+go on a narrow screen: in flow under its trigger, not anchored to an edge it can
+run off.
+
+**A fixed pixel width outlives the viewport that suited it.** Label columns,
+image previews and single-purpose fields are where this hides. A 120px label
+column leaves 170px for the value on a phone, so an email breaks mid-string; two
+fixed 220px previews that wrap become 460px of scrolling. Both were written for a
+desktop and neither had a small-screen override. If a width is not a token, ask
+what it does at 340px.
+
+---
+
 ## Consuming the package
 
 ### MomentoMarks, or any bundler
