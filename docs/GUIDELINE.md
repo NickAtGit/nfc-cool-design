@@ -281,6 +281,59 @@ stepper for a whole afternoon. It hides the symptom, not the cause: if something
 is missing from a container that clips, suspect the track sizing before the
 markup.
 
+**A setting that is on or off is a switch.** A checkbox is for picking members
+of a set; a switch is for turning one thing on. Three checkboxes at the foot of a
+card, each explaining itself behind a hover mark, were the controls that decide
+what a whole team may change on their own cards. As switches with their
+consequence on the line beneath, the row reads as a statement with its state
+beside it. Paint the switch from the checkbox rather than replacing it, so the
+form, the keyboard and the screen reader are untouched, and give the knob its own
+token: it stays light on a filled track in both themes, which neither the card
+colour nor the button's foreground does.
+
+**Copy follows the control.** The moment those checkboxes became switches,
+"Each person ticked gets a push" was describing something that no longer existed.
+A control's name in prose is part of the control.
+
+**A tooltip inside a `<label>` can never open on tap.** The label's activation
+behaviour runs on the click, focus moves to the field it labels, and the bubble
+closes in the same gesture that opened it. It looks like a CSS problem and is
+not. `preventDefault()` on the mark's own click stops the label activating, and
+the mark keeps the focus the bubble depends on.
+
+**Frame a popup by the container that has width, not by its trigger.** An 18px
+mark is a hopeless anchor: anchored left the bubble runs off the right edge,
+centred it runs off the left for a mark early in a row, and no `max-width` can
+clamp it because the trigger's x is unknown to CSS. Take the trigger out of the
+positioned chain and pin the bubble to the card's padding instead. It then cannot
+leave the card whatever the trigger's position, with no number to guess. Keep the
+block axis at the trigger's static position so it still opens where it belongs.
+
+**A read-once explanation folds; an answer to the question on screen does not.**
+The line that tells someone what a control will do to their team is not a
+footnote, it is the label's other half. Fold only what is read once, like the
+accepted file types before a first upload.
+
+**Say a number once per screen.** Two cards forty pixels apart, each stating
+"11 of 10 seats used", read as two different figures at a glance; on a phone they
+land almost on top of each other. The same went for a card count in a page head
+and again in the toolbar beneath it.
+
+**An empty state carries its action.** "No cards yet. Create one to get started"
+with nothing to press is a dead end, and it is the first thing a new team sees.
+
+**A button whose only job is to scroll is not a button.** "Invite people" in a
+page head, linking to `#invite`, where the invite form is already the first card
+on the page. On a phone it cost a full row above the thing it pointed at.
+
+**A media query adds no specificity.** Two rules of equal weight are decided by
+source order alone, so a phone rule written in the file's main breakpoint block
+loses to any same-weight rule further down the file. A component that defines its
+own grid later in the sheet keeps that grid on a phone, and the symptom is a
+desktop layout at 340px rather than anything that looks like a cascade problem.
+Put a component's narrow-viewport rules after the component, not in the shared
+block.
+
 **Never join values with a middot.** `A · B · C` is not a layout. It cannot align
 between rows, it strands its separators when a value is missing, and it is one of
 the surest signs of a generated interface. Values get columns, or their own line,
