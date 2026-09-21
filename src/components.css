@@ -590,6 +590,43 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 }
 .app-header .spacer { margin-inline-start: auto; }
 
+/* THE PAGE HEAD: where a console page says its name. The bar above it is
+   the shell's (logo, burger, theme) and never the page's, which is how the
+   business console has always read: the title sits at the top of the content,
+   its one-line consequence under it, and the page's actions at the inline
+   end of the same row so they land at one y whatever the title's length.
+   A page one level down carries a crumb above the title -- the way back,
+   named -- rather than an arrow in the bar. */
+.page-head {
+   display: flex; align-items: center; justify-content: space-between;
+   gap: var(--space-4); min-block-size: 3.25rem;
+   margin-block-end: var(--space-6);
+}
+.page-head-text {
+   display: flex; flex-direction: column; justify-content: center;
+   gap: var(--space-1); min-block-size: 3.25rem; min-inline-size: 0;
+}
+.page-head h1 {
+   font-family: var(--font-heading); font-weight: 700;
+   font-size: var(--text-subhead); line-height: var(--leading-snug);
+   letter-spacing: var(--tracking-heading); color: var(--color-text); margin: 0;
+}
+.page-head .sub { font-size: var(--text-xs); color: var(--color-text-secondary); }
+.page-head .crumb {
+   display: inline-flex; align-items: center; gap: var(--space-1);
+   font-size: var(--text-xs); font-weight: 600; color: var(--color-link-text);
+   text-decoration: none;
+}
+.page-head .crumb:hover { color: var(--color-link-text-hover); }
+.page-head .crumb svg { inline-size: 1em; block-size: 1em; }
+[dir="rtl"] .page-head .crumb svg { transform: scaleX(-1); }
+.page-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+/* On a phone the actions drop under the title and stretch. */
+@media (max-width: 599px) {
+   .page-head { flex-direction: column; align-items: stretch; }
+   .page-head .actions { justify-content: flex-start; }
+}
+
 /* ============================================================
    Layout helpers
    ============================================================ */
