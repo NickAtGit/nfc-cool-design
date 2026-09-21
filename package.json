@@ -20,7 +20,8 @@
     "./design.css": "./dist/design.css",
     "./tokens.json": "./src/tokens.json",
     "./design-tokens.css": "./dist/design-tokens.css",
-    "./nav.js": "./src/nav.js"
+    "./nav.js": "./src/nav.js",
+    "./theme.js": "./src/theme.js"
   },
   "scripts": {
     "prepare": "npm run build",

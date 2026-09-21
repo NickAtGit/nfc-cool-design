@@ -65,6 +65,7 @@
    --color-neutral-border: #E6E8EB;
    --field-bg: #FFFFFF;
    --field-border: #767E86;
+   --switch-knob: #FFFFFF;
    --platform-ios-fg: #1A60CE;
    --platform-ios-bg: rgba(26, 96, 206, 0.10);
    --platform-ios-border: rgba(26, 96, 206, 0.28);
@@ -134,6 +135,7 @@
    --color-neutral-border: #30363D;
    --field-bg: #0D1117;
    --field-border: #8B949E;
+   --switch-knob: #FFFFFF;
    --platform-ios-fg: #00A2F3;
    --platform-ios-bg: rgba(0, 162, 243, 0.12);
    --platform-ios-border: rgba(0, 162, 243, 0.34);

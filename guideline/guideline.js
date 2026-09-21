@@ -1,7 +1,7 @@
 (function () {
   const root = document.documentElement;
   const css = n => getComputedStyle(root).getPropertyValue(n).trim();
-  const KEY_THEME = 'nfccool.guideline.theme', KEY_DIR = 'nfccool.guideline.dir';
+  const KEY_DIR = 'nfccool.guideline.dir';
 
   /* --- resolve any colour (hex, rgb, rgba, transparent) to an rgb triplet --- */
   const probe = document.createElement('span');
@@ -100,12 +100,11 @@
     themeBtn.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
     dirBtn.textContent = root.getAttribute('dir') === 'rtl' ? 'LTR' : 'RTL';
   }
-  themeBtn.addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    remember(KEY_THEME, next);
-    labelToggles(); renderTables(); renderSwatches();
-  });
+  /* The button is the guideline's own, so it is not a .nav-theme-toggle that
+     theme.js would drive by delegation; it asks theme.js to flip and listens
+     for the answer, which also arrives when the OS flips the theme. */
+  themeBtn.addEventListener('click', () => window.nfccoolTheme.toggle());
+  root.addEventListener('nfccool:theme', () => { labelToggles(); renderTables(); renderSwatches(); });
   dirBtn.addEventListener('click', () => {
     const next = root.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
     root.setAttribute('dir', next);

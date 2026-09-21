@@ -64,6 +64,19 @@ const cases = [
   ['dark primary button hover label',  D['color-primary-fg'], D['color-primary-bg-hover'], AA],
   ['dark primary on brand band',       D['btn-onbrand-fg'],   D['btn-onbrand-bg'],         AA],
   ['dark android pill label',        D['platform-android-fg'],  D['color-bg-card'],  AA],
+
+  // The switch. The TRACK carries the state: its on-fill must read against the
+  // card in both themes. The knob only has to be seen on the off track, where
+  // it is the one thing that moves; on the dark theme's yellow on-track it is
+  // decoration and is not asserted. The avatar's default pair is the primary
+  // button's, already covered above.
+  ['light switch on-track against card', L['color-primary-bg'], L['color-bg-card'],  UI],
+  ['dark switch on-track against card',  D['color-primary-bg'], D['color-bg-card'],  UI],
+  ['light switch knob on the off track', L['switch-knob'],      L['field-border'],   UI],
+  ['dark switch knob on the off track',  D['switch-knob'],      D['field-border'],   UI],
+  // The progress fill against the two surfaces it sits on.
+  ['light progress fill on page',        L['color-primary-bg'], L['color-bg'],       UI],
+  ['dark progress fill on page',         D['color-primary-bg'], D['color-bg'],       UI],
 ];
 
 for (const [label, fg, bg, min] of cases) {

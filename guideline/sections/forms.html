@@ -26,6 +26,23 @@
     <div class="checkbox-row">
       <input type="checkbox" id="f6" checked><label for="f6">Show my company logo on the card</label>
     </div>
+    <div>
+      <label class="switch-row">
+        <span class="switch-label">Comments</span>
+        <span class="switch-hint">Anyone who can see the album can write under a memory.</span>
+        <input class="switch" type="checkbox" role="switch" checked>
+      </label>
+      <label class="switch-row">
+        <span class="switch-label">Members may edit their own cards</span>
+        <span class="switch-hint">Everyone switched on can change their card without asking.</span>
+        <input class="switch" type="checkbox" role="switch">
+      </label>
+      <label class="switch-row">
+        <span class="switch-label">Disabled</span>
+        <span class="switch-hint">Decided by the plan, not by the person.</span>
+        <input class="switch" type="checkbox" role="switch" checked disabled>
+      </label>
+    </div>
     <div class="input-group">
       <input class="input" type="email" placeholder="Newsletter signup" aria-label="Email">
       <button class="btn btn-primary">Subscribe</button>
@@ -36,4 +53,6 @@
   <b>Sixteen pixels, always.</b> Inputs are <code>--text-body</code> because anything smaller makes iOS
   Safari zoom the page on focus. Focus is the newsletter form's <code>:focus-within</code> ring,
   generalised to every control, and the field border is its own token so a boundary reads on a card.
+  <b>A setting that is on or off is a switch</b>, painted from the checkbox so the form, the keyboard
+  and the screen reader are untouched; its consequence sits on the line beneath and does not fold.
 </div>

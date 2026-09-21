@@ -138,6 +138,7 @@ ${fonts === 'local' ? LOCAL_FONTS + '\n' : ''}${layersCSS()}
 /* ---- guideline chrome ---- */
 ${r('guideline/guideline.css')}
 </style>
+<script>${r('src/theme.js').replace(/<\/script/gi, '<\\/script')}</script>
 <script>${r('guideline/head.js')}</script>`;
   let body = `<div class="app-shell" data-mode="${mode}">
 ${sidebar(current, href)}

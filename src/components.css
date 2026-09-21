@@ -248,6 +248,68 @@
 }
 .checkbox-row label { font-size: var(--text-sm); line-height: var(--leading-normal); }
 
+/* A setting that is on or off is a switch; a checkbox is for picking members
+   of a set. Painted from the checkbox itself -- <input type="checkbox"
+   class="switch" role="switch"> -- so the form, the keyboard and the screen
+   reader are untouched. The off track takes --field-border, a control's own
+   edge where 3:1 is the bar; the on track is the filled primary, so a chosen
+   thing reads as the same family as a primary button and flips to brand
+   yellow in dark. The knob is its own token because it stays light on both
+   tracks in both themes, which neither the card colour nor the button's label
+   does. The track is the state indicator; the knob only has to be seen on the
+   off track, where it is the one thing that moves. */
+.switch {
+   appearance: none;
+   flex-shrink: 0;
+   inline-size: 2.625rem;
+   block-size: 1.625rem;
+   margin: 0;
+   padding: 0;
+   border: 0;
+   border-radius: var(--radius-pill);
+   background: var(--field-border);
+   position: relative;
+   cursor: pointer;
+   transition: background var(--transition);
+}
+.switch::after {
+   content: "";
+   position: absolute;
+   inset-block-start: 3px;
+   inset-inline-start: 3px;
+   inline-size: 1.25rem;
+   block-size: 1.25rem;
+   border-radius: var(--radius-pill);
+   background: var(--switch-knob);
+   box-shadow: var(--elev-1);
+   transition: inset-inline-start var(--transition);
+}
+.switch:checked { background: var(--color-primary-bg); }
+.switch:checked::after { inset-inline-start: 1.1875rem; }
+.switch:disabled { opacity: 0.55; cursor: not-allowed; }
+/* The row a switch lives in, as a <label> so the whole row toggles it: the
+   name and its consequence stacked on the inline-start side, the control on
+   the inline-end side, centred across both lines. The consequence is the
+   label's other half, not a footnote, so it does not fold. */
+.switch-row {
+   display: grid;
+   grid-template-columns: minmax(0, 1fr) auto;
+   align-items: center;
+   gap: var(--space-1) var(--space-4);
+   padding-block: var(--space-3);
+   cursor: pointer;
+}
+.switch-row .switch { grid-column: 2; grid-row: 1 / span 2; }
+.switch-row .switch-label {
+   grid-column: 1; font-family: var(--font-heading); font-weight: 600;
+   font-size: var(--text-sm); color: var(--color-text);
+}
+.switch-row .switch-hint {
+   grid-column: 1; font-size: var(--text-xs); color: var(--color-text-muted);
+   line-height: var(--leading-normal);
+}
+.switch-row + .switch-row { border-block-start: 1px solid var(--color-border-light); }
+
 /* Pill-in-a-pill input group, as used by the newsletter form. */
 .input-group {
    display: flex; align-items: center;
@@ -346,6 +408,38 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 .status-dot.is-no      { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
 .status-dot.is-limited { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
 
+/* A person: a picture, or their initials. Sized by one custom property so a
+   size modifier changes the glyph with the box. The default is the primary
+   fill and its label, which pass together by construction; a product that
+   derives a colour per person (a hash of their id) sets --avatar-bg inline
+   and owns the contrast of the ink it puts on it. */
+.avatar {
+   --avatar-bg: var(--color-primary-bg);
+   --avatar-fg: var(--color-primary-fg);
+   --avatar-size: 2.625rem;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   flex-shrink: 0;
+   inline-size: var(--avatar-size);
+   block-size: var(--avatar-size);
+   border-radius: var(--radius-pill);
+   background: var(--avatar-bg);
+   color: var(--avatar-fg);
+   font-family: var(--font-heading);
+   font-weight: 600;
+   font-size: calc(var(--avatar-size) * 0.4);
+   line-height: 1;
+   text-transform: uppercase;
+   letter-spacing: var(--tracking-label);
+   overflow: hidden;
+   user-select: none;
+}
+.avatar img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+.avatar-sm { --avatar-size: 2rem; }
+.avatar-lg { --avatar-size: 4rem; }
+.avatar-xl { --avatar-size: 6rem; }
+
 .empty-state {
    text-align: center; padding: var(--space-10) var(--space-6);
    color: var(--color-text-secondary);
@@ -392,6 +486,28 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 }
 @keyframes skeleton-pulse { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; opacity: 0.8; } }
+
+/* Determinate progress: a native <progress class="progress" value max>, so it
+   announces itself and needs no script. Indeterminate waiting is the button's
+   own spinner (data-loading), not this. The track is the neutral tint so it
+   reads on the page and on a card alike. */
+.progress {
+   appearance: none;
+   display: block;
+   inline-size: 100%;
+   block-size: 0.5rem;
+   border: 0;
+   border-radius: var(--radius-pill);
+   background: var(--color-neutral-bg);
+   overflow: hidden;
+   color: var(--color-primary-bg);
+}
+.progress::-webkit-progress-bar { background: var(--color-neutral-bg); border-radius: var(--radius-pill); }
+.progress::-webkit-progress-value {
+   background: var(--color-primary-bg); border-radius: var(--radius-pill);
+   transition: inline-size var(--transition);
+}
+.progress::-moz-progress-bar { background: var(--color-primary-bg); border-radius: var(--radius-pill); }
 
 /* ============================================================
    Overlay - one modal that is a bottom sheet on small screens.

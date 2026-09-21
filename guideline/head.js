@@ -1,6 +1,5 @@
-/* Runs before first paint: restores the theme and direction a person chose on
-   an earlier page. A theme the host has already stamped on the root wins. */
-(function(){var r=document.documentElement,t=null,d=null;
-try{t=localStorage.getItem('nfccool.guideline.theme');d=localStorage.getItem('nfccool.guideline.dir');}catch(e){}
-if(!r.getAttribute('data-theme')){r.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}
+/* Runs before first paint: restores the reading direction a person chose on an
+   earlier page. The theme is src/theme.js's job, inlined just above this. */
+(function(){var r=document.documentElement,d=null;
+try{d=localStorage.getItem('nfccool.guideline.dir');}catch(e){}
 if(!r.getAttribute('dir')){r.setAttribute('dir',d||'ltr');}})();

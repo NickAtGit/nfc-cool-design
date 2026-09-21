@@ -47,7 +47,9 @@ Editing those outputs by hand is a drift bug and `npm test` fails on it.
    `test/contrast.test.mjs`.
 7. **Dark mode is `[data-theme]`, resolved before first paint.** One
    `localStorage` key, one attribute, one synchronous head script. Never
-   `prefers-color-scheme` in a component rule.
+   `prefers-color-scheme` in a component rule. The script is `src/theme.js`,
+   inlined in `<head>`; it also drives the nav's theme controls and records the
+   focus modality (`data-focus`). Consumers do not write their own.
 8. **Logical properties everywhere.** `margin-inline`, `inset-inline-start`,
    `border-inline-start`. Arabic is a shipping locale, not a future problem.
 
@@ -289,7 +291,8 @@ consequence on the line beneath, the row reads as a statement with its state
 beside it. Paint the switch from the checkbox rather than replacing it, so the
 form, the keyboard and the screen reader are untouched, and give the knob its own
 token: it stays light on a filled track in both themes, which neither the card
-colour nor the button's foreground does.
+colour nor the button's foreground does. That is `.switch` and `.switch-row` in layer 3
+now, with `--switch-knob` in the brand; the console's local copy is retired.
 
 **Copy follows the control.** The moment those checkboxes became switches,
 "Each person ticked gets a push" was describing something that no longer existed.
@@ -370,11 +373,25 @@ what it does at 340px.
 
 ## Consuming the package
 
-### MomentoMarks, or any bundler
+### MomentoMarks (Astro, vendored)
+
+This repo is private and MomentoMarks' Docker image installs from manifests
+alone, so a git or `link:` dependency breaks the production build. The bundle
+and the two scripts are vendored through the same `consumers.json` + sync that
+business_card_service uses:
 
 ```bash
-pnpm add @nfccool/design
+npm run build          # regenerates every layer AND refreshes the copies
+npm run sync:check     # fails if MomentoMarks' copies have fallen behind
 ```
+
+In `apps/web`, `Base.astro` imports `styles/design/design.css`, inlines
+`lib/client/design-theme.js` in `<head>`, and loads `design-nav.js` as a
+module. Fonts are the consumer's: this package declares `--font-*` and ships
+no woff2. The vendored files are generated output and are never edited there.
+
+Any bundler-based consumer that CAN install would do the same with
+
 ```js
 import '@nfccool/design/tokens.css';
 import '@nfccool/design/brands/nfccool.css';
@@ -437,9 +454,6 @@ Three things the sync deliberately does **not** do:
   refreshes — the manifest's `why` says so for each consumer, and keeping it
   honest is part of the entry.
 
-A consumer that installs from npm — MomentoMarks — is deliberately **not** in
-the manifest. It resolves the package itself and cannot drift, so listing it
-would imply a copy that does not exist.
 
 Link it once in `web/home/templates/base.html`, `web/templates/base_error.html`
 and `web/vcard_profile/templates/my_profile.html`. Those three templates are
