@@ -373,31 +373,37 @@ what it does at 340px.
 
 ## Consuming the package
 
-### MomentoMarks (Astro, vendored)
+### MomentoMarks (Astro, a git dependency)
 
-This repo is private and MomentoMarks' Docker image installs from manifests
-alone, so a git or `link:` dependency breaks the production build. The bundle
-and the two scripts are vendored through the same `consumers.json` + sync that
-business_card_service uses:
+This repo is private, so the package is installed from git, pinned by commit,
+with a read-only token where a machine installs it:
 
-```bash
-npm run build          # regenerates every layer AND refreshes the copies
-npm run sync:check     # fails if MomentoMarks' copies have fallen behind
+```jsonc
+// apps/web/package.json
+"@nfccool/design": "github:NickAtGit/nfc-cool-design#<commit>"
 ```
-
-In `apps/web`, `Base.astro` imports `styles/design/design.css`, inlines
-`lib/client/design-theme.js` in `<head>`, and loads `design-nav.js` as a
-module. Fonts are the consumer's: this package declares `--font-*` and ships
-no woff2. The vendored files are generated output and are never edited there.
-
-Any bundler-based consumer that CAN install would do the same with
-
 ```js
-import '@nfccool/design/tokens.css';
-import '@nfccool/design/brands/nfccool.css';
-import '@nfccool/design/components.css';
-import '@nfccool/design/archetypes.css';
+import "@nfccool/design/tokens.css";
+import "@nfccool/design/brands/nfccool.css";
+import "@nfccool/design/components.css";
+import "@nfccool/design/archetypes.css";   // the marketing pages only
 ```
+
+The `exports` all point at TRACKED files (`src/`), so the install needs no
+build step; `prepare` is not allowed to run there. Bumping the pin is how a
+design change reaches the web: commit here, push, `pnpm update @nfccool/design`
+there. GitHub Actions and the cell's Docker build read the token from the
+`NFCCOOL_DESIGN_TOKEN` secret and hand it to git as an `insteadOf` rewrite of
+`https://github.com/`. Fonts are the consumer's: this package declares
+`--font-*` and ships no woff2. The theme script is inlined in `<head>` from
+`@nfccool/design/theme.js`; `nav.js` is loaded as a module.
+
+**One nav, and its utilities stay in the bar.** The bar's markup is brand,
+panel (the destinations), utility cluster, then the burger — in that order,
+so below 1200px the destinations fold behind the burger while Sign in and the
+theme control remain visible, and the burger sits at the inline end. With the
+utilities inside the panel the burger sat beside the logo (MomentoMarks,
+2026-09-22).
 
 ### nfc-cool-website (SiteKit, no npm at build time)
 

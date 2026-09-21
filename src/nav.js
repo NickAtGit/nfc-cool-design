@@ -16,9 +16,12 @@
  *
  * Expected markup:
  *   <nav class="nav" data-nav="bar" id="site-nav">
+ *     <a class="nav-brand">
+ *     <div class="nav-panel" id="site-nav-panel"> ...destinations... </div>
+ *     <div class="nav-utility"> ...theme toggle, sign in... </div>
  *     <button class="nav-toggle" aria-controls="site-nav-panel" aria-expanded="false">
- *     <div class="nav-panel" id="site-nav-panel"> ... </div>
  *   </nav>
+ *   (utilities OUTSIDE the panel, burger LAST: they stay in the bar on a phone)
  *
  *   <button data-nav-open="app-nav">            <- drawer trigger, below md
  *   <nav class="nav" data-nav="side" id="app-nav">

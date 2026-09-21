@@ -1,5 +1,5 @@
 {
-  "$note": "Who vendors this package's built CSS, and where. A path that does not exist on this machine is skipped, not an error, so the build works on a CI runner with no siblings. Roots resolve against this repo's parent directory unless absolute; NFCCOOL_DESIGN_CONSUMER_ROOT overrides that parent. Sync UPDATES a vendored file that is already there and never creates one: a consumer adopts the package deliberately, with --adopt, not as a side effect of someone running a build.",
+  "$note": "Who vendors this package's built CSS, and where. A consumer that installs the package (MomentoMarks, a git dependency pinned by commit) is not listed: it resolves the package itself and cannot drift. A path that does not exist on this machine is skipped, not an error, so the build works on a CI runner with no siblings. Roots resolve against this repo's parent directory unless absolute; NFCCOOL_DESIGN_CONSUMER_ROOT overrides that parent. Sync UPDATES a vendored file that is already there and never creates one: a consumer adopts the package deliberately, with --adopt, not as a side effect of someone running a build.",
   "consumers": {
     "business_card_service": {
       "root": "business_card_service",
@@ -7,15 +7,6 @@
       "files": {
         "dist/design.css": "web/static/stylesheets/design.css",
         "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css"
-      }
-    },
-    "MomentoMarks": {
-      "root": "MomentoMarks",
-      "why": "Astro with a bundler, but the package cannot be installed: this repo is private on GitHub and the cell's Docker image installs from manifests alone, so a git or link: dependency breaks the production build. The full bundle is vendored (the app pages carry the archetype layer unused; it collides with nothing there), plus the two scripts. Adopted 2026-09-21 on the MomentoMarks branch design-system; until that branch lands on main this entry only refreshes the copies when that branch is the one checked out.",
-      "files": {
-        "dist/design.css": "apps/web/src/styles/design/design.css",
-        "dist/nav.js": "apps/web/src/lib/client/design-nav.js",
-        "dist/theme.js": "apps/web/src/lib/client/design-theme.js"
       }
     }
   }
