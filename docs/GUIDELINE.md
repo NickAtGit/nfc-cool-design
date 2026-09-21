@@ -389,8 +389,9 @@ import "@nfccool/design/components.css";
 import "@nfccool/design/archetypes.css";   // the marketing pages only
 ```
 
-The `exports` all point at TRACKED files (`src/`), so the install needs no
-build step; `prepare` is not allowed to run there. Bumping the pin is how a
+The `exports` all point at TRACKED files (`src/`) — the `dist/` bundles are
+for the vendoring consumers only and are not exported — so a git install runs
+no script at all. Bumping the pin is how a
 design change reaches the web: commit here, push, `pnpm update @nfccool/design`
 there. GitHub Actions and the cell's Docker build read the token from the
 `NFCCOOL_DESIGN_TOKEN` secret and hand it to git as an `insteadOf` rewrite of

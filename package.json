@@ -17,14 +17,11 @@
     "./components.css": "./src/components.css",
     "./archetypes.css": "./src/archetypes.css",
     "./email.css": "./src/email.css",
-    "./design.css": "./dist/design.css",
     "./tokens.json": "./src/tokens.json",
-    "./design-tokens.css": "./dist/design-tokens.css",
     "./nav.js": "./src/nav.js",
     "./theme.js": "./src/theme.js"
   },
   "scripts": {
-    "prepare": "npm run build",
     "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
     "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
