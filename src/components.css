@@ -626,6 +626,11 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    .page-head { flex-direction: column; align-items: stretch; }
    .page-head .actions { justify-content: flex-start; }
 }
+/* A FORM PAGE IN THE CONSOLE: the page head and the cards under it share one
+   reading column, centred in the page column, so a label is never a foot
+   away from its control on a wide screen. A list page takes the whole column
+   and needs no class. */
+.form-narrow { inline-size: 100%; max-inline-size: var(--measure-content); margin-inline: auto; }
 
 /* ============================================================
    Layout helpers
@@ -945,6 +950,11 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 /* stacked rail: each label sits under its icon, so a tablet keeps readable
    destinations without paying for the full width. Counts, section labels and
    the logo step aside; only the person's own collapse takes the labels away. */
+@media (max-width: 1199px) {
+   /* The person's own collapse is a choice between the column and the rail;
+      below xl the viewport has already made it. */
+   [data-nav="side"] [data-nav-collapse] { display: none; }
+}
 @media (min-width: 768px) and (max-width: 1199px) {
    [data-nav="side"] { inline-size: var(--nav-rail-stacked); padding-inline: var(--space-2); }
    [data-nav="side"] .nav-link {
@@ -1003,6 +1013,11 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
       box-shadow: var(--elev-2);
       animation: nav-drop var(--transition) both;
    }
+   /* Closed by CSS, not only by the script: the panel is a dropdown here, and a
+      page that painted it open for the instant before nav.js ran would show
+      the whole menu unfolding on every load. `hidden` is what nav.js sets and
+      what a screen reader honours; the class is the same fact, painted. */
+   [data-nav="side"]:not(.is-open) .nav-panel,
    [data-nav="side"] .nav-panel[hidden] { display: none; }
    [data-nav="side"] .nav-link { padding: var(--space-3) var(--space-4); }
    [data-nav="side"] .nav-utility { margin-block-start: var(--space-3); }
