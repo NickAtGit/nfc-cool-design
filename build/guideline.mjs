@@ -50,7 +50,8 @@ const GLYPHS = {
 };
 const SVG = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
 const icon = slug => `<svg class="nav-icon" ${SVG}>${GLYPHS[slug]}</svg>`;
-const BURGER = `<svg width="16" height="16" ${SVG.replace('stroke-width="1.8"', 'stroke-width="2"')}><path d="M3 6h18M3 12h18M3 18h18"/></svg>`;
+const BURGER_OPEN = `<svg class="nav-toggle-icon nav-toggle-icon-open" width="16" height="16" ${SVG.replace('stroke-width="1.8"', 'stroke-width="2"')}><path d="M3 6h18M3 12h18M3 18h18"/></svg>`;
+const BURGER_CLOSE = `<svg class="nav-toggle-icon nav-toggle-icon-close" width="16" height="16" ${SVG.replace('stroke-width="1.8"', 'stroke-width="2"')}><path d="M5 5l14 14M19 5L5 19"/></svg>`;
 
 const LOGO = `<a class="nav-brand" href="HOME"><img class="nav-logo-on-light" src="images/nfc-secondary-logo-black.webp" alt="NFC.cool" width="600" height="148"><img class="nav-logo-on-dark" src="images/nfc-secondary-logo-white.webp" alt="NFC.cool" width="600" height="148"></a>`;
 
@@ -63,13 +64,19 @@ export function sidebar(current, href) {
     }).join('\n') + '\n</ul>').join('\n');
   return `<nav class="nav" data-nav="side" id="guide-nav" aria-label="Guideline">
 ${LOGO.replace('HOME', href(SECTIONS[0]))}
+<button class="nav-theme-toggle" type="button" aria-label="Toggle light or dark theme"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18V4a8 8 0 1 1 0 16z"/></svg></button>
+<button class="nav-toggle" type="button" aria-controls="guide-nav-panel" aria-expanded="false" aria-label="Menu">${BURGER_OPEN}${BURGER_CLOSE}</button>
+<div class="nav-panel" id="guide-nav-panel">
 ${lists}
-<div class="nav-utility"><button class="btn btn-ghost btn-sm" type="button" data-nav-collapse aria-label="Collapse navigation" title="Collapse navigation"><svg width="18" height="18" ${SVG}><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button></div>
+<div class="nav-utility">
+<div class="nav-theme-switch" role="group" aria-label="Colour theme"><button type="button" data-theme-set="light" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Light</span></button><button type="button" data-theme-set="dark" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Dark</span></button></div>
+<button class="btn btn-ghost btn-sm" type="button" data-nav-collapse aria-label="Collapse navigation" title="Collapse navigation"><svg width="18" height="18" ${SVG}><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+</div>
+</div>
 </nav>`;
 }
 
 const HEADER = `<header class="app-header">
-  <button class="nav-toggle" type="button" data-nav-open="guide-nav" aria-label="Menu">${BURGER}</button>
   <span class="ks-site-name"><span class="brand-name">NFC<em class="brand-tail">.cool</em></span> Design Guideline</span>
   <span class="spacer"></span>
   <span class="ks-bp" id="ks-bp"></span>

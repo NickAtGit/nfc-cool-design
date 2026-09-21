@@ -1,6 +1,6 @@
 <p class="ks-lede">
   One component, two modes. A nav is a list of destinations plus a utility cluster laid out along an
-  axis; the axis is the only thing the mode changes, so the link shape, active state, focus, drawer
+  axis; the axis is the only thing the mode changes, so the link shape, active state, focus, fold
   mechanics and toggle button are written once and shared.
 </p>
 
@@ -71,10 +71,6 @@
     </nav>
     <div class="ks-shell-main">
       <header class="app-header" style="margin:calc(var(--space-5) * -1) calc(var(--space-5) * -1) var(--space-5)">
-        <button class="nav-toggle" type="button" data-nav-open="ks-side" aria-label="Menu">
-          <svg class="nav-toggle-icon nav-toggle-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-      <svg class="nav-toggle-icon nav-toggle-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
-        </button>
         <h1>Overview</h1><span class="spacer"></span>
         <button class="btn btn-primary btn-sm">New card</button>
       </header>
@@ -128,11 +124,11 @@
 <div class="ks-basis">
   <b>The console sidebar.</b> Three modes on the existing four breakpoints, so no new breakpoint enters
   the system: full with labels at <code>lg</code> and up, a stacked rail with each label under its
-  icon from <code>md</code> to <code>lg</code>, and an off-canvas drawer with a scrim below
+  icon from <code>md</code> to <code>xl</code>, and below <code>md</code> a sticky bar whose burger drops the panel under it, the way the business console has always worked on a phone. Not a drawer: a panel that opens where the thumb already is beats one that slides in from an edge. It sits below
   <code>md</code>.
   <code>.is-collapsed</code> is how a person collapses the sidebar themselves, and the choice
   persists. The sidebar follows the theme: the console obeys one palette rather than carrying a
   second dark surface family that has to be kept in contrast on its own.
   <span class="ks-note" style="display:block;margin-top:var(--space-2)">Below 768px the first example
-  becomes a drawer. Use the burger in its header to open it.</span>
+  becomes the bar with its dropdown. Use its own burger to open it.</span>
 </div>

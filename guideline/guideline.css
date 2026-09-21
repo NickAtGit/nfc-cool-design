@@ -124,7 +124,6 @@ body {
 .ks-navbox [data-nav="side"] { position:static; transform:none; block-size:auto; }
 .ks-navbox .ks-shell-main { flex:1; min-inline-size:0; padding:var(--space-5);
   font-size:var(--text-sm); color:var(--color-text-secondary); }
-.ks-navbox .nav-scrim { position:absolute; }
 
 .ks-decisions td { vertical-align:top; }
 .ks-yellows { display:grid; grid-template-columns:1fr; gap:var(--space-5); }

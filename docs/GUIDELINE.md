@@ -191,15 +191,20 @@ joining them.
 **One nav component, two modes.** A nav is a list of destinations plus a
 utility cluster laid out along an axis, and the axis is the only thing the mode
 changes: `data-nav="bar"` for the marketing header, `data-nav="side"` for the
-product console. Link shape, active state, focus, drawer mechanics and the
+product console. Link shape, active state, focus, fold mechanics and the
 toggle button are written once.
 
-The side mode has three responsive states, all on the existing four
-breakpoints: full with labels at `lg` and up, an icon rail from `md` to `lg`
-with labels hidden visually but kept in the accessibility tree, and an
-off-canvas drawer with a scrim below `md`. `.is-collapsed` forces the rail at
-any width, which is how a person collapses the sidebar themselves; the choice
-persists in `localStorage`.
+The side mode is the business console's shell, taken from the live console on
+2026-09-22 so a consumer inherits it rather than rebuilding it: a floating
+card that sticks at the gutter beside the page column. Three states on the
+four breakpoints: the full column with labels at `xl` and up, a stacked rail
+from `md` to `xl` with each label under its icon, and below `md` a sticky bar
+(brand, theme icon, burger) whose burger drops the panel under it as its own
+card. A dropdown, not a drawer: a panel that opens where the thumb already is
+beats one that slides in from an edge, and it needs no scrim. `.is-collapsed`
+forces the icon rail at any width, which is how a person collapses the sidebar
+themselves; the choice persists in `localStorage`. The page's own name is not
+in the bar: it is a `.page-head` at the top of the content.
 
 **This supersedes a written decision.** `business_card_service`'s
 `docs/superpowers/specs/2026-09-02-team-product-refocus-design.md` chose

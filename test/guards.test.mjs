@@ -258,13 +258,17 @@ for (const f of AUTHORED) {
   });
 }
 
-/* Below md the side nav is an off-canvas drawer, opened by a button that
-   names it with data-nav-open. That button has to be visible there, or the
-   drawer can never be opened on a phone. */
-test('the drawer trigger is displayed below md', () => {
-  const hit = scopedRules(read('src/components.css')).find(r =>
-    /max-width: 767px/.test(r.scope) && /\[data-nav-open\]/.test(r.selector) && /display:\s*inline-flex/.test(r.decl));
-  assert.ok(hit, 'a .nav-toggle[data-nav-open] rule with display: inline-flex must sit inside @media (max-width: 767px)');
+/* Below md the side nav is a bar whose burger drops the panel. The burger has
+   to be visible there, or the panel can never be opened on a phone; and the
+   panel has to honour `hidden`, or it is open before the script runs. */
+test('the phone bar shows the burger below md, and its panel folds', () => {
+  const rules = scopedRules(read('src/components.css'));
+  const burger = rules.find(r =>
+    /max-width: 767px/.test(r.scope) && /\[data-nav="side"\] \.nav-toggle/.test(r.selector) && /display:\s*inline-flex/.test(r.decl));
+  assert.ok(burger, 'a [data-nav="side"] .nav-toggle rule with display: inline-flex must sit inside @media (max-width: 767px)');
+  const folded = rules.find(r =>
+    /max-width: 767px/.test(r.scope) && /\.nav-panel\[hidden\]/.test(r.selector) && /display:\s*none/.test(r.decl));
+  assert.ok(folded, 'the side panel must honour [hidden] below md');
 });
 
 /* A page may hold several side navs (the guideline does: its own sidebar and
@@ -281,9 +285,9 @@ test('the sidebar collapse toggle is scoped to its own nav', () => {
 /* From md to lg the sidebar is a stacked rail: each label sits under its icon,
    so an iPad keeps readable destinations without paying for the full width.
    Only the person's own collapse takes the labels away. */
-test('the md to lg rail keeps its labels, stacked under the icons', () => {
+test('the md to xl rail keeps its labels, stacked under the icons', () => {
   const rail = scopedRules(read('src/components.css'))
-    .filter(r => /min-width: 768px\) and \(max-width: 899px/.test(r.scope));
+    .filter(r => /min-width: 768px\) and \(max-width: 1199px/.test(r.scope));
   const hidden = rail.filter(r => /\.nav-label/.test(r.selector) && /clip-path|position:\s*absolute/.test(r.decl));
   assert.deepEqual(hidden.map(r => r.selector), [], 'the rail must not visually hide .nav-label');
   assert.ok(rail.some(r => /\.nav-link\b/.test(r.selector) && /flex-direction:\s*column/.test(r.decl)),

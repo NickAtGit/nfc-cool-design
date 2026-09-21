@@ -651,9 +651,10 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    Responsive behaviour, driven by the four breakpoints:
      bar    xl and up   inline row
             below xl    burger + drop panel
-     side   lg and up   full sidebar with labels
-            md to lg    stacked rail, each label under its icon
-            below md    off-canvas drawer + scrim
+     side   xl and up   the floating column, labels beside icons
+            md to xl    stacked rail, each label under its icon
+            below md    a sticky bar (brand, theme icon, burger); the burger
+                        drops the panel under it as its own card
 
    .is-collapsed forces the icon-only rail at any width, so a person can
    collapse the sidebar themselves. It is also what lets one page show the
@@ -822,8 +823,10 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 
 /* Each mode carries only its own control, so a page can ship both navs and
    neither has to remember to hide the other's. */
-[data-nav="bar"] .nav-theme-switch,
-[data-nav="side"] .nav-theme-toggle { display: none; }
+[data-nav="bar"] .nav-theme-switch { display: none; }
+@media (min-width: 1200px) {
+   [data-nav="side"] .nav-theme-toggle { display: none; }
+}
 [data-nav="side"] .nav-theme-switch { inline-size: 100%; }
 /* A collapsed rail has no room for two words, so it falls back to the bar's
    single icon. Both controls ship in the side markup and swap here, the same
@@ -831,12 +834,6 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 [data-nav="side"].is-collapsed .nav-theme-switch { display: none; }
 [data-nav="side"].is-collapsed .nav-theme-toggle { display: inline-flex; }
 
-.nav-scrim {
-   position: fixed;
-   inset: 0;
-   z-index: 79;
-   background: var(--nav-scrim);
-}
 
 /* ---------- mode: bar ---------- */
 [data-nav="bar"] {
@@ -873,23 +870,62 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    [data-nav="bar"] .nav-link { padding: var(--space-3) var(--space-4); }
 }
 
-/* ---------- mode: side ---------- */
+/* ---------- mode: side ----------
+
+   THE CONSOLE'S SHELL, as the business console has always drawn it: the nav
+   is a floating card beside the page column. It sticks at the gutter so the
+   destinations, the account line and the theme control stay in view while the
+   page scrolls. Three states on the four breakpoints, one markup:
+
+     xl and up   the full column, labels beside icons, the theme switch
+     md to xl    a stacked rail: each label under its icon, the theme icon
+     below md    a sticky bar (brand, theme icon, burger) whose burger drops
+                 the panel under it as its own card -- a dropdown, not a
+                 drawer, because a panel that opens where the thumb already
+                 is beats one that slides in from an edge
+
+   Markup (the same parts as the bar, laid along the block axis):
+     <nav class="nav" data-nav="side" id="app-nav">
+       <a class="nav-brand">…both logos…</a>
+       <button class="nav-theme-toggle">   (bar and rail; the switch in the column)
+       <button class="nav-toggle" aria-controls="app-nav-panel" aria-expanded="false">
+       <div class="nav-panel" id="app-nav-panel">
+         <p class="nav-section">…</p><ul class="nav-list">…</ul>
+         <div class="nav-utility">…theme switch, account line, sign out…</div>
+       </div>
+     </nav> */
 [data-nav="side"] {
+   position: sticky;
+   inset-block-start: var(--space-6);
+   z-index: 50;
    flex-direction: column;
    align-items: stretch;
-   gap: var(--space-5);
+   gap: var(--space-4);
    inline-size: var(--nav-width);
-   /* It is a flex item inside .app-shell. Without this it shrinks below its
-      own width when the page is tight, squeezing every link until the label
+   /* A flex item inside .app-shell. Without this it shrinks below its own
+      width when the page is tight, squeezing every link until the label
       collapses under its icon. */
    flex-shrink: 0;
-   block-size: 100%;
+   align-self: flex-start;
+   block-size: calc(100vh - var(--space-6) * 2);
    padding: var(--space-5) var(--space-4);
-   background: var(--nav-side-bg);
-   border-inline-end: 1px solid var(--color-border);
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   box-shadow: var(--elev-0);
+}
+[data-nav="side"] .nav-brand { padding-inline: var(--space-2); }
+[data-nav="side"] .nav-panel {
+   display: flex; flex-direction: column; flex: 1; min-block-size: 0;
+   overflow-y: auto; gap: var(--space-1);
 }
 [data-nav="side"] .nav-list { flex-direction: column; align-items: stretch; gap: var(--space-1); }
-[data-nav="side"] .nav-utility { flex-direction: column; align-items: stretch; margin-block-start: auto; margin-inline-start: 0; }
+[data-nav="side"] .nav-utility {
+   flex-direction: column; align-items: stretch; gap: var(--space-3);
+   margin-block-start: auto; margin-inline-start: 0;
+   padding-block-start: var(--space-4);
+   border-block-start: 1px solid var(--color-border-light);
+}
 [data-nav="side"] .nav-section {
    padding: var(--space-4) var(--space-4) var(--space-2);
    font-size: var(--text-3xs);
@@ -898,7 +934,6 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    letter-spacing: var(--tracking-eyebrow);
    color: var(--color-text-muted);
 }
-
 /* collapsed rail: icons only, labels still in the accessibility tree */
 [data-nav="side"].is-collapsed { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
 [data-nav="side"].is-collapsed .nav-link { justify-content: center; padding-inline: 0; }
@@ -907,11 +942,10 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 [data-nav="side"].is-collapsed .nav-section,
 [data-nav="side"].is-collapsed .nav-brand img,
 [data-nav="side"].is-collapsed .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* stacked rail: each label sits under its icon, so an iPad keeps readable
+/* stacked rail: each label sits under its icon, so a tablet keeps readable
    destinations without paying for the full width. Counts, section labels and
    the logo step aside; only the person's own collapse takes the labels away. */
-@media (min-width: 768px) and (max-width: 899px) {
+@media (min-width: 768px) and (max-width: 1199px) {
    [data-nav="side"] { inline-size: var(--nav-rail-stacked); padding-inline: var(--space-2); }
    [data-nav="side"] .nav-link {
       flex-direction: column;
@@ -932,34 +966,62 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    [data-nav="side"] .nav-section,
    [data-nav="side"] .nav-brand img,
    [data-nav="side"] .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+   /* No room for two words: the rail takes the bar's single icon. */
+   [data-nav="side"] .nav-theme-switch { display: none; }
+   [data-nav="side"] .nav-theme-toggle { display: inline-flex; align-self: center; }
+   [data-nav="side"] .nav-utility .btn { padding-inline: 0; }
 }
-
-/* drawer */
+/* the phone bar, and the panel it drops */
 @media (max-width: 767px) {
-   /* The button that opens the drawer only exists at drawer widths. */
-   .nav-toggle[data-nav-open] { display: inline-flex; }
    [data-nav="side"] {
-      position: fixed;
-      inset-block: 0;
-      inset-inline-start: 0;
-      z-index: 80;
-      inline-size: var(--nav-width);
-      max-inline-size: 85vw;
-      box-shadow: var(--elev-3);
-      transform: translateX(-100%);
-      transition: transform var(--transition);
+      position: sticky;
+      inset-block-start: var(--space-4);
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-2);
+      inline-size: auto;
+      block-size: auto;
+      align-self: stretch;
+      padding: var(--space-2) var(--space-4);
    }
-   [dir="rtl"] [data-nav="side"] { transform: translateX(100%); }
-   [data-nav="side"].is-open { transform: translateX(0); }
-   [data-nav="side"][hidden] { display: flex; }
+   [data-nav="side"] .nav-brand { flex: 1; padding-inline: 0; }
+   [data-nav="side"] .nav-brand img { block-size: 1.25rem; }
+   [data-nav="side"] .nav-theme-switch { display: none; }
+   [data-nav="side"] .nav-theme-toggle { display: inline-flex; order: 1; }
+   [data-nav="side"] .nav-toggle { display: inline-flex; order: 2; }
+   /* The burger drops the panel under the bar, as its own floating card. */
+   [data-nav="side"] .nav-panel {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: calc(100% + var(--space-3));
+      flex: none;
+      max-block-size: calc(100vh - var(--nav-height) - var(--space-8));
+      padding: var(--space-3) var(--space-4) var(--space-4);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--elev-2);
+      animation: nav-drop var(--transition) both;
+   }
+   [data-nav="side"] .nav-panel[hidden] { display: none; }
+   [data-nav="side"] .nav-link { padding: var(--space-3) var(--space-4); }
+   [data-nav="side"] .nav-utility { margin-block-start: var(--space-3); }
 }
-@media (min-width: 768px) {
-   .nav-scrim { display: none; }
+@keyframes nav-drop {
+   from { opacity: 0; transform: translateY(calc(var(--space-2) * -1)); }
+   to { opacity: 1; transform: translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-   [data-nav="side"] { transition: none; }
+   [data-nav="side"] .nav-panel { animation-duration: 0s; }
 }
-
-/* The shell a console page sits in. */
-.app-shell { display: flex; min-block-size: 100vh; }
+/* The shell a console page sits in: the nav card and the page column, side by
+   side at the gutter, stacked on a phone. */
+.app-shell {
+   display: flex; align-items: flex-start; gap: var(--space-6);
+   padding: var(--space-6) var(--container-padding);
+   min-block-size: 100vh;
+}
 .app-shell > .app-main { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; }
+@media (max-width: 767px) {
+   .app-shell { flex-direction: column; align-items: stretch; gap: var(--space-4); padding: var(--space-4); }
+}
