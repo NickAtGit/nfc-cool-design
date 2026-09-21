@@ -373,10 +373,9 @@ what it does at 340px.
 
 ## Consuming the package
 
-### MomentoMarks (Astro, a git dependency)
+### MomentoMarks (Astro, a dependency)
 
-This repo is private, so the package is installed from git, pinned by commit,
-with a read-only token where a machine installs it:
+This repo is public, so the package is installed from GitHub, pinned by commit:
 
 ```jsonc
 // apps/web/package.json
@@ -389,15 +388,14 @@ import "@nfccool/design/components.css";
 import "@nfccool/design/archetypes.css";   // the marketing pages only
 ```
 
-The `exports` all point at TRACKED files (`src/`) — the `dist/` bundles are
-for the vendoring consumers only and are not exported — so a git install runs
-no script at all. Bumping the pin is how a
-design change reaches the web: commit here, push, `pnpm update @nfccool/design`
-there. GitHub Actions and the cell's Docker build read the token from the
-`NFCCOOL_DESIGN_TOKEN` secret and hand it to git as an `insteadOf` rewrite of
-`https://github.com/`. Fonts are the consumer's: this package declares
-`--font-*` and ships no woff2. The theme script is inlined in `<head>` from
-`@nfccool/design/theme.js`; `nav.js` is loaded as a module.
+pnpm records it as a tarball with an integrity hash, so no build machine needs
+git or a token. The `exports` all point at TRACKED files (`src/`); the `dist/`
+bundles are for the vendoring consumers only and are not exported, so the
+install runs no script. Bumping the pin is how a design change reaches the
+web: commit here, push, `pnpm update @nfccool/design` there. Fonts are the
+consumer's: this package declares `--font-*` and ships no woff2. The theme
+script is inlined in `<head>` from `@nfccool/design/theme.js`; `nav.js` is
+loaded as a module.
 
 **One nav, and its utilities stay in the bar.** The bar's markup is brand,
 panel (the destinations), utility cluster, then the burger — in that order,
