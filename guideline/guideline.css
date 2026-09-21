@@ -117,13 +117,11 @@ body {
 }
 
 /* nav examples: contain sticky/fixed so they stay in their box */
-.ks-navbox { position:relative; overflow:hidden; border:1px dashed var(--color-border);
+.ks-navbox { position:relative; border:1px dashed var(--color-border);
   border-radius:var(--radius-lg); margin-block-end:var(--space-3); background:var(--color-bg); }
 .ks-navbox [data-nav="bar"] { position:static; }
-.ks-navbox .ks-shell { display:flex; min-block-size:15rem; }
-.ks-navbox [data-nav="side"] { position:static; transform:none; block-size:auto; }
-.ks-navbox .ks-shell-main { flex:1; min-inline-size:0; padding:var(--space-5);
-  font-size:var(--text-sm); color:var(--color-text-secondary); }
+.ks-navbox .app-shell { min-block-size:15rem; }
+.ks-navbox [data-nav="side"] { position:relative; inset-block-start:auto; block-size:auto; }
 
 .ks-decisions td { vertical-align:top; }
 .ks-yellows { display:grid; grid-template-columns:1fr; gap:var(--space-5); }

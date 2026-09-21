@@ -16,4 +16,7 @@ open site/index.html   # the guideline, one page per section
 `src/tokens.json` is the source of truth. `src/tokens.css`, `src/brands/*.css`
 and `src/email.css` are generated from it and must not be hand-edited.
 
-Read [docs/GUIDELINE.md](docs/GUIDELINE.md) before changing anything.
+Read [docs/GUIDELINE.md](docs/GUIDELINE.md) before changing anything, and
+[docs/RECIPES.md](docs/RECIPES.md) before building a page: it has the complete
+markup for a console list page, a console form page, an empty state and a
+marketing page, so a page is assembled rather than designed.

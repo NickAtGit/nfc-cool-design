@@ -376,6 +376,15 @@ what it does at 340px.
 
 ---
 
+## Building a page
+
+A page is assembled, not designed: the system owns the shell, the page head,
+every surface, control and piece of feedback, and a page owns its content and
+the layout of what is unique to it. [RECIPES.md](RECIPES.md) has the complete
+markup for the four page kinds every NFC.cool property has (a console list, a
+console form, an empty state, a marketing page) and the wiring in each
+consumer. Start there.
+
 ## Consuming the package
 
 ### MomentoMarks (Astro, a dependency)
