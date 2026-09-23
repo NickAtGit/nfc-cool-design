@@ -606,9 +606,19 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    display: flex; flex-direction: column; justify-content: center;
    gap: var(--space-1); min-block-size: 3.25rem; min-inline-size: 0;
 }
+/* A FLAT SIZE, NOT A FLUID ONE, and the one place in this file that states a
+   size rather than naming a step on the ladder. The console's title has been
+   one size at every width on business.nfc.cool since it shipped, and this is
+   it. `--text-subhead` is a clamp against the VIEWPORT, so the same title lost
+   a fifth of itself the moment the window was half a screen wide -- which is
+   exactly how a console is
+   looked at when it is being compared with something else, and it read as a
+   smaller page rather than a narrower one. Nico, 2026-09-23: "titles look too
+   small, apply the business.nfc.cool style". A page column is not a hero: it
+   is a fixed measure at every width it has, so its title is too. */
 .page-head h1 {
    font-family: var(--font-heading); font-weight: 700;
-   font-size: var(--text-subhead); line-height: var(--leading-snug);
+   font-size: 1.625rem; line-height: var(--leading-heading);
    letter-spacing: var(--tracking-heading); color: var(--color-text); margin: 0;
 }
 .page-head .sub { font-size: var(--text-xs); color: var(--color-text-secondary); }
@@ -723,6 +733,53 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    font-variant-numeric: tabular-nums;
    color: var(--color-text-muted);
 }
+
+/* THE ACCOUNT LINE, at the foot of the console column: who is signed in, then
+   the way out. The business console has drawn it this way since it shipped and
+   it is the half of the column a person recognises -- a name and an address
+   under the destinations, not a row of blue words. Two controls, because they
+   do different things: the identity is a LINK to the account page, and signing
+   out is a button beside it, carrying its icon alone: in a column this narrow
+   the word "Sign out" ate the space the address needed, and the address is the
+   fact worth keeping. The label ships in a `.sr-only` span all the same.
+
+   Composes `.avatar`: one drawing of a person in this system, sized `sm` here.
+
+   Markup:
+     <div class="nav-account">
+       <a class="nav-account-link" href="…"><span class="avatar avatar-sm">N</span>
+         <span class="nav-account-who">
+           <span class="nav-account-name">…</span><span class="nav-account-email">…</span>
+         </span></a>
+       <button class="nav-account-out">…icon…<span class="sr-only">Sign out</span></button>
+     </div> */
+.nav-account { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); }
+.nav-account-link {
+   flex: 1; min-inline-size: 0;
+   display: flex; align-items: center; gap: var(--space-3);
+   padding: var(--space-1) var(--space-2);
+   margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1);
+   border-radius: var(--radius); color: inherit; text-decoration: none;
+}
+.nav-account-link:hover { background: var(--nav-fill-active); }
+/* min-inline-size: 0 on both the row and the column, or a long address refuses
+   to ellipsize and widens the column instead: a flex item's floor is its
+   content, and `overflow: hidden` on the text alone never reaches it. */
+.nav-account-who {
+   flex: 1; min-inline-size: 0;
+   display: flex; flex-direction: column; line-height: var(--leading-snug);
+}
+.nav-account-name { font-weight: 600; color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-account-email { font-size: var(--text-3xs); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-account-out {
+   display: inline-flex; align-items: center; justify-content: center;
+   flex-shrink: 0; inline-size: 1.875rem; block-size: 1.875rem; padding: 0;
+   border: 0; border-radius: var(--radius); background: transparent;
+   color: var(--color-text-muted); cursor: pointer;
+   transition: color var(--transition), background var(--transition);
+}
+.nav-account-out svg { inline-size: 0.9375rem; block-size: 0.9375rem; }
+.nav-account-out:hover { background: var(--nav-fill-active); color: var(--color-text); }
 
 .nav-utility { display: flex; align-items: center; gap: var(--space-2); margin-inline-start: auto; }
 /* The burger, matching nfc.cool's shipped .sk-nav-toggle: a quiet bordered
@@ -942,7 +999,12 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 /* collapsed rail: icons only, labels still in the accessibility tree */
 [data-nav="side"].is-collapsed { inline-size: var(--nav-rail); padding-inline: var(--space-2); }
 [data-nav="side"].is-collapsed .nav-link { justify-content: center; padding-inline: 0; }
+/* A rail has one column to spend, so the account line stops being a row: the
+   avatar, then the way out under it. Same move as the nav link above. */
+[data-nav="side"].is-collapsed .nav-account { flex-direction: column; gap: var(--space-2); }
+[data-nav="side"].is-collapsed .nav-account-link { flex: none; justify-content: center; margin: 0; padding: 0; }
 [data-nav="side"].is-collapsed .nav-label,
+[data-nav="side"].is-collapsed .nav-account-who,
 [data-nav="side"].is-collapsed .nav-count,
 [data-nav="side"].is-collapsed .nav-section,
 [data-nav="side"].is-collapsed .nav-brand img,
@@ -973,9 +1035,12 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
       text-overflow: clip;
    }
    [data-nav="side"] .nav-count,
+   [data-nav="side"] .nav-account-who,
    [data-nav="side"] .nav-section,
    [data-nav="side"] .nav-brand img,
    [data-nav="side"] .nav-brand-text { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+   [data-nav="side"] .nav-account { flex-direction: column; gap: var(--space-2); }
+   [data-nav="side"] .nav-account-link { flex: none; justify-content: center; margin: 0; padding: 0; }
    /* No room for two words: the rail takes the bar's single icon. */
    [data-nav="side"] .nav-theme-switch { display: none; }
    [data-nav="side"] .nav-theme-toggle { display: inline-flex; align-self: center; }
@@ -994,6 +1059,24 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
       align-self: stretch;
       padding: var(--space-2) var(--space-4);
    }
+   /* THE STRIP ABOVE A STICKY BAR. The bar sticks a gutter down from the top,
+      which leaves a band of page above it that nothing paints -- so the page's
+      own content slides through it as you scroll, over the top of the bar's
+      rounded corners. Nico, 2026-09-23: "I see content scroll under it, in
+      business.nfc.cool its better handled". It is handled there by this: a
+      block of the page's own background, as wide as the shell's gutter on
+      either side, riding directly above the bar. `bottom: calc(100% + 1px)`
+      rather than 100% so it clears the bar's own border instead of sitting on
+      it. It is inside the bar's stacking context (sticky, z-index 50), so it
+      covers the content without needing a z-index of its own. */
+   [data-nav="side"]::before {
+      content: "";
+      position: absolute;
+      inset-inline: calc(var(--space-4) * -1);
+      inset-block-end: calc(100% + 1px);
+      block-size: var(--space-4);
+      background: var(--color-bg);
+   }
    [data-nav="side"] .nav-brand { flex: 1; padding-inline: 0; }
    [data-nav="side"] .nav-brand img { block-size: 1.25rem; }
    [data-nav="side"] .nav-theme-switch { display: none; }
@@ -1002,7 +1085,14 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    /* The burger drops the panel under the bar, as its own floating card. */
    [data-nav="side"] .nav-panel {
       position: absolute;
+      /* An absolute box is laid out against the bar's PADDING box, so
+         `inset-inline: 0` put the panel's border a pixel inside the bar's --
+         and the page column under it is on the bar's border, not the bar's
+         padding. One pixel of negative margin on each side is the difference
+         between a dropdown and a dropdown that missed. Nico, 2026-09-23: "the
+         menu on mobile is a bit wider than the content underneath". */
       inset-inline: 0;
+      margin-inline: -1px;
       inset-block-start: calc(100% + var(--space-3));
       flex: none;
       max-block-size: calc(100vh - var(--nav-height) - var(--space-8));
