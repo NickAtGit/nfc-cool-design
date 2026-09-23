@@ -229,7 +229,13 @@ renders the brand name, and WCAG 1.4.3 exempts text that is part of a logo or
 brand name. It measures 1.45:1 and that is allowed. It is one token
 (`--color-brand-tail`) so the call can be revisited, and `test/contrast.test.mjs`
 pins it so a change is deliberate. **Do not copy this pattern onto ordinary
-text.** Related: the live CSS carries a comment explaining that the feature
+text.**
+
+**The wordmark in running text** (a footer's "Moments by NFC.cool", a
+signature line) is the same markup, `<span class="brand-name">NFC<em
+class="brand-tail">.cool</em></span>`, linked to nfc.cool and set about 1.4em
+of the line around it. nfc.cool uses it in headings only; at footer size the
+tail's 0.78em comes out near nine pixels and stops reading as ".cool". Related: the live CSS carries a comment explaining that the feature
 numeral's `text-shadow` exists so "axe measures the glyph against the shadow,
 not the card". That numeral is genuinely decorative and always `aria-hidden`,
 so it is fine, but the technique is not a contrast strategy.

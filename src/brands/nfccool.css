@@ -20,6 +20,7 @@
    --color-accent-hover: #E6B400;
    --color-accent-light: rgba(255, 199, 0, 0.12);
    --color-brand-tail: #FFC700;
+   --brand-tail-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.4);
    --color-brand-highlight: rgba(255, 255, 255, 0.18);
    --nav-bar-bg: rgba(255, 255, 255, 0.92);
    --nav-side-bg: #FFFFFF;
@@ -90,6 +91,7 @@
    --color-accent-hover: #FFD93D;
    --color-accent-light: rgba(255, 199, 0, 0.18);
    --color-brand-tail: #FFC700;
+   --brand-tail-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.4);
    --color-brand-highlight: transparent;
    --nav-bar-bg: rgba(22, 27, 34, 0.85);
    --nav-side-bg: #1C2128;

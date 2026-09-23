@@ -30,6 +30,10 @@
    display: inline-block;
    margin-inline-start: -0.05em; margin-inline-end: 0.15em;
    transform: translate(0.06em, -0.02em);
+   /* nfc.cool's own rule carries this, measured on the live site 2026-09-23;
+      the lift is what keeps the thin yellow script from dissolving into a
+      light page. Its hero sets it heavier (0.55) over the photograph. */
+   text-shadow: var(--brand-tail-shadow);
 }
 
 /* ============================================================

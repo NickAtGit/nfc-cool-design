@@ -636,6 +636,37 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    .page-head { flex-direction: column; align-items: stretch; }
    .page-head .actions { justify-content: flex-start; }
 }
+/* SECTION TABS, under a page head: the rooms of one destination, each its own
+   address, the active one underlined in the button colour. business.nfc.cool's
+   account and settings pages, measured from its dashboard.css 2026-09-23. Four
+   fit a phone; past that the row scrolls sideways with no scrollbar. */
+.section-nav {
+   display: flex; gap: var(--space-1);
+   margin-block: calc(var(--space-6) * -1 + var(--space-2)) var(--space-6);
+   border-block-end: 1px solid var(--color-border);
+   overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.section-nav::-webkit-scrollbar { display: none; }
+.section-nav a {
+   padding: var(--space-2) var(--space-3); margin-block-end: -1px;
+   border-block-end: 2px solid transparent;
+   color: var(--color-text-muted); font-size: var(--text-sm); font-weight: 600;
+   text-decoration: none; white-space: nowrap;
+}
+.section-nav a:hover { color: var(--color-text); }
+.section-nav a[aria-current="page"] { color: var(--color-text); border-block-end-color: var(--color-primary-bg); }
+
+/* A CARD'S OWN HEAD: its title and the line under it INSIDE the card, and the
+   card's actions at the inline end of the same row. The same shape .page-head
+   uses one level up. */
+.card-head {
+   display: flex; align-items: center; justify-content: space-between;
+   gap: var(--space-3);
+}
+.card-head-text { display: flex; flex-direction: column; gap: var(--space-1); min-inline-size: 0; }
+.card-head .sub { font-size: var(--text-xs); color: var(--color-text-secondary); margin: 0; }
+.card-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+
 /* A FORM PAGE IN THE CONSOLE: the page head and the cards under it share one
    reading column, centred in the page column, so a label is never a foot
    away from its control on a wide screen. A list page takes the whole column
@@ -847,27 +878,32 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 .nav-theme-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
 .nav-theme-toggle svg { inline-size: 1rem; block-size: 1rem; }
 
+/* business.nfc.cool's switch, measured 2026-09-23: a slim track with a hair
+   of inset, halves a finger shorter than a button, and bold labels one step
+   below --text-xs. Ours was a size up everywhere, which read as a bigger
+   control beside the same sidebar. */
 .nav-theme-switch {
    display: grid;
    grid-template-columns: 1fr 1fr;
-   gap: var(--space-1);
-   padding: var(--space-1);
+   gap: 3px;
+   padding: 3px;
    border: 1px solid var(--color-border);
-   border-radius: var(--radius);
+   border-radius: var(--radius-md);
    background: var(--color-bg-alt);
 }
 .nav-theme-switch button {
    display: inline-flex;
    align-items: center;
    justify-content: center;
-   gap: var(--space-2);
-   padding: var(--space-2) var(--space-2);
+   gap: 6px;
+   padding: 6px var(--space-2);
    border: 0;
-   border-radius: var(--radius-sm);
+   border-radius: var(--radius);
    background: transparent;
    color: var(--color-text-muted);
    font-family: inherit;
-   font-size: var(--text-xs);
+   font-size: var(--text-2xs);
+   line-height: 1.5;
    font-weight: 600;
    cursor: pointer;
    transition: color var(--transition), background var(--transition);
@@ -889,7 +925,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 @media (min-width: 1200px) {
    [data-nav="side"] .nav-theme-toggle { display: none; }
 }
-[data-nav="side"] .nav-theme-switch { inline-size: 100%; }
+/* Inset from the column's edges the way business.nfc.cool's is, so the
+   switch reads as a control inside the column rather than a band across it. */
+[data-nav="side"] .nav-theme-switch { margin: 0.625rem var(--space-3) var(--space-3); }
 /* A collapsed rail has no room for two words, so it falls back to the bar's
    single icon. Both controls ship in the side markup and swap here, the same
    way the two wordmarks do above -- no script, and nothing to keep in sync. */
