@@ -22,7 +22,8 @@ Layers 1, 3 and 4 are brand-neutral. A second brand is a new file in
 `src/brands/`, selected with `data-brand` on `<html>`. It is never a fork.
 
 **Layers 1 and 2 are generated.** `src/tokens.json` is the source of truth;
-`build/emit-css.mjs` writes `tokens.css`, every `brands/*.css` and `email.css`.
+`build/emit-css.mjs` writes `tokens.css`, every `brands/*.css`, `email.css` and
+`email/palette.js`.
 Editing those outputs by hand is a drift bug and `npm test` fails on it.
 
 ---
@@ -486,9 +487,56 @@ where the four competing `:root` blocks live today.
 
 ### Email
 
-`src/email.css` ships flat literals and a system font stack, because mail
-clients strip custom properties and will not load a webfont. Inline it with a
-mail-safe inliner. Do not reference the token files from an email template.
+**A mail is rendered, not written.** `@nfccool/design/email.js` exports
+`renderEmail(options) → { html, text }`. A template hands it a heading, a
+preheader, an ordered list of blocks (`text`, `button`, `link-fallback`,
+`note`, `quote`, `divider`) and a footer; the renderer owns every table, every
+inline style and both colour schemes, and writes the plain-text part from the
+same blocks. It has no dependencies and needs no build step, because consumers
+install this package from git and run nothing; the types are
+`src/email.d.ts`. The guideline's Email page renders real examples in both
+themes and documents every option.
+
+**Colour comes from the tokens, as literals.** Mail clients strip custom
+properties, so `build/emit-css.mjs` resolves a small role table (page, card,
+border, rule, heading, text, muted, link, button, quote) against
+`src/tokens.json` for BOTH themes into `src/email/palette.js`, and the same
+table writes `src/email.css`. Light values are inline on every element; dark
+values are a `prefers-color-scheme` block keyed on classes, repeated under
+`[data-ogsc]`/`[data-ogsb]` for Outlook.com. `src/email.js` carries no colour
+literal, and `test/email.test.mjs` fails on any colour in a rendered mail that
+is not a token value.
+
+**The mail button is the link blue, not the web's filled primary.** Blue as
+text is the gradient's dark stop, and a mail button is only ever seen at rest:
+there is no hover to lift the web primary's 3.48:1 label to AA. So the mail
+button fills with `--color-link-text` (`#1A60CE`, white label 5.82:1) and one
+blue carries every action in a mail. In dark mode it is brand yellow with an ink
+label, the web's own flip. Every pair a mail paints clears 4.5:1 in both
+themes, with no exception.
+
+**The header is a hosted PNG.** Gmail blocks SVG and no client loads a webfont
+reliably, so the wordmark ships as `src/email/wordmark-on-light.png` and
+`wordmark-on-dark.png` (2x, exported as `@nfccool/design/email/…`), drawn from
+the guideline's own secondary logo by `npm run email:assets`, each with a
+hairline halo in its card colour so the ink survives a client that inverts the
+mail on its own (the Gmail apps). The consumer hosts both in one public https
+folder and passes it as `assetBaseUrl`; old files stay up, because a mail in an
+inbox fetches its image every time it is opened. Without it the header is the
+brand name in bold.
+
+**A consumer without Node takes generated Django templates.** `npm run build`
+writes `dist/email/django/` (a layout with blocks and one partial per block)
+and the two PNGs to `dist/email/`, all made by rendering `src/email.js` with
+placeholders, so the markup cannot drift. Django's autoescape escapes; it does
+not validate links, and a Django mail keeps its own `.txt` part.
+
+`src/email.css` remains for a template that must be written by hand: flat
+literals, a system font stack, a dark block to keep in a `<style>` element.
+Do not reference the token files from an email template.
+
+`npm run email:shots -- <dir>` photographs every guideline example in both
+schemes at 390 and 800px, the review a mail gets before it ships.
 
 ---
 

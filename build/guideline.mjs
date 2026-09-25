@@ -8,6 +8,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { renderEmail, escapeHtml, EMAIL_ASSETS } from '../src/email.js';
+import { EXAMPLES } from '../guideline/email-examples.mjs';
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const r = f => readFileSync(join(root, f), 'utf8');
@@ -26,6 +28,7 @@ export const SECTIONS = [
   { slug: 'navigation', title: 'Navigation',           group: 'Components' },
   { slug: 'headers',    title: 'Header tiers',         group: 'Components' },
   { slug: 'overlay',    title: 'Overlay',              group: 'Components' },
+  { slug: 'email',      title: 'Email',                group: 'Components' },
   { slug: 'archetypes', title: 'Marketing archetypes', group: 'Archetypes' },
   { slug: 'prose',      title: 'Prose',                group: 'Archetypes' },
 ];
@@ -45,6 +48,7 @@ const GLYPHS = {
   navigation: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5Z"/>',
   headers:    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M7 7h6"/>',
   overlay:    '<rect x="3" y="3" width="13" height="13" rx="2"/><rect x="8" y="8" width="13" height="13" rx="2"/>',
+  email:      '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
   archetypes: '<rect x="3" y="3" width="18" height="6" rx="1.5"/><rect x="3" y="12" width="8" height="9" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/>',
   prose:      '<path d="M4 6h16M4 10h16M4 14h11M4 18h7"/>',
 };
@@ -116,10 +120,39 @@ ${dark}
 }`;
 }
 
-const section = (s, current) =>
+/* The Email section shows real mails: <!--email:slug--> in its source becomes
+   the example rendered by src/email.js, once in each scheme, side by side.
+   Each frame forces its scheme by rewriting the mail's own dark media query,
+   so the pair does not depend on the viewer's system setting. The wordmark
+   PNGs sit beside the guideline's images, or inline as data for the
+   single-file build, which cannot fetch a sibling. */
+const ASSET_BASE = 'https://guideline.invalid/email/';
+const DARK_QUERY = '@media (prefers-color-scheme: dark){';
+function emailFrames(slug, images) {
+  const ex = EXAMPLES[slug];
+  if (!ex) throw new Error(`guideline: no email example named ${slug}`);
+  let { html } = renderEmail({ ...ex.options, assetBaseUrl: ASSET_BASE });
+  for (const f of EMAIL_ASSETS) {
+    const src = images === 'inline'
+      ? `data:image/png;base64,${readFileSync(join(root, 'src/email', f)).toString('base64')}`
+      : `images/${f}`;
+    html = html.replaceAll(ASSET_BASE + f, src);
+  }
+  if (!html.includes(DARK_QUERY)) throw new Error('guideline: the mail no longer carries its dark media query');
+  const frame = scheme => {
+    const forced = html.replace(DARK_QUERY, scheme === 'dark' ? '@media all{' : '@media not all{');
+    return `<figure class="ks-email-frame"><figcaption class="ks-note">${scheme === 'dark' ? 'Dark' : 'Light'}</figcaption>`
+      + `<iframe title="${escapeHtml(`${ex.title}, ${scheme}`)}" srcdoc="${escapeHtml(forced)}" height="640"></iframe></figure>`;
+  };
+  return `<div class="ks-email-pair">${frame('light')}${frame('dark')}</div>`;
+}
+const sectionBody = (s, images) => r(`guideline/sections/${s.slug}.html`)
+  .replace(/<!--email:([\w-]+)-->/g, (_, slug) => emailFrames(slug, images));
+
+const section = (s, current, images) =>
   `<section class="gl-section${s.slug === current ? ' is-current' : ''}" id="${s.slug}" data-title="${s.title}">
 <h1 class="ks-title">${s.title}</h1>
-${r(`guideline/sections/${s.slug}.html`)}</section>`;
+${sectionBody(s, images)}</section>`;
 
 /* Inlined in both outputs: a module script fetched from file:// is blocked by
    the browser, and the artifact cannot fetch a sibling file at all. */
@@ -152,7 +185,7 @@ ${sidebar(current, href)}
 <div class="app-main">
 ${HEADER}
 <main class="ks-page">
-${sections.map(s => section(s, current)).join('\n')}
+${sections.map(s => section(s, current, images)).join('\n')}
 ${r('guideline/sections/_footer.html')}</main>
 </div>
 </div>

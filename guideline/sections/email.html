@@ -1,0 +1,123 @@
+<p class="ks-lede">
+  Every NFC.cool product sends mail in one style: the wordmark on a white card, one heading, a few lines,
+  one blue button, small print under it, the product in the footer. A template does not write that
+  markup. It hands <code class="ks-code">renderEmail</code> a list of blocks and gets back the HTML and
+  the plain text, both from the same data.
+</p>
+
+<h3 class="ks-h3">A sign-in link</h3>
+<!--email:sign-in-->
+<div class="ks-basis">
+  <b>One action, then its fallback, then the small print.</b> The button is the gradient's dark stop with a
+  white label (5.82:1). A mail has no hover state to rescue the web button's 3.48:1 resting label, so the mail
+  uses the blue that already carries link text. In dark mode it is brand yellow with an ink label, exactly as on
+  the web. The link under the button breaks anywhere, so a long token never widens the card on a phone.
+</div>
+
+<h3 class="ks-h3">A notification</h3>
+<!--email:pending-review-->
+<div class="ks-basis">
+  <b>Somebody's own words sit on their own panel.</b> An album's title is quoted on the page colour with a
+  blue edge, so it reads as the album and not as part of the sentence, and a title full of
+  <code>&lt;script&gt;</code> or quotes arrives as text: everything is escaped.
+</div>
+
+<h3 class="ks-h3">The API</h3>
+<div class="prose"><pre><code>import { renderEmail } from '@nfccool/design/email.js';
+
+const { html, text } = renderEmail({
+  assetBaseUrl: 'https://moments.example.com/email/',   // where the two wordmark PNGs are hosted
+  lang: 'en',                                           // optional, default 'en'
+  dir: 'ltr',                                           // optional, 'rtl' flips every side
+  preheader: 'This link works once and expires in 15 minutes.',
+  heading: 'Sign in to Moments',
+  blocks: [
+    { type: 'text', text: 'Tap the button below to sign in. It works once and expires in 15 minutes.' },
+    { type: 'button', label: 'Sign in', href: link },
+    { type: 'link-fallback', href: link },
+    { type: 'note', text: 'If you did not ask for this, you can ignore this email.' },
+  ],
+  footer: {
+    product: 'Moments by NFC.cool',
+    reason: 'You got this because someone asked to sign in to Moments with this address.',
+    links: [{ label: 'Terms', href: termsUrl }, { label: 'Privacy', href: privacyUrl }],
+  },
+});
+// Send html and text together as multipart/alternative.</code></pre></div>
+
+<div class="ks-scroll"><table class="ks-table" style="margin-block:var(--space-4) var(--space-3)">
+  <thead><tr><th>Block</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td>{ type: 'text', text }</td><td>A paragraph of body copy. <code class="ks-code">text</code> is a string, or runs:
+      <code class="ks-code">['Restore it ', { text: 'here', href }, '.']</code>, <code class="ks-code">{ text, strong: true }</code>.</td></tr>
+    <tr><td>{ type: 'button', label, href }</td><td>The one action. Bulletproof in Outlook desktop: the whole pill is the link.</td></tr>
+    <tr><td>{ type: 'link-fallback', href }</td><td>"Or copy this link:" and the raw URL. Give <code class="ks-code">label</code> to translate it.</td></tr>
+    <tr><td>{ type: 'note', text }</td><td>Muted small print: a deadline, "if you did not ask for this".</td></tr>
+    <tr><td>{ type: 'quote', text }</td><td>A title set apart on its own panel, such as an album's name.</td></tr>
+    <tr><td>{ type: 'divider' }</td><td>A hairline between the action and the small print.</td></tr>
+  </tbody>
+</table></div>
+<div class="ks-basis">
+  <b>The renderer owns all markup and styling; a template owns words and links.</b> There is no style
+  option and no raw HTML block on purpose: a mail that needs one is a gap in this system, and belongs here
+  first. A link that is not <code>http(s)</code> or <code>mailto</code> throws, rather than shipping a
+  button that does nothing.
+</div>
+
+<h3 class="ks-h3">The rules</h3>
+<div class="ks-basis">
+  <b>One button per mail.</b> Everything else is text or a note. Two blue buttons make the reader choose.<br>
+  <b>The heading says what happened, in the reader's words.</b> "Set a new password", not "Password reset request".<br>
+  <b>The preheader finishes the subject.</b> It is the grey line an inbox shows after it; do not repeat the heading.<br>
+  <b>Every mail says why it came.</b> The footer's <code>reason</code>: "You got this because you own this album."<br>
+  <b>Write it once in plain text too.</b> You do not: <code>text</code> comes from the same blocks, the button as
+  "Label: URL", the fallback dropped when the button already carries its URL.<br>
+  <b>House style per product.</b> MomentoMarks writes no em dash in any string a person reads; its examples here follow
+  that. The renderer does not impose it.
+</div>
+
+<h3 class="ks-h3">Colour and dark mode</h3>
+<div class="ks-basis">
+  <b>Every colour is a token.</b> <code>build/emit-css.mjs</code> resolves a small role table (page, card, border,
+  heading, text, muted, link, button) against <code>src/tokens.json</code> for both themes into
+  <code>src/email/palette.js</code>, as flat literals: mail clients strip custom properties. The light values are
+  inline on every element; the dark ones are a <code>prefers-color-scheme</code> block keyed on classes (Apple Mail,
+  iOS Mail, Outlook for Mac, Thunderbird), repeated under <code>[data-ogsc]</code> and <code>[data-ogsb]</code> for
+  Outlook.com. Gmail's apps invert a light mail on their own; the wordmark carries a hairline halo in its card colour
+  so its ink letters survive that.
+</div>
+
+<h3 class="ks-h3">Hosting the wordmark</h3>
+<div class="ks-basis">
+  <b>Gmail blocks SVG and no client loads a webfont reliably,</b> so the header is a PNG, in two variants at 2x:
+  <code>wordmark-on-light.png</code> and <code>wordmark-on-dark.png</code>, shipped as
+  <code>@nfccool/design/email/wordmark-on-light.png</code> and <code>…/wordmark-on-dark.png</code>. The consumer
+  serves both from one public https folder it controls and passes that folder as <code>assetBaseUrl</code>. Keep
+  old files up once a mail has gone out: a mail sitting in an inbox fetches its image every time it is opened.
+  Without <code>assetBaseUrl</code>, or with <code>brand: { wordmark: false }</code>, the header is the brand
+  name in bold text. They are drawn from the repo's own logo by <code>npm run email:assets</code>.
+</div>
+
+<h3 class="ks-h3">From Django</h3>
+<div class="ks-basis">
+  <b>Django takes generated templates, not a port.</b> <code>npm run build</code> writes
+  <code>dist/email/django/</code>: <code>layout.html</code> and one partial per block, each made by rendering
+  <code>src/email.js</code> with placeholders, so the markup cannot drift. Vendor that folder into a templates
+  directory as <code>nfccool_email/</code> and the two PNGs into static files. A mail extends the layout; Django's
+  autoescape does the escaping. It writes no plain-text part (keep a <code>.txt</code> template, as for subjects)
+  and does not validate links, so build them with <code>reverse()</code> and <code>build_absolute_uri()</code>.
+</div>
+<div class="prose"><pre><code>{% extends "nfccool_email/layout.html" %}
+{% block preheader %}This link works once and expires in an hour.{% endblock %}
+{% block heading %}Set a new password{% endblock %}
+{% block content %}
+  {% include "nfccool_email/text.html" with text="Tap the button to choose a new password." %}
+  {% include "nfccool_email/button.html" with label="Choose a new password" href=reset_url %}
+  {% include "nfccool_email/link_fallback.html" with href=reset_url %}
+  {% include "nfccool_email/note.html" with text=ignore_note %}
+{% endblock %}
+{% block footer_product %}NFC.cool{% endblock %}
+{% block footer_reason %}
+  You got this because someone asked to reset the password for this address.
+{% endblock %}
+{# context: email_title, and email_asset_base (an absolute URL ending in /) #}</code></pre></div>

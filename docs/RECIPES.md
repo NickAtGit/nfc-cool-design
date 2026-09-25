@@ -205,6 +205,69 @@ The bar nav, the hero band, sections, and the closing call.
 <section class="section section-alt final-cta"><div class="container">…</div></section>
 ```
 
+## Recipe 5: a transactional email
+
+A mail is data. The renderer owns the tables, the inline styles, dark mode,
+Outlook, escaping and the plain-text part; a template owns words and links.
+
+```ts
+import { renderEmail } from "@nfccool/design/email.js";
+
+export function albumDeletedMail(m: { albumTitle: string; deletedBy: string; purgeDay: string; restoreUrl: string }) {
+  return renderEmail({
+    assetBaseUrl: "https://moments.example.com/email/", // hosts wordmark-on-light.png + wordmark-on-dark.png
+    preheader: `Any owner can restore it until ${m.purgeDay}.`,
+    heading: "Your album was deleted",
+    blocks: [
+      { type: "quote", text: m.albumTitle },
+      { type: "text", text: `${m.deletedBy} deleted it. It is hidden now and will be erased for good on ${m.purgeDay}.` },
+      { type: "button", label: "Restore the album", href: m.restoreUrl },
+      { type: "link-fallback", href: m.restoreUrl },
+      { type: "note", text: "After that date the memories, media and comments are permanently deleted." },
+    ],
+    footer: {
+      product: "Moments by NFC.cool",
+      reason: "You got this because you own this album.",
+      links: [{ label: "Terms", href: "https://moments.example.com/terms" }, { label: "Privacy", href: "https://moments.example.com/privacy" }],
+    },
+  }); // → { html, text }: send both as multipart/alternative
+}
+```
+
+The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`,
+`{ text, strong: true }`), `button`, `link-fallback` (`label` to translate
+"Or copy this link:"), `note`, `quote`, `divider`. Options: `lang`, `dir`
+(`"rtl"` flips every side), `title`, `brand: { name, wordmark: false, href }`,
+`footer: { product, reason, address, links }`.
+
+- **One button.** Put `link-fallback` right after it for any link that signs
+  someone in or resets something; the plain text does not repeat it.
+- **Links are http(s) or mailto.** Anything else throws a `TypeError`, so a
+  bad link fails the send loudly instead of shipping a dead button.
+- **Host the two PNGs** from `@nfccool/design/email/` at a stable public https
+  folder and never delete an old one. No `assetBaseUrl`, or
+  `brand: { wordmark: false }`, gives a text header.
+- **Django** (no Node): vendor `dist/email/django/` as `templates/nfccool_email/`
+  and `dist/email/*.png` into static files, then
+
+  ```django
+  {% extends "nfccool_email/layout.html" %}
+  {% block preheader %}This link works once and expires in an hour.{% endblock %}
+  {% block heading %}Set a new password{% endblock %}
+  {% block content %}
+    {% include "nfccool_email/text.html" with text="Tap the button to choose a new password." %}
+    {% include "nfccool_email/button.html" with label="Choose a new password" href=reset_url %}
+    {% include "nfccool_email/link_fallback.html" with href=reset_url %}
+  {% endblock %}
+  {% block footer_reason %}You got this because someone asked to reset the password for this address.{% endblock %}
+  ```
+
+  with `email_title` and `email_asset_base` (absolute, ending in `/`) in the
+  context. `gap=` on an include overrides the space above a block. Keep a
+  `.txt` template beside it for the plain part.
+- **Review it**: `npm run email:shots -- <dir>` renders the guideline examples
+  in both schemes at 390 and 800px.
+
 ## Wiring it in each consumer
 
 **MomentoMarks (Astro).** `layouts/AppShell.astro` IS recipe 1 and 2: a page

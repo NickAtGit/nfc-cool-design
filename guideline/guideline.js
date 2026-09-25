@@ -148,5 +148,19 @@
   document.querySelectorAll('a[href="#"]').forEach(a =>
     a.addEventListener('click', e => e.preventDefault()));
 
-  labelToggles(); renderSwatches(); renderTables(); renderType(); renderScales(); bp();
+  /* --- email frames take the height of the mail inside them. A frame in a
+     hidden section has no layout, so this runs again when one is shown. --- */
+  function sizeFrames() {
+    document.querySelectorAll('.ks-email-frame iframe').forEach(f => {
+      const doc = f.contentDocument;
+      if (!doc || !doc.body || !f.offsetParent) return;
+      f.style.height = '1px';
+      f.style.height = doc.documentElement.scrollHeight + 'px';
+    });
+  }
+  document.querySelectorAll('.ks-email-frame iframe').forEach(f => f.addEventListener('load', sizeFrames));
+  window.addEventListener('resize', sizeFrames);
+  window.addEventListener('hashchange', () => setTimeout(sizeFrames, 0));
+
+  labelToggles(); renderSwatches(); renderTables(); renderType(); renderScales(); bp(); sizeFrames();
 })();

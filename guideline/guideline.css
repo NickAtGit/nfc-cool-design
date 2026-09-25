@@ -152,3 +152,17 @@ body {
            color:var(--color-text-muted); font-size:var(--text-2xs); }
 .ks-avatar { inline-size:2.75rem; block-size:2.75rem; border-radius:50%;
              background:var(--brand-gradient); flex-shrink:0; }
+
+/* ---- email: a real mail per frame, light beside dark ---- */
+.ks-email-pair { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-4); margin-block-end:var(--space-3); }
+@media (min-width:900px) { .ks-email-pair { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } }
+.ks-scroll { overflow-x:auto; }
+#email .prose pre { overflow-x:auto; max-width:100%; }
+.ks-email-frame { margin:0; min-width:0; }
+.ks-email-frame figcaption { margin-block-end:var(--space-2); }
+.ks-email-frame iframe { display:block; inline-size:100%; border:1px solid var(--color-border);
+  border-radius:var(--radius-lg); background:var(--color-bg); }
+
+/* The page is a flex item of the main column: without this a long code
+   line in a section widens the whole page on a phone. */
+.ks-page { min-inline-size:0; inline-size:100%; }
