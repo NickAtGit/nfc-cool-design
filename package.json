@@ -17,16 +17,24 @@
     "./components.css": "./src/components.css",
     "./archetypes.css": "./src/archetypes.css",
     "./email.css": "./src/email.css",
+    "./email.js": {
+      "types": "./src/email.d.ts",
+      "default": "./src/email.js"
+    },
+    "./email/wordmark-on-light.png": "./src/email/wordmark-on-light.png",
+    "./email/wordmark-on-dark.png": "./src/email/wordmark-on-dark.png",
     "./tokens.json": "./src/tokens.json",
     "./nav.js": "./src/nav.js",
     "./theme.js": "./src/theme.js"
   },
   "scripts": {
-    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-email-django.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
     "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
     "test": "node --test test/*.test.mjs",
     "sync": "node build/sync-consumers.mjs",
-    "sync:check": "node build/sync-consumers.mjs --check"
+    "sync:check": "node build/sync-consumers.mjs --check",
+    "email:assets": "node build/emit-email-assets.mjs",
+    "email:shots": "node build/email-shots.mjs"
   }
 }

@@ -7,6 +7,16 @@ import { join } from 'node:path';
 const read = f => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const AUTHORED = ['src/components.css', 'src/archetypes.css'];
 
+/* The mail renderer is authored too, and takes every colour from the
+   generated src/email/palette.js. A literal in it would be one mail colour
+   that no token change could ever reach. */
+test('src/email.js declares no literal colour', () => {
+  const hits = read('src/email.js').split('\n')
+    .map((line, i) => [i + 1, line])
+    .filter(([, l]) => /#[0-9a-fA-F]{3,8}\b/.test(l.replace(/&#\d+;/g, '')) || /\brgba?\(/.test(l));
+  assert.deepEqual(hits, [], `literal colour found:\n${hits.map(([n, l]) => `  src/email.js:${n} ${l.trim()}`).join('\n')}`);
+});
+
 /* Colour lives in the brand layer. A literal in a component means that
    component cannot be re-skinned, which is how a shared system dies. */
 for (const f of AUTHORED) {
@@ -183,7 +193,9 @@ for (const f of AUTHORED) {
 test('every export target is in git or built by the prepare script', () => {
   const pkg = JSON.parse(read('package.json'));
   const tracked = new Set(execFileSync('git', ['ls-files'], { cwd: ROOT }).toString().split('\n'));
-  const built = Object.values(pkg.exports).map(p => p.replace(/^\.\//, '')).filter(p => !tracked.has(p));
+  // A conditional export ({ types, default }) points at several files.
+  const targets = Object.values(pkg.exports).flatMap(v => (typeof v === 'string' ? [v] : Object.values(v)));
+  const built = targets.map(p => p.replace(/^\.\//, '')).filter(p => !tracked.has(p));
   if (built.length === 0) return;
   assert.match(pkg.scripts?.prepare ?? '', /\bbuild\b/,
     `${built.join(', ')} are not tracked, so an install must build them: add "prepare": "npm run build"`);

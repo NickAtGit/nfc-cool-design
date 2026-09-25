@@ -1,6 +1,7 @@
-/* Generates src/tokens.css (L1) and src/brands/<brand>.css (L2) from src/tokens.json.
+/* Generates src/tokens.css (L1), src/brands/<brand>.css (L2) and the email
+   layer (src/email.css, src/email/palette.js) from src/tokens.json.
    Run: node build/emit-css.mjs        Check only: node build/emit-css.mjs --check */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -104,33 +105,89 @@ ${block(b.dark, '')}
 
 
 /* ---- Email: resolved literals. Mail clients strip custom properties and
-   will not load a webfont, so email gets flat values and a system stack. ---- */
-function emailCSS(b) {
-  const L = b.light;
-  return BANNER + `/* Layer: email. Light-mode literals only - no custom properties, no webfont.
-   Generated from src/tokens.json. Inline these with a mail-safe inliner. */
+   will not load a webfont, so email gets flat values and a system stack.
+   One role table feeds both email outputs: src/email/palette.js, which the
+   renderer (src/email.js) imports, and src/email.css for anyone inlining by
+   hand. A role names what a colour DOES in a mail; the token it reads is the
+   web system's own, so a palette change reaches every mail on the next build. */
+const EMAIL_ROLES = {
+  page:     ['color-bg',             'the page behind the card, and the footer\'s ground'],
+  card:     ['color-bg-card',        'the card'],
+  border:   ['color-border',         'the card\'s hairline'],
+  rule:     ['color-border-light',   'a divider inside the card'],
+  heading:  ['color-text',           'the heading, a quoted title, the text wordmark'],
+  text:     ['color-text-secondary', 'body copy'],
+  muted:    ['color-text-muted',     'notes, the fallback link\'s label, the footer'],
+  link:     ['color-link-text',      'link text: the gradient\'s dark stop in light, yellow in dark'],
+  /* Blue as text is the dark stop, and a mail button is read at rest only:
+     there is no hover to lift the light stop's 3.48:1 label to AA. So the
+     button fills with the link colour, which clears AA in both themes and is
+     itself a brand value, and one blue carries every action in a mail. */
+  buttonBg: ['color-link-text',      'the button\'s fill'],
+  buttonFg: ['color-primary-fg',     'the button\'s label'],
+  quoteBg:  ['color-bg',             'a quoted title\'s panel'],
+  quoteBar: ['color-link',           'a quoted title\'s edge'],
+};
+const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+const emailTheme = theme => Object.fromEntries(Object.entries(EMAIL_ROLES).map(([role, [token]]) => [role, theme[token]]));
 
-.email-body { margin:0; padding:0; background:${L['color-bg']}; }
-.email-wrap { width:100%; background:${L['color-bg']}; padding:32px 16px; }
-.email-card { max-width:560px; margin:0 auto; background:${L['color-bg-card']};
-   border:1px solid ${L['color-border']}; border-radius:14px; padding:32px; }
-.email-text { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-   font-size:16px; line-height:1.6; color:${L['color-text-secondary']}; margin:0 0 16px; }
-.email-h1 { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-   font-size:24px; line-height:1.2; font-weight:700; color:${L['color-text']}; margin:0 0 16px; }
-.email-btn { display:inline-block; background:${L['color-link-text']}; color:${L['color-on-brand']};
-   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+function emailPaletteJS(b) {
+  const r = p.radius;
+  const body = {
+    label: b.label,
+    font: FONT_STACK,
+    radius: { card: r.lg, button: r.md },
+    light: emailTheme(b.light),
+    dark: emailTheme(b.dark),
+  };
+  const roles = Object.entries(EMAIL_ROLES).map(([role, [token, why]]) => ` *   ${role.padEnd(9)}--${token.padEnd(21)} ${why}`).join('\n');
+  return BANNER.replace(' */\n', '\n   Imported by src/email.js. Flat literals, no custom properties: mail clients strip them. */\n')
+    + `/* Roles, and the token each reads:\n${roles}\n */\n`
+    + `export const palette = ${JSON.stringify(body, null, 2)};\n`;
+}
+
+function emailCSS(b) {
+  const L = emailTheme(b.light), D = emailTheme(b.dark), r = p.radius;
+  const f = FONT_STACK.replaceAll(', ', ',');
+  return BANNER + `/* Layer: email. Flat literals, no custom properties, no webfont.
+   Generated from src/tokens.json. Prefer src/email.js, which renders a whole
+   mail from data and owns this markup; these classes are for a template that
+   must be written by hand. Inline them with a mail-safe inliner, and keep the
+   dark block in a <style> element: an inliner cannot inline a media query. */
+
+.email-body { margin:0; padding:0; background:${L.page}; }
+.email-wrap { width:100%; background:${L.page}; padding:32px 16px; }
+.email-card { max-width:560px; margin:0 auto; background:${L.card};
+   border:1px solid ${L.border}; border-radius:${r.lg}; padding:32px; }
+.email-text { font-family:${f};
+   font-size:16px; line-height:1.6; color:${L.text}; margin:0 0 16px; }
+.email-h1 { font-family:${f};
+   font-size:24px; line-height:1.25; font-weight:700; color:${L.heading}; margin:0 0 16px; }
+.email-btn { display:inline-block; background:${L.buttonBg}; color:${L.buttonFg};
+   font-family:${f};
    font-size:16px; font-weight:600; text-decoration:none;
-   padding:12px 24px; border-radius:10px; }
-.email-link { color:${L['color-link-text']}; }
-.email-muted { font-size:13px; line-height:1.5; color:${L['color-text-muted']}; }
-.email-hr { border:0; border-top:1px solid ${L['color-border-light']}; margin:24px 0; }
+   padding:13px 28px; border-radius:${r.md}; }
+.email-link { color:${L.link}; }
+.email-muted { font-size:13px; line-height:1.5; color:${L.muted}; }
+.email-hr { border:0; border-top:1px solid ${L.rule}; margin:24px 0; }
+
+@media (prefers-color-scheme: dark) {
+   .email-body, .email-wrap { background:${D.page} !important; }
+   .email-card { background:${D.card} !important; border-color:${D.border} !important; }
+   .email-text { color:${D.text} !important; }
+   .email-h1 { color:${D.heading} !important; }
+   .email-btn { background:${D.buttonBg} !important; color:${D.buttonFg} !important; }
+   .email-link { color:${D.link} !important; }
+   .email-muted { color:${D.muted} !important; }
+   .email-hr { border-top-color:${D.rule} !important; }
+}
 `;
 }
 
 const outputs = [['src/tokens.css', l1]];
 for (const [id, b] of Object.entries(t.brands)) outputs.push([`src/brands/${id}.css`, brandCSS(id, b)]);
 outputs.push(['src/email.css', emailCSS(t.brands[t.defaultBrand])]);
+outputs.push(['src/email/palette.js', emailPaletteJS(t.brands[t.defaultBrand])]);
 
 let drift = false;
 for (const [rel, content] of outputs) {
@@ -140,6 +197,7 @@ for (const [rel, content] of outputs) {
     try { cur = readFileSync(path, 'utf8'); } catch { }
     if (cur !== content) { console.error(`DRIFT: ${rel} does not match src/tokens.json`); drift = true; }
   } else {
+    mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, content);
     console.log(`wrote ${rel} (${content.length} bytes)`);
   }
