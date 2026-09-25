@@ -9,7 +9,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { renderEmail, escapeHtml, EMAIL_ASSETS } from '../src/email.js';
-import { EXAMPLES } from '../guideline/email-examples.mjs';
+import { EXAMPLES, PLACEHOLDER_ICON_BASE, PLACEHOLDER_ICONS } from '../guideline/email-examples.mjs';
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const r = f => readFileSync(join(root, f), 'utf8');
@@ -137,6 +137,12 @@ function emailFrames(slug, images) {
       ? `data:image/png;base64,${readFileSync(join(root, 'src/email', f)).toString('base64')}`
       : `images/${f}`;
     html = html.replaceAll(ASSET_BASE + f, src);
+  }
+  for (const f of PLACEHOLDER_ICONS) {
+    const src = images === 'inline'
+      ? `data:image/png;base64,${readFileSync(join(root, 'guideline/images', f)).toString('base64')}`
+      : `images/${f}`;
+    html = html.replaceAll(PLACEHOLDER_ICON_BASE + f, src);
   }
   if (!html.includes(DARK_QUERY)) throw new Error('guideline: the mail no longer carries its dark media query');
   const frame = scheme => {

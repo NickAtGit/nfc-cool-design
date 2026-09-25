@@ -65,6 +65,16 @@ export function safeHref(href) {
   return s;
 }
 
+/* An image in a mail is fetched by the client from an absolute http(s) URL:
+   safeHref's rules, without mailto. */
+export function safeImageSrc(src) {
+  const s = String(src ?? '').trim();
+  if (!/^https?:\/\//i.test(s)) {
+    throw new TypeError(`renderEmail: refused image ${JSON.stringify(s)}. An image is an absolute http(s) URL.`);
+  }
+  return safeHref(s);
+}
+
 /* ------------------------------------------------------------------ styling */
 
 const css = obj => Object.entries(obj).filter(([, v]) => v !== undefined && v !== null)
@@ -85,6 +95,7 @@ const DARK = [
   ['.em-rule', 'border-top-color', 'rule', 'bg'],
   ['.em-quote', 'background-color', 'quoteBg', 'bg'],
   ['.em-quote', 'border-color', 'quoteBar', 'bg'],
+  ['.em-logo', 'border-color', 'border', 'bg'],
 ];
 function darkRules(prefix) {
   const D = palette.dark;
@@ -258,6 +269,18 @@ function checkOptions(o) {
   }
   if (o.dir !== undefined && o.dir !== 'ltr' && o.dir !== 'rtl') throw new TypeError('renderEmail: dir is "ltr" or "rtl"');
   if (o.lang !== undefined && !/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(o.lang)) throw new TypeError('renderEmail: lang must be a BCP 47 tag');
+  const logo = o.brand?.logo;
+  if (logo !== undefined) {
+    if (!logo || typeof logo !== 'object') throw new TypeError('renderEmail: brand.logo must be an object');
+    safeImageSrc(logo.src);
+    if (logo.srcDark !== undefined) safeImageSrc(logo.srcDark);
+    for (const k of ['width', 'height']) {
+      if (!Number.isInteger(logo[k]) || logo[k] < 1 || logo[k] > 600) {
+        throw new TypeError(`renderEmail: brand.logo.${k} must be a whole number of px between 1 and 600, got ${JSON.stringify(logo[k])}`);
+      }
+    }
+    if (typeof logo.alt !== 'string') throw new TypeError('renderEmail: brand.logo.alt must be a string (empty when the name sits beside it)');
+  }
 }
 
 function assetUrl(base, file) {
@@ -268,9 +291,48 @@ function assetUrl(base, file) {
   return (b.endsWith('/') ? b : `${b}/`) + file;
 }
 
+/* A product's own mark: its icon, squircle-cornered, with its name beside it
+   in bold, the way the product's web header shows it. The icon is the
+   consumer's own hosted 2x PNG; `srcDark` swaps in under a dark scheme the
+   same way the wordmark does, and a client that cannot swap shows the light
+   one, whose hairline (the card's border colour, repainted in dark) keeps
+   its edge on either card. Outlook desktop ignores the radius and shows a
+   square icon, which is still the icon. */
+function logoMark(brand, L, start, link) {
+  const logo = brand.logo;
+  const w = logo.width, h = logo.height;
+  const radius = `${Math.round(w * 0.22)}px`;
+  const img = (src, cls) => `<img class="${cls}" src="${escapeHtml(safeImageSrc(src))}" width="${w}" height="${h}" alt="${escapeHtml(logo.alt)}" style="${css({
+    display: 'block', width: `${w}px`, height: `${h}px`, border: `1px solid ${L.border}`, 'border-radius': radius,
+    'box-sizing': 'border-box', 'font-family': FONT, 'font-size': '13px', color: L.heading,
+  })}">`;
+  let icon;
+  if (logo.srcDark !== undefined) {
+    icon = img(logo.src, 'em-logo em-wm-light em-h')
+      + `<!--[if !mso]><!--><div class="em-wm-dark" style="display:none;max-height:0;overflow:hidden;mso-hide:all">`
+      + img(logo.srcDark, 'em-logo')
+      + `</div><!--<![endif]-->`;
+  } else {
+    icon = img(logo.src, 'em-logo em-h');
+  }
+  const cells = [`<td class="em-brand-icon" valign="middle" style="vertical-align:middle;font-size:0;line-height:0">${link(icon)}</td>`];
+  if (brand.showName !== false && typeof brand.name === 'string' && brand.name.trim()) {
+    cells.push(`<td class="em-brand-name" valign="middle" style="${css({ 'vertical-align': 'middle', [`padding-${start}`]: '12px' })}">`
+      + link(`<span class="em-h" style="${css({ 'font-family': FONT, 'font-size': '20px', 'line-height': '24px', 'font-weight': 700, 'letter-spacing': '-0.2px', color: L.heading })}">${escapeHtml(brand.name)}</span>`)
+      + `</td>`);
+  }
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr>${cells.join('')}</tr></table>`;
+}
+
 function header(o, L, start) {
   const brand = o.brand ?? {};
   const name = brand.name ?? palette.label;
+  const link = brand.href === undefined
+    ? inner => inner
+    : inner => `<a href="${escapeHtml(safeHref(brand.href))}" style="text-decoration:none">${inner}</a>`;
+  if (brand.logo !== undefined) {
+    return `<tr><td align="${start}" style="padding-bottom:28px">${logoMark(brand, L, start, link)}</td></tr>`;
+  }
   const useImage = o.assetBaseUrl && brand.wordmark !== false;
   let mark;
   if (useImage) {
@@ -284,8 +346,7 @@ function header(o, L, start) {
   } else {
     mark = `<span class="em-h" style="${css({ 'font-family': FONT, 'font-size': '19px', 'line-height': '24px', 'font-weight': 700, 'letter-spacing': '-0.2px', color: L.heading })}">${escapeHtml(name)}</span>`;
   }
-  if (brand.href !== undefined) mark = `<a href="${escapeHtml(safeHref(brand.href))}" style="text-decoration:none">${mark}</a>`;
-  return `<tr><td align="${start}" style="padding-bottom:28px">${mark}</td></tr>`;
+  return `<tr><td align="${start}" style="padding-bottom:28px">${link(mark)}</td></tr>`;
 }
 
 function footerHtml(f, L, start) {

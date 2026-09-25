@@ -11,6 +11,12 @@ const footer = {
 };
 const link = 'https://moments.example.com/auth/verify?token=4f9c2a7e1b8d4c3a9e6f0b2d5a7c1e8f';
 
+/* The neutral placeholder icon a product-logo example shows, never a real
+   product's art. build/guideline.mjs and build/email-shots.mjs point these
+   URLs at guideline/images/. */
+export const PLACEHOLDER_ICON_BASE = 'https://guideline.invalid/email/';
+export const PLACEHOLDER_ICONS = ['placeholder-icon-light.png', 'placeholder-icon-dark.png'];
+
 export const EXAMPLES = {
   'sign-in': {
     title: 'A sign-in link',
@@ -53,6 +59,36 @@ export const EXAMPLES = {
         { type: 'note', text: ['If you did not ask for this, you can ignore this email: your password stays as it is. Questions? Write to ', { text: 'support@nfc.cool', href: 'mailto:support@nfc.cool' }, '.'] },
       ],
       footer: { ...footer, reason: 'You got this because someone asked to reset the password for this address.' },
+    },
+  },
+  'product-logo': {
+    title: "A product's own logo",
+    options: {
+      brand: {
+        name: 'Example App',
+        logo: {
+          src: `${PLACEHOLDER_ICON_BASE}placeholder-icon-light.png`,
+          srcDark: `${PLACEHOLDER_ICON_BASE}placeholder-icon-dark.png`,
+          width: 40, height: 40, alt: '',
+        },
+      },
+      preheader: 'The download link works for 7 days.',
+      heading: 'Your export is ready',
+      blocks: [
+        { type: 'text', text: 'Everything in this album is packed into one file:' },
+        { type: 'quote', text: 'Lisbon, summer 2026' },
+        { type: 'button', label: 'Download the export', href: 'https://app.example.com/exports/7d1f3c/download' },
+        { type: 'link-fallback', href: 'https://app.example.com/exports/7d1f3c/download' },
+        { type: 'note', text: 'The link works for 7 days. After that, start a new export from the album.' },
+      ],
+      footer: {
+        product: 'Example App by NFC.cool',
+        reason: 'You got this because you asked for an export of this album.',
+        links: [
+          { label: 'Terms', href: 'https://app.example.com/terms' },
+          { label: 'Privacy', href: 'https://app.example.com/privacy' },
+        ],
+      },
     },
   },
 };

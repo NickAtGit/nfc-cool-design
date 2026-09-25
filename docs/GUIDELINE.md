@@ -525,6 +525,21 @@ folder and passes it as `assetBaseUrl`; old files stay up, because a mail in an
 inbox fetches its image every time it is opened. Without it the header is the
 brand name in bold.
 
+**A product signs with its own icon.** `brand.logo: { src, srcDark?, width,
+height, alt }` replaces the wordmark with the product's app icon, and
+`brand.name` sits beside it in bold heading ink (20px, vertically centred)
+unless `brand.showName` is `false`. Both URLs are absolute http(s) and are
+refused otherwise; `width`/`height` are the display size and the files are 2x.
+The icon's corners round to 22% of its width (the iOS squircle, inline, so
+Outlook desktop alone shows it square) and it carries a hairline in the card's
+border colour, repainted in dark, so a light icon keeps its edge on a white
+card and on a dark one when a client cannot swap. `srcDark` swaps in under a
+dark scheme exactly as the wordmark does. The product hosts its own icons; the
+footer's `product` line still names the maker ("Moments by NFC.cool"). The
+Django layout's `{% block header %}` does the same from `email_logo_src`,
+`email_logo_src_dark`, `email_logo_width`, `email_logo_height`,
+`email_logo_alt` and `email_brand_name`, and falls back to the wordmark.
+
 **A consumer without Node takes generated Django templates.** `npm run build`
 writes `dist/email/django/` (a layout with blocks and one partial per block)
 and the two PNGs to `dist/email/`, all made by rendering `src/email.js` with

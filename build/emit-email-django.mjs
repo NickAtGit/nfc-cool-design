@@ -10,6 +10,10 @@
    What Django gets, and what it gives up:
    - layout.html, extended by each mail, with blocks for the title, preheader,
      heading, content and footer, and `email_asset_base` for the PNGs;
+   - a header block that shows a product's own icon and name when the context
+     carries `email_logo_src` (plus `email_logo_src_dark`, `email_logo_width`,
+     `email_logo_height`, `email_logo_alt`, `email_brand_name`), and the
+     NFC.cool wordmark otherwise;
    - one partial per block type, included with `with label=… href=…`;
    - Django's autoescape does the escaping. It does NOT validate links the way
      renderEmail does, and it writes no plain-text part: a Django mail keeps
@@ -59,6 +63,40 @@ html = swap(html, [
   [S('PRODUCT'), `{% block footer_product %}${palette.label}{% endblock %}`],
   [S('REASON'), '{% block footer_reason %}{% endblock %}'],
 ]);
+/* ---- the header: a product logo when the context has one, else the wordmark ---- */
+const HEAD_START = '<tr><td align="left" style="padding-bottom:28px">';
+const headerRow = mail => {
+  const a = mail.indexOf(HEAD_START);
+  const b = mail.indexOf('\n<tr><td><h1', a);
+  if (a < 0 || b < 0) throw new Error('header row not found: src/email.js changed shape, update this generator');
+  return mail.slice(a, b);
+};
+const LOGO_W = 587, LOGO_H = 593;
+let logoRow = headerRow(renderEmail({
+  heading: 'x', blocks: [],
+  brand: { name: S('NAME'), logo: { src: URL_('LOGO'), srcDark: URL_('LOGODARK'), width: LOGO_W, height: LOGO_H, alt: S('ALT') } },
+}).html);
+const darkPart = /<!--\[if !mso\]><!--><div class="em-wm-dark"[\s\S]*?<\/div><!--<!\[endif\]-->/;
+const nameCell = /<td class="em-brand-name"[\s\S]*?<\/td>/;
+if (!darkPart.test(logoRow) || !nameCell.test(logoRow)) throw new Error('logo header pieces not found: src/email.js changed shape, update this generator');
+logoRow = logoRow
+  .replace(darkPart, m => `{% if email_logo_src_dark %}${m}{% endif %}`)
+  .replace(nameCell, m => `{% if email_brand_name %}${m}{% endif %}`);
+logoRow = swap(logoRow, [
+  ['class="em-logo em-wm-light em-h"', 'class="em-logo{% if email_logo_src_dark %} em-wm-light{% endif %} em-h"'],
+  [URL_('LOGODARK'), '{{ email_logo_src_dark }}'],
+  [URL_('LOGO'), '{{ email_logo_src }}'],
+  [`width="${LOGO_W}"`, 'width="{{ email_logo_width }}"'],
+  [`width:${LOGO_W}px`, 'width:{{ email_logo_width }}px'],
+  [`height="${LOGO_H}"`, 'height="{{ email_logo_height }}"'],
+  [`height:${LOGO_H}px`, 'height:{{ email_logo_height }}px'],
+  [`border-radius:${Math.round(LOGO_W * 0.22)}px`, 'border-radius:{% widthratio email_logo_width 100 22 %}px'],
+  [S('ALT'), '{{ email_logo_alt|default:"" }}'],
+  [S('NAME'), '{{ email_brand_name }}'],
+]);
+const wordmarkRow = headerRow(html);
+html = html.replace(wordmarkRow, `{% block header %}{% if email_logo_src %}${logoRow}{% else %}${wordmarkRow}{% endif %}{% endblock %}`);
+
 const files = { 'layout.html': `${BANNER}\n${html}` };
 
 /* ---- one partial per block ---- */

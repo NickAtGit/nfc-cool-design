@@ -20,6 +20,20 @@ export type EmailBlock =
   /** A hairline between the action and the small print. */
   | { type: 'divider' };
 
+/** A product's icon for the mail header. Host both PNGs yourself, at 2x the display size. */
+export interface EmailLogo {
+  /** Absolute http(s) URL of the icon on a light card. Shown wherever a client cannot swap. */
+  src: string;
+  /** Absolute http(s) URL of the icon on a dark card, swapped in under a dark scheme. */
+  srcDark?: string;
+  /** DISPLAY width in px (1 to 600); the file is twice this. Corners round at 22% of it. */
+  width: number;
+  /** DISPLAY height in px (1 to 600); the file is twice this. */
+  height: number;
+  /** The image's alt text. Pass '' when `name` is shown beside it, so a screen reader does not say it twice. */
+  alt: string;
+}
+
 export interface EmailOptions {
   /** The big line at the top of the card. Also the document title unless `title` is given. */
   heading: string;
@@ -32,10 +46,15 @@ export interface EmailOptions {
   /** Absolute http(s) URL of the folder that hosts EMAIL_ASSETS. Without it the header is the brand name in bold text. */
   assetBaseUrl?: string;
   brand?: {
-    /** The wordmark's alt text, and the text header without an assetBaseUrl. Defaults to "NFC.cool". */
+    /** The wordmark's alt text, and the text header without an assetBaseUrl. Defaults to "NFC.cool".
+     *  With `logo`, the product's name, set in bold beside the icon. */
     name?: string;
     /** false: always the text header, even with an assetBaseUrl (a brand that is not NFC.cool). */
     wordmark?: boolean;
+    /** A product's own icon in place of the NFC.cool wordmark, with `name` beside it. */
+    logo?: EmailLogo;
+    /** false: the logo alone, without `name` beside it. Default true. */
+    showName?: boolean;
     /** Makes the header a link. */
     href?: string;
   };
@@ -67,6 +86,8 @@ export const EMAIL_ASSETS: readonly string[];
 export function escapeHtml(value: unknown): string;
 /** Returns the link if it is http(s) or mailto, otherwise throws a TypeError. */
 export function safeHref(href: unknown): string;
+/** Returns the URL if it is an absolute http(s) URL, otherwise throws a TypeError. */
+export function safeImageSrc(src: unknown): string;
 
 /** One block's markup, styled as renderEmail styles it. For generators that assemble a mail outside JavaScript. */
 export function renderBlock(block: EmailBlock, options?: { dir?: 'ltr' | 'rtl' }): string;

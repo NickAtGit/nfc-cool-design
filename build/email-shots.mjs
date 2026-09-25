@@ -10,7 +10,7 @@ import { join, resolve } from 'node:path';
 import { root } from './guideline.mjs';
 import { openPage } from './chrome.mjs';
 import { renderEmail } from '../src/email.js';
-import { EXAMPLES } from '../guideline/email-examples.mjs';
+import { EXAMPLES, PLACEHOLDER_ICON_BASE, PLACEHOLDER_ICONS } from '../guideline/email-examples.mjs';
 
 const out = resolve(process.argv[2] ?? join(root, 'site', 'email-shots'));
 mkdirSync(out, { recursive: true });
@@ -23,7 +23,8 @@ const server = createServer((req, res) => {
   if (pages.has(path)) { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); return res.end(pages.get(path)); }
   const m = /^\/email\/([\w@.-]+\.png)$/.exec(path);
   if (m) {
-    try { const b = readFileSync(join(root, 'src/email', m[1])); res.writeHead(200, { 'content-type': 'image/png' }); return res.end(b); } catch { }
+    const dir = PLACEHOLDER_ICONS.includes(m[1]) ? 'guideline/images' : 'src/email';
+    try { const b = readFileSync(join(root, dir, m[1])); res.writeHead(200, { 'content-type': 'image/png' }); return res.end(b); } catch { }
   }
   res.writeHead(404); res.end();
 });
@@ -31,7 +32,8 @@ await new Promise(r => server.listen(0, '127.0.0.1', r));
 const base = `http://127.0.0.1:${server.address().port}`;
 
 for (const [slug, ex] of Object.entries(EXAMPLES)) {
-  const { html, text } = renderEmail({ ...ex.options, assetBaseUrl: `${base}/email/` });
+  let { html, text } = renderEmail({ ...ex.options, assetBaseUrl: `${base}/email/` });
+  html = html.replaceAll(PLACEHOLDER_ICON_BASE, `${base}/email/`);
   pages.set(`/${slug}.html`, html);
   writeFileSync(join(out, `${slug}.html`), html);
   writeFileSync(join(out, `${slug}.txt`), text);

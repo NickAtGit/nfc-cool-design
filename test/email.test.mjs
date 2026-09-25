@@ -243,6 +243,68 @@ test('the renderer and everything it loads ship in git and in the exports', () =
   }
 });
 
+/* ---------------------------------------------------------------- product logo */
+
+const LOGO = { src: 'https://m.example.com/email/icon-light.png', srcDark: 'https://m.example.com/email/icon-dark.png', width: 40, height: 40, alt: '' };
+const withLogo = (brand = {}, o = {}) => render({ assetBaseUrl: BASE, brand: { name: 'Moments', logo: LOGO, ...brand }, ...o });
+
+test('a product logo replaces the wordmark, with the name beside it, vertically centred', () => {
+  const { html } = withLogo();
+  assert.ok(!html.includes('wordmark-on-light.png'), 'the wordmark must go when a logo is given');
+  assert.match(html, /<img class="em-logo em-wm-light em-h" src="https:\/\/m\.example\.com\/email\/icon-light\.png" width="40" height="40" alt=""/);
+  assert.match(html, /<div class="em-wm-dark" style="display:none;[^"]*mso-hide:all"><img class="em-logo" src="https:\/\/m\.example\.com\/email\/icon-dark\.png"/);
+  assert.match(html, /border-radius:9px/, 'corners at 22% of the width');
+  assert.match(html, /<td class="em-brand-name" valign="middle" style="vertical-align:middle;padding-left:12px"><span class="em-h" style="[^"]*font-size:20px[^"]*font-weight:700[^"]*">Moments<\/span><\/td>/);
+  assert.match(html, /<td class="em-brand-icon" valign="middle" style="vertical-align:middle/);
+  const dark = html.slice(html.indexOf('@media (prefers-color-scheme: dark)'));
+  assert.match(dark, /\.em-logo\{border-color:#30363D !important\}/, 'the hairline repaints in dark');
+});
+
+test('showName: false shows the icon alone; no name, no name cell', () => {
+  assert.ok(!withLogo({ showName: false }).html.includes('em-brand-name'));
+  assert.ok(!withLogo({ name: undefined }).html.includes('em-brand-name'));
+  assert.ok(withLogo({ showName: true }).html.includes('em-brand-name'));
+});
+
+test('a logo without srcDark has no dark swap', () => {
+  const { html } = withLogo({ logo: { ...LOGO, srcDark: undefined } });
+  assert.ok(!html.includes('icon-dark.png'));
+  assert.match(html, /<img class="em-logo em-h" src="https:\/\/m\.example\.com\/email\/icon-light\.png"/);
+  assert.ok(!/<div class="em-wm-dark"/.test(html));
+});
+
+test('the logo header is escaped, flips in rtl, and becomes a link with brand.href', () => {
+  const { html } = withLogo({ name: NASTY, logo: { ...LOGO, alt: NASTY, src: 'https://m.example.com/i.png?a=1&b=2' }, href: 'https://m.example.com/' });
+  assert.ok(!html.includes('<script>'));
+  assert.ok(html.includes('alt="&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;'));
+  assert.ok(html.includes('src="https://m.example.com/i.png?a=1&amp;b=2"'));
+  assert.equal(html.split('<a href="https://m.example.com/" style="text-decoration:none">').length - 1, 2, 'icon and name both link');
+  assert.match(withLogo({}, { dir: 'rtl' }).html, /class="em-brand-name" valign="middle" style="vertical-align:middle;padding-right:12px"/);
+});
+
+test('logo URLs are absolute http(s) images, sizes are whole px, alt is a string', () => {
+  const BAD_SRC = ['javascript:alert(1)', 'data:image/png;base64,AAAA', '/email/icon.png', '//x.example/i.png',
+    'mailto:a@b.c', 'https://x.example/a"onerror="x', 'https://x.example/ a', '', null];
+  for (const src of BAD_SRC) {
+    assert.throws(() => withLogo({ logo: { ...LOGO, src } }), TypeError, `src ${src}`);
+    if (src !== null) assert.throws(() => withLogo({ logo: { ...LOGO, srcDark: src } }), TypeError, `srcDark ${src}`);
+  }
+  for (const n of [0, -1, 1.5, '40', 601, NaN, undefined]) {
+    assert.throws(() => withLogo({ logo: { ...LOGO, width: n } }), TypeError, `width ${n}`);
+    assert.throws(() => withLogo({ logo: { ...LOGO, height: n } }), TypeError, `height ${n}`);
+  }
+  assert.throws(() => withLogo({ logo: { ...LOGO, alt: undefined } }), TypeError);
+  assert.throws(() => withLogo({ logo: 'https://x.example/i.png' }), TypeError);
+  assert.doesNotThrow(() => withLogo({ logo: { ...LOGO, src: 'http://localhost:4400/email/app-icon-light.png' } }));
+});
+
+test('the plain-text part is the same with or without a logo', () => {
+  const o = all[0].options;
+  const plain = renderEmail({ ...o, assetBaseUrl: BASE }).text;
+  assert.equal(renderEmail({ ...o, assetBaseUrl: BASE, brand: { name: 'Moments', logo: LOGO } }).text, plain);
+  assert.equal(renderEmail({ ...o, brand: { name: 'Moments', logo: LOGO, showName: false } }).text, plain);
+});
+
 /* ---------------------------------------------------------------- Django */
 
 test('the Django templates are the renderer\'s own markup with no placeholder left', () => {
@@ -261,6 +323,16 @@ test('the Django templates are the renderer\'s own markup with no placeholder le
     assert.equal(layout.split(`{% block ${b} %}`).length - 1, 1, `layout must carry {% block ${b} %} once`);
   }
   assert.ok(layout.includes('{{ email_asset_base }}wordmark-on-light.png'));
+  assert.equal(layout.split('{% block header %}').length - 1, 1, 'layout must carry {% block header %} once');
+  const head = layout.slice(layout.indexOf('{% block header %}'), layout.indexOf('{% endblock %}', layout.indexOf('{% block header %}')));
+  assert.ok(head.startsWith('{% block header %}{% if email_logo_src %}'), 'the logo header is chosen by email_logo_src');
+  assert.ok(head.indexOf('{% else %}') < head.indexOf('wordmark-on-light.png'), 'the wordmark is the fallback');
+  for (const v of ['email_logo_src', 'email_logo_src_dark', 'email_logo_width', 'email_logo_height', 'email_brand_name']) {
+    assert.ok(head.includes(`{{ ${v} }}`), `the header uses {{ ${v} }}`);
+  }
+  assert.match(head, /\{% if email_logo_src_dark %\}<!--\[if !mso\]>/, 'the dark icon only when there is one');
+  assert.match(head, /\{% if email_brand_name %\}<td class="em-brand-name"/, 'the name cell only when there is a name');
+  assert.ok(head.includes('border-radius:{% widthratio email_logo_width 100 22 %}px'));
   const button = readFileSync(new URL('button.html', dir), 'utf8');
   assert.ok(button.includes('href="{{ href }}"') && button.includes('{{ label }}'));
   assert.ok(button.includes(renderBlock({ type: 'button', label: 'L', href: 'https://x.example/' }).split('href=')[0]),

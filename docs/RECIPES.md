@@ -237,7 +237,7 @@ export function albumDeletedMail(m: { albumTitle: string; deletedBy: string; pur
 The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`,
 `{ text, strong: true }`), `button`, `link-fallback` (`label` to translate
 "Or copy this link:"), `note`, `quote`, `divider`. Options: `lang`, `dir`
-(`"rtl"` flips every side), `title`, `brand: { name, wordmark: false, href }`,
+(`"rtl"` flips every side), `title`, `brand: { name, wordmark: false, href, logo, showName }`,
 `footer: { product, reason, address, links }`.
 
 - **One button.** Put `link-fallback` right after it for any link that signs
@@ -247,6 +247,11 @@ The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`
 - **Host the two PNGs** from `@nfccool/design/email/` at a stable public https
   folder and never delete an old one. No `assetBaseUrl`, or
   `brand: { wordmark: false }`, gives a text header.
+- **A product's own logo**: `brand: { name: "Moments", logo: { src, srcDark,
+  width: 40, height: 40, alt: "" } }` puts the product's app icon (2x PNGs it
+  hosts itself, absolute http(s)) with its name beside it in place of the
+  wordmark; `showName: false` shows the icon alone. Keep the footer's
+  `product: "Moments by NFC.cool"`.
 - **Django** (no Node): vendor `dist/email/django/` as `templates/nfccool_email/`
   and `dist/email/*.png` into static files, then
 

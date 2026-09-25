@@ -22,6 +22,31 @@
   <code>&lt;script&gt;</code> or quotes arrives as text: everything is escaped.
 </div>
 
+<h3 class="ks-h3">A product's own logo</h3>
+<!--email:product-logo-->
+<div class="ks-basis">
+  <b>A product signs its mail with its own icon and name,</b> the way its web header does: the app icon at
+  40px with its corners rounded to 22% of its width, the iOS squircle, and the name in bold heading ink beside
+  it. <code>srcDark</code> swaps in under a dark scheme exactly as the wordmark does; a client that cannot swap
+  shows the light icon, and a hairline in the card's border colour keeps its edge on either card. The footer
+  still says whose it is: "Moments by NFC.cool". Without <code>brand.logo</code> the header stays the NFC.cool
+  wordmark. The icon here is a placeholder; the design system carries no product's art.
+</div>
+<div class="prose"><pre><code>renderEmail({
+  brand: {
+    name: 'Moments',                       // set in bold beside the icon; showName: false hides it
+    logo: {
+      src: 'https://moments.example.com/email/app-icon-light.png',      // 80x80 PNG
+      srcDark: 'https://moments.example.com/email/app-icon-dark.png',   // optional
+      width: 40, height: 40,               // the DISPLAY size; the files are 2x
+      alt: '',                             // empty when the name sits beside it
+    },
+  },
+  heading: 'Your export is ready',
+  blocks: [ /* … */ ],
+  footer: { product: 'Moments by NFC.cool', reason: '…', links: [ /* Terms, Privacy */ ] },
+});</code></pre></div>
+
 <h3 class="ks-h3">The API</h3>
 <div class="prose"><pre><code>import { renderEmail } from '@nfccool/design/email.js';
 
@@ -120,4 +145,6 @@ const { html, text } = renderEmail({
 {% block footer_reason %}
   You got this because someone asked to reset the password for this address.
 {% endblock %}
-{# context: email_title, and email_asset_base (an absolute URL ending in /) #}</code></pre></div>
+{# context: email_title, and email_asset_base (an absolute URL ending in /) #}
+{# a product's logo instead of the wordmark: email_logo_src, email_logo_src_dark (optional),
+   email_logo_width, email_logo_height (display px), email_logo_alt, email_brand_name #}</code></pre></div>
