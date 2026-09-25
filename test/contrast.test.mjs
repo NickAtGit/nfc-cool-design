@@ -274,3 +274,24 @@ for (const [label, context, classes] of VARIANTS) {
     }
   });
 }
+
+/* A read-only input must not pass for an editable one. In dark, the old rule
+   (only a --color-bg-alt fill) sat a few levels from --field-bg and the two
+   looked the same. The boundary carries the difference now: a dashed border
+   in a colour that is not the field border, and secondary ink that still
+   reads on the fill, in both themes. */
+test('a read-only input reads as read-only in both themes', () => {
+  const css = componentsCSS.replace(/\/\*[\s\S]*?\*\//g, '');
+  const m = /\.input\[readonly\](?:, \.textarea\[readonly\])? \{([^}]*)\}/.exec(css);
+  assert.ok(m, 'the .input[readonly] rule is missing');
+  const decl = Object.fromEntries(m[1].split(';').map(d => d.split(':').map(x => x.trim())).filter(([k, v]) => k && v));
+  assert.equal(decl['border-style'], 'dashed', 'a read-only field has a dashed boundary');
+  const tok = v => /^var\(--([\w-]+)\)$/.exec(v ?? '')?.[1];
+  for (const [theme, T] of [['light', L], ['dark', D]]) {
+    const bg = T[tok(decl.background)], border = T[tok(decl['border-color'])], fg = T[tok(decl.color)];
+    assert.ok(bg && border && fg, `${theme}: background, border-color and color must each be a token`);
+    assert.notEqual(border.toUpperCase(), T['field-border'].toUpperCase(), `${theme}: the border must differ from an editable field's`);
+    assert.notEqual(bg.toUpperCase(), T['field-bg'].toUpperCase(), `${theme}: the fill must differ from an editable field's`);
+    assert.ok(ratio(fg, bg) >= AA, `${theme}: read-only text ${fg} on ${bg} is ${ratio(fg, bg).toFixed(2)}:1`);
+  }
+});

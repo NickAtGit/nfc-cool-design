@@ -20,8 +20,13 @@
       <textarea class="textarea" id="f4" placeholder="Optional"></textarea>
     </div>
     <div class="field">
+      <label class="field-label" for="f7">Read-only</label>
+      <input class="input" id="f7" value="owner@example.com" readonly>
+      <p class="field-hint">Shown, selectable, not editable.</p>
+    </div>
+    <div class="field">
       <label class="field-label" for="f5">Disabled</label>
-      <input class="input" id="f5" value="Read only" disabled>
+      <input class="input" id="f5" value="Not available" disabled>
     </div>
     <div class="checkbox-row">
       <input type="checkbox" id="f6" checked><label for="f6">Show my company logo on the card</label>
@@ -53,6 +58,9 @@
   <b>Sixteen pixels, always.</b> Inputs are <code>--text-body</code> because anything smaller makes iOS
   Safari zoom the page on focus. Focus is the newsletter form's <code>:focus-within</code> ring,
   generalised to every control, and the field border is its own token so a boundary reads on a card.
+  <b>Read-only is not editable and must not look it:</b> a dashed hairline in the quiet border colour, the
+  alternate fill and secondary ink, so it still reads (and copies) but is plainly not a place to type, in
+  dark too, where the fill alone is nearly the field's own.
   <b>A setting that is on or off is a switch</b>, painted from the checkbox so the form, the keyboard
   and the screen reader are untouched; its consequence sits on the line beneath and does not fold.
 </div>
