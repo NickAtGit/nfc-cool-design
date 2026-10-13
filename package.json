@@ -16,6 +16,8 @@
     "./brands/nfccool.css": "./src/brands/nfccool.css",
     "./components.css": "./src/components.css",
     "./archetypes.css": "./src/archetypes.css",
+    "./images/AppStore.svg": "./src/images/AppStore.svg",
+    "./images/GooglePlay.svg": "./src/images/GooglePlay.svg",
     "./email.css": "./src/email.css",
     "./email.js": {
       "types": "./src/email.d.ts",

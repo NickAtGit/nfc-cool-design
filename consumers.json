@@ -3,10 +3,12 @@
   "consumers": {
     "business_card_service": {
       "root": "business_card_service",
-      "why": "Django, no npm at all: the bundle is copied into staticfiles and linked from the templates. Adoption is IN PROGRESS as of 2026-09-07 and lives on the design/card-page-on-design-system branch, where both files are still untracked; main's console links its own dashboard.css and does not consume the package. Until that branch lands this entry only refreshes the copies when that branch is the one checked out.",
+      "why": "Django, no npm at all: the bundle is copied into staticfiles and linked from the templates. Adoption is IN PROGRESS as of 2026-09-07 and lives on the design/card-page-on-design-system branch, where both files are still untracked; main's console links its own dashboard.css and does not consume the package. Until that branch lands this entry only refreshes the copies when that branch is the one checked out. The store badges are vendored on main since 2026-10-13: the console's invite page shows them, and sync keeps those two copies current.",
       "files": {
         "dist/design.css": "web/static/stylesheets/design.css",
-        "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css"
+        "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css",
+        "dist/images/AppStore.svg": "web/static/images/AppStore.svg",
+        "dist/images/GooglePlay.svg": "web/static/images/GooglePlay.svg"
       }
     }
   }

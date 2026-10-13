@@ -119,7 +119,10 @@ brighten instead.
 CTA is an App Store badge, which works only when the conversion is leaving for
 the store. It has no answer for Save, Invite, Delete or Save Contact, and
 business_card_service filled that vacuum with five different button designs.
-Store badges remain the marketing hero's primary CTA.
+Store badges remain the marketing hero's primary CTA, and they are the control
+wherever the next step is installing the app, the console included: the
+official artwork ships as `images/AppStore.svg` and `images/GooglePlay.svg`, and
+a text button reading "App Store" is never a stand-in for it.
 
 **No control sits on top of the media it acts on.** A thumbnail's ✕, hung off
 its corner, is the one control with nowhere to come from: it is smaller than the

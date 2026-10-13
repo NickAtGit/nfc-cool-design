@@ -265,8 +265,11 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
 .trust-line .stars { color: var(--color-accent); margin-inline-end: 0.4em; letter-spacing: 0.05em; }
 
 /* ============================================================
-   Store badges - the marketing primary CTA. Kept in dark badge form
-   even on the gradient: the official artwork carries its own authority.
+   Store badges - the marketing primary CTA, and the control anywhere the
+   next step is installing the app (the console's invite page). The artwork
+   ships as images/AppStore.svg and images/GooglePlay.svg; never redraw it as
+   a text button. Kept in dark badge form even on the gradient: the official
+   artwork carries its own authority.
    ============================================================ */
 .store-buttons { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; }
 .store-button {

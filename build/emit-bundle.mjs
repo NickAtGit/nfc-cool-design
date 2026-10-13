@@ -1,7 +1,7 @@
 /* Concatenates the four layers into dist/design.css for consumers with no
    bundler (business_card_service's Django + WhiteNoise, and the vendored
    copy for nfc-cool-website). Usage: node build/emit-bundle.mjs */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,6 +25,13 @@ for (const script of ['nav.js', 'theme.js']) {
     + readFileSync(join(root, 'src', script), 'utf8');
   writeFileSync(join(root, 'dist', script), body);
   console.log(`wrote dist/${script} (${body.length} bytes)`);
+}
+/* The store badge artwork, likewise: authored in src/images, vendored from
+   dist/images. Copied byte for byte; it is Apple's and Google's artwork. */
+mkdirSync(join(root, 'dist', 'images'), { recursive: true });
+for (const f of readdirSync(join(root, 'src', 'images'))) {
+  copyFileSync(join(root, 'src', 'images', f), join(root, 'dist', 'images', f));
+  console.log(`wrote dist/images/${f}`);
 }
 for (const [name, files] of Object.entries(BUNDLES)) {
   const out = `/* @nfccool/design v${version} - generated bundle, do not edit.\n   Layers: ${files.join(', ')} */\n\n`
