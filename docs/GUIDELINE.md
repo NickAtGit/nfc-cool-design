@@ -448,6 +448,55 @@ number field never asks for its min-content width.
 
 ---
 
+## One way to do each thing
+
+Also from the 2026-10-15 review: each of these replaced two or three ways the
+console had been doing the same job. The behaviour lives in `src/ui.js`, an
+ES module beside `nav.js` that only enhances; every one of them still works
+without it.
+
+**One way back, above the title.** A page below a list or a section carries
+`.crumb`, "‹ Parent", first in `.page-head-text`, named with the parent's own
+title word for word ("Cards", "Leads", "Team & brand"). There is no back button
+in the header and no "Back to …" at the foot of the page; the console had all
+three, page by page. A top-level page and a tabbed section carry none, because
+the nav and the tabs are the way around. A link back to a filtered list keeps
+the filters.
+
+**A thing's pages are tabs.** The pages of one thing (a card's Details,
+Settings and App Clip card) sit under its page head as the same `.section-nav`
+a settings section uses, with the thing's name as the subtitle. Header buttons
+linking sideways between them were three weights of the same idea. On a phone
+the strip scrolls; `ui.js` brings the current tab into view on load (inside
+the strip, never the page) and fades the strip's end while more tabs wait past
+it, so a tab cut off mid-word stops reading as the end of the row.
+
+**One "are you sure", and it names the thing.** Signing out and every remove,
+revoke and delete a row or a card carries ask first, in one `<dialog
+class="dialog">`: a title naming what goes ("Revoke ‘e2e loop’?", "Delete Alex
+Rivera's card (Main)?"), one sentence on what happens next ("It stops working
+at once."), Cancel, then the action under its own verb. Never "Are you sure?",
+never OK. The page ships the dialog once, in its own language; `ui.js` fills it
+from `data-confirm-*` on whatever asked. A row's destructive action is
+`.btn-danger.btn-quiet.btn-sm`; full `.btn-danger` is for the action a page
+exists for, like deleting a team.
+
+**One feedback channel.** Whatever just happened is said by the one `.toast`
+at the foot of the window: a success hides after five seconds, an error stays
+until its close button. The console also drew a list of messages in the page,
+and on a phone a confirmation landed below the figures where nobody saw it.
+An `.alert` is for a standing state of the page, not for news; a field's error
+is `.field-error` under the field.
+
+**A row's actions are one menu.** `.row-menu` puts a row's actions behind a
+32px trigger at its end (40px on touch). A destructive item goes last, in the
+danger colour, after a `.menu-sep` hairline, and it asks first. Near the bottom
+of the window the menu opens upward; the last rows of the console's Cards list
+opened theirs off the page. A row's settings (a name, a role, an allowance) are
+not menu items that save on change: they are a dialog with one Save.
+
+---
+
 ## Building a page
 
 A page is assembled, not designed: the system owns the shell, the page head,
@@ -480,8 +529,8 @@ bundles are for the vendoring consumers only and are not exported, so the
 install runs no script. Bumping the pin is how a design change reaches the
 web: commit here, push, `pnpm update @nfccool/design` there. Fonts are the
 consumer's: this package declares `--font-*` and ships no woff2. The theme
-script is inlined in `<head>` from `@nfccool/design/theme.js`; `nav.js` is
-loaded as a module.
+script is inlined in `<head>` from `@nfccool/design/theme.js`; `nav.js` and
+`ui.js` are loaded as modules.
 
 **One nav, and its utilities stay in the bar.** The bar's markup is brand,
 panel (the destinations), utility cluster, then the burger — in that order,

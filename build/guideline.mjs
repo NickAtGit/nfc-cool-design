@@ -165,6 +165,11 @@ ${sectionBody(s, images)}</section>`;
 const navScript = () => '<script type="module">\n'
   + r('src/nav.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
   + '\n</script>';
+/* ui.js the same way, and its showToast handed to the guideline's own script,
+   which runs the live examples on the Feedback and Overlay pages. */
+const uiScript = () => '<script type="module">\n'
+  + r('src/ui.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
+  + '\nwindow.ksShowToast = showToast;\n</script>';
 
 const MIME = { svg: 'image/svg+xml', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg' };
 function inlineImages(html) {
@@ -198,7 +203,8 @@ ${r('guideline/sections/_footer.html')}</main>
 <script>
 ${r('guideline/guideline.js')}
 </script>
-${navScript()}`;
+${navScript()}
+${uiScript()}`;
   if (images === 'inline') body = inlineImages(body);
   return wrap
     ? `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${head}\n</head>\n<body>\n${body}\n</body>\n</html>\n`

@@ -27,6 +27,7 @@
     "./email/wordmark-on-dark.png": "./src/email/wordmark-on-dark.png",
     "./tokens.json": "./src/tokens.json",
     "./nav.js": "./src/nav.js",
+    "./ui.js": "./src/ui.js",
     "./theme.js": "./src/theme.js"
   },
   "scripts": {

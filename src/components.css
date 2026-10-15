@@ -427,8 +427,8 @@
        <input type="number" inputmode="numeric" aria-label="Seats" value="12" min="1">
        <button type="button" aria-label="More seats"><svg …><path d="M12 5v14M5 12h14"/></svg></button>
      </div>
-   The buttons need a few lines of the page's own script (stepUp/stepDown and
-   an input event); the field alone still works without it. */
+   src/ui.js wires the buttons (stepUp and stepDown, then the input and change
+   events a form listens for); without it the field still takes a number. */
 .stepper {
    display: inline-grid;
    grid-template-columns: 2.625rem 4rem 2.625rem;
@@ -628,14 +628,54 @@ a.card, a.card-interactive { color: var(--color-text); }
 .alert-info    { background: var(--color-info-bg);    border-color: var(--color-info-border); }
 .alert-title { font-weight: 700; }
 
+/* THE ONE FEEDBACK CHANNEL: every "Saved", "Invite sent" and "Could not
+   save" a page reports goes to one toast at the foot of the window, never to
+   a list drawn somewhere in the page. The business console had both, and on a
+   phone a confirmation landed below the figures where nobody saw it
+   (2026-10-15). A success hides itself after five seconds; an error stays
+   until its close button, because a person has to read it and may have to
+   act. The page ships the element empty and hidden, so the live region exists
+   before anything is announced, and src/ui.js fills it (showToast) or picks
+   up one the server rendered. Centred by its own margins rather than a
+   transform, so it is centred in both directions. Markup:
+     <div class="toast" data-toast role="status" aria-live="polite" data-close-label="Close" hidden></div>
+   or, rendered by the server after a redirect:
+     <div class="toast toast-success" data-toast role="status" aria-live="polite"><span class="toast-text">Saved.</span></div> */
 .toast {
-   position: fixed; inset-block-end: var(--space-6); inset-inline-start: 50%;
-   transform: translateX(-50%);
+   position: fixed; z-index: 90;
+   inset-block-end: var(--space-6); inset-inline: var(--space-4);
+   display: flex; align-items: center; gap: var(--space-3);
+   inline-size: fit-content; max-inline-size: 26rem; margin-inline: auto;
    padding: var(--space-3) var(--space-5);
+   border: 1px solid var(--color-border);
    border-radius: var(--radius-md);
-   background: var(--color-text); color: var(--color-bg);
-   font-size: var(--text-sm); font-weight: 600;
-   box-shadow: var(--elev-2); z-index: 90;
+   background: var(--color-bg-card); color: var(--color-text-secondary);
+   font-size: var(--text-sm); font-weight: 600; line-height: var(--leading-snug);
+   box-shadow: var(--elev-2);
+   animation: toast-in var(--transition) both;
+}
+.toast[hidden] { display: none; }
+.toast-success { border-color: var(--color-success-fg); color: var(--color-success-fg); }
+.toast-danger  { border-color: var(--color-danger-fg);  color: var(--color-danger-fg); }
+.toast-text { flex: 1; min-inline-size: 0; }
+.toast-close {
+   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+   inline-size: 2rem; block-size: 2rem; margin-inline-end: calc(var(--space-2) * -1); padding: 0;
+   border: 0; border-radius: var(--radius-sm); background: transparent; color: inherit; cursor: pointer;
+}
+.toast-close svg { inline-size: 1rem; block-size: 1rem; }
+@media (hover: hover) {
+   .toast-close:hover { background: var(--color-neutral-bg); }
+}
+@keyframes toast-in {
+   from { opacity: 0; transform: translateY(var(--space-2)); }
+   to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }
+/* On a phone it spans the gutter, so a long message wraps instead of
+   squeezing against one edge. */
+@media (max-width: 599px) {
+   .toast { inset-block-end: var(--space-4); inline-size: auto; max-inline-size: none; }
 }
 
 .skeleton {
@@ -708,6 +748,94 @@ a.card, a.card-interactive { color: var(--color-text); }
 @media (hover: hover) {
    .menu a:hover, .menu button:hover { background: var(--color-link-light); color: var(--color-link-text); }
 }
+.menu form { margin: 0; }
+/* A destructive item reads red at rest, and a hairline sits above it so it is
+   never the item the eye lands on after the one before it (the console's
+   "Give back to holder" sat flush against Delete). Destructive items go last. */
+.menu .is-danger { color: var(--color-danger-fg); }
+@media (hover: hover) {
+   .menu .is-danger:hover { background: var(--color-danger-bg); color: var(--color-danger-fg); }
+}
+.menu-sep { block-size: 1px; margin: var(--space-1) var(--space-2); background: var(--color-border); }
+
+/* A ROW'S MENU: a list row's actions behind one 32px trigger at the row's
+   inline end, the fixed trailing control a list's right edge comes from. A
+   <details>, so it opens and closes with no script; src/ui.js adds what
+   <details> cannot do alone: an outside click and Escape close it, opening
+   one closes the others, and near the bottom of the window it opens UPWARD
+   (.is-up) instead of off the page, which the last rows of the console's
+   Cards list did. Markup:
+     <details class="row-menu">
+       <summary aria-label="Actions for Alex"><svg …three dots…/></summary>
+       <div class="menu">
+         <a href="…">Edit</a>
+         <div class="menu-sep" role="separator"></div>
+         <form method="post" data-confirm-title="Delete Alex's card (Main)?" data-confirm-detail="Its link and QR code stop working."><button class="is-danger">Delete</button></form>
+       </div>
+     </details> */
+.row-menu { position: relative; display: inline-block; }
+.row-menu > summary {
+   list-style: none;
+   display: inline-flex; align-items: center; justify-content: center;
+   inline-size: 2rem; block-size: 2rem;
+   border: 1px solid var(--color-border); border-radius: var(--radius);
+   color: var(--color-text-secondary); cursor: pointer;
+   transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.row-menu > summary::-webkit-details-marker { display: none; }
+.row-menu > summary::marker { content: ""; }
+.row-menu > summary svg { inline-size: 1.125rem; block-size: 1.125rem; }
+.row-menu[open] > summary, .row-menu > summary:active {
+   background: var(--color-link-light); border-color: var(--color-link); color: var(--color-text);
+}
+@media (hover: hover) {
+   .row-menu > summary:hover { background: var(--color-link-light); border-color: var(--color-link); color: var(--color-text); }
+}
+.row-menu > .menu {
+   position: absolute; inset-inline-end: 0; inset-block-start: calc(100% + var(--space-1));
+   display: flex; flex-direction: column; gap: 2px;
+}
+.row-menu.is-up > .menu { inset-block-start: auto; inset-block-end: calc(100% + var(--space-1)); }
+
+/* THE CONFIRM DIALOG: the one "are you sure", for signing out and for every
+   remove, revoke and delete a row or a card carries. A title that names the
+   thing ("Revoke 'e2e loop'?", "Delete Alex's card (Main)?"), one sentence
+   saying what happens next ("It stops working at once."), then Cancel and the
+   action, the action last and named with its own verb. A native <dialog>, so
+   Escape, the focus trap and the backdrop are the browser's, and Cancel is a
+   method="dialog" form that needs no script. The page ships ONE, in its own
+   words, and src/ui.js fills it from data-confirm-title, -detail and -action
+   on the form, the submit button or the link that asked; without the script
+   the form simply posts. The backdrop is the nav's scrim, the one veil the
+   system has. Markup:
+     <dialog class="dialog" data-confirm-dialog aria-labelledby="confirm-title">
+       <h2 class="dialog-title" id="confirm-title">Sign out?</h2>
+       <p class="dialog-text">You can sign back in with your email and password.</p>
+       <div class="dialog-actions">
+         <form method="dialog"><button class="btn btn-secondary" autofocus>Cancel</button></form>
+         <button class="btn btn-danger btn-primary" type="button" data-confirm-go>Remove</button>
+       </div>
+     </dialog> */
+.dialog {
+   inline-size: min(100% - var(--space-8), 25rem);
+   max-block-size: 85vh; overflow-y: auto;
+   margin: auto; padding: var(--space-6);
+   border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+   background: var(--color-bg-card); color: var(--color-text);
+   box-shadow: var(--elev-3);
+}
+.dialog::backdrop { background: var(--nav-scrim); }
+.dialog-title {
+   margin: 0 0 var(--space-2);
+   font-family: var(--font-heading); font-weight: 700; font-size: var(--text-md);
+   line-height: var(--leading-snug); color: var(--color-text);
+}
+.dialog-text {
+   margin: 0 0 var(--space-5);
+   font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--color-text-secondary);
+}
+.dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
+.dialog-actions form { margin: 0; }
 
 /* ============================================================
    Header tiers
@@ -783,16 +911,29 @@ a.card, a.card-interactive { color: var(--color-text); }
    letter-spacing: var(--tracking-heading); color: var(--color-text); margin: 0;
 }
 .page-head .sub { font-size: var(--text-xs); color: var(--color-text-secondary); }
-.page-head .crumb {
+/* THE BACK LINK: "‹ Parent", small and in the link colour, first in
+   .page-head-text so it sits directly above the h1. The ONE way back from a
+   page below a list or a section (a card under Cards, a lead under Leads, a
+   delete page under its settings tab), named with the parent's own title
+   word for word. Never a button in the header, never "Back to …" at the foot
+   of the page, and none on a top-level page or a tabbed section, whose tabs
+   are the way around. When the parent is a filtered list, its href keeps the
+   filters so the person comes back to the list they left. Not scoped to
+   .page-head: a page with no head (a sign-in card) puts it first in the card.
+   The chevron is drawn and pulled into the gutter by its own blank side, so
+   the stroke, not the box, lines up with the title's edge. Markup:
+     <a class="crumb" href="/cards"><svg …><path d="M15 5l-7 7 7 7"/></svg><span><span class="sr-only">Back to </span>Cards</span></a> */
+.crumb {
    display: inline-flex; align-items: center; gap: var(--space-1);
+   inline-size: fit-content; margin-inline-start: -0.25em;
    font-size: var(--text-xs); font-weight: 600; color: var(--color-link-text);
    text-decoration: none;
 }
 @media (hover: hover) {
-   .page-head .crumb:hover { color: var(--color-link-text-hover); }
+   .crumb:hover { color: var(--color-link-text-hover); }
 }
-.page-head .crumb svg { inline-size: 1em; block-size: 1em; }
-[dir="rtl"] .page-head .crumb svg { transform: scaleX(-1); }
+.crumb svg { inline-size: 1em; block-size: 1em; flex-shrink: 0; }
+[dir="rtl"] .crumb svg { transform: scaleX(-1); }
 .page-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
 /* On a phone the actions drop under the title and stretch. */
 @media (max-width: 599px) {
@@ -802,14 +943,32 @@ a.card, a.card-interactive { color: var(--color-text); }
 /* SECTION TABS, under a page head: the rooms of one destination, each its own
    address, the active one underlined in the button colour. business.nfc.cool's
    account and settings pages, measured from its dashboard.css 2026-09-23. Four
-   fit a phone; past that the row scrolls sideways with no scrollbar. */
+   fit a phone; past that the row scrolls sideways with no scrollbar.
+   The same row serves one THING's pages too (a card's Details, Settings and
+   App Clip card), under that thing's page head: each page used to link to the
+   others its own way, and the tab row is the one way that reads as siblings.
+   Two things a scrolling strip cannot do alone, so src/ui.js does them: on
+   load it scrolls the tab you are on into the middle of the strip (never the
+   page), because on a phone it sat out of sight past the edge; and while more
+   tabs wait past the end it sets .can-scroll-end, which fades that edge, so a
+   strip cut off mid-word stops reading as the end of the row. */
 .section-nav {
    display: flex; gap: var(--space-1);
    margin-block: calc(var(--space-6) * -1 + var(--space-2)) var(--space-6);
    border-block-end: 1px solid var(--color-border);
    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+   scroll-padding-inline: var(--space-4);
 }
 .section-nav::-webkit-scrollbar { display: none; }
+/* A mask is alpha, not colour: black is "keep", transparent is "fade". */
+.section-nav.can-scroll-end {
+   -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-6)), transparent);
+   mask-image: linear-gradient(to right, black calc(100% - var(--space-6)), transparent);
+}
+[dir="rtl"] .section-nav.can-scroll-end {
+   -webkit-mask-image: linear-gradient(to left, black calc(100% - var(--space-6)), transparent);
+   mask-image: linear-gradient(to left, black calc(100% - var(--space-6)), transparent);
+}
 .section-nav a {
    padding: var(--space-2) var(--space-3); margin-block-end: -1px;
    border-block-end: 2px solid transparent;
@@ -1367,4 +1526,5 @@ a.card, a.card-interactive { color: var(--color-text); }
    control's own rule at the same weight. */
 @media (pointer: coarse) {
    .btn-sm { padding-block: var(--space-3); font-size: var(--text-sm); }
+   .row-menu > summary { inline-size: 2.5rem; block-size: 2.5rem; }
 }

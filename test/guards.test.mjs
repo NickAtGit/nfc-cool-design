@@ -444,6 +444,23 @@ for (const f of AUTHORED) {
   });
 }
 
+/* The behaviour behind the console's components ships with them: ui.js is
+   exported, and the guideline runs it, so its live examples are the real
+   thing. The CSS hooks it sets have to exist, in both reading directions. */
+test('ui.js ships, and the classes it sets are styled', () => {
+  const pkg = JSON.parse(read('package.json'));
+  assert.equal(pkg.exports['./ui.js'], './src/ui.js', 'export ./ui.js');
+  assert.match(read('build/guideline.mjs'), /src\/ui\.js/, 'the guideline must inline ui.js');
+  const rules = scopedRules(read('src/components.css'));
+  const has = (sel, re) => rules.some(r => r.selector === sel && re.test(r.decl));
+  assert.ok(has('.row-menu.is-up > .menu', /inset-block-end/), 'a row menu near the bottom opens upward');
+  assert.ok(has('.section-nav.can-scroll-end', /mask-image:\s*linear-gradient\(to right/), 'the tab strip fades its end');
+  assert.ok(has('[dir="rtl"] .section-nav.can-scroll-end', /mask-image:\s*linear-gradient\(to left/), 'and its end is on the left in RTL');
+  assert.ok(has('.toast[hidden]', /display:\s*none/), 'a hidden toast is gone, whatever its display');
+  const js = read('src/ui.js');
+  assert.match(js, /tone !== 'danger'\) toastTimer = setTimeout\([^,]+, 5000\)/, 'a success hides after five seconds and an error stays');
+});
+
 /* Touch sizes follow the kind of screen, not its width: an iPad fell back to
    the mouse sizes at 768px when they lived in the phone breakpoint. */
 test('a small button grows to the standard control on any touch screen', () => {

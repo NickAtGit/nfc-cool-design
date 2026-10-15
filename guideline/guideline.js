@@ -143,6 +143,25 @@
     route();
   }
 
+  /* Live examples. A toast button shows its message through ui.js's
+     showToast. A specimen form (data-ks-demo) is the confirm dialog's subject:
+     ui.js asks first and cancels the submit; once the person confirms, ui.js
+     lets the submit through, and this stops it before it reloads the page and
+     reports it in the toast instead. ui.js is a module, so it runs after this
+     script and showToast is looked up at click time. */
+  const toast = (text, tone) => window.ksShowToast && window.ksShowToast(text, { tone });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-ks-toast]');
+    if (b) toast(b.dataset.ksToast, b.dataset.ksTone);
+  });
+  document.addEventListener('submit', e => {
+    const f = e.target;
+    if (!f.matches('form[data-ks-demo]') || e.defaultPrevented) return;
+    e.preventDefault();
+    f.closest('details.row-menu')?.removeAttribute('open');
+    toast(f.dataset.ksDemo, 'success');
+  });
+
   /* Specimen links are href="#", which would jump the page to the top on each
      click. A real consumer's links go somewhere. */
   document.querySelectorAll('a[href="#"]').forEach(a =>

@@ -8,6 +8,68 @@
   </div>
 </div>
 <div class="ks-basis">
-  <b>One modal</b> that becomes a bottom sheet below <code>sm</code>. Narrow the window past 600px to
-  see it change.
+  <b>One modal</b> that becomes a bottom sheet below <code>sm</code>, for a form or a preview that needs
+  room. Narrow the window past 600px to see it change.
+</div>
+
+<h3 class="ks-h3">The confirm dialog</h3>
+<div class="ks-demo">
+  <div class="ks-row">
+    <form data-ks-demo="Signed out. (Not really: this is the guideline.)" data-confirm-title="Sign out?" data-confirm-detail="You can sign back in with your email and password." data-confirm-action="Sign out" data-confirm-tone="primary">
+      <button class="btn btn-icon" type="submit" aria-label="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    </form>
+    <form data-ks-demo="Revoked e2e loop." data-confirm-title="Revoke ‘e2e loop’?" data-confirm-detail="It stops working at once." data-confirm-action="Revoke">
+      <button class="btn btn-danger btn-quiet btn-sm" type="submit">Revoke</button>
+    </form>
+    <span class="ks-note" style="margin:0">Press either: both ask first</span>
+  </div>
+  <div class="dialog" style="position:static;margin-top:var(--space-5);box-shadow:var(--elev-1)" aria-hidden="true">
+    <p class="dialog-title">Delete Alex Rivera's card (Main)?</p>
+    <p class="dialog-text">Its link and QR code stop working. This cannot be undone.</p>
+    <div class="dialog-actions"><button class="btn btn-secondary" type="button" tabindex="-1">Cancel</button><button class="btn btn-danger btn-primary" type="button" tabindex="-1">Delete</button></div>
+  </div>
+</div>
+<dialog class="dialog" data-confirm-dialog aria-labelledby="ks-confirm-title">
+  <h2 class="dialog-title" id="ks-confirm-title"></h2>
+  <p class="dialog-text"></p>
+  <div class="dialog-actions">
+    <form method="dialog"><button class="btn btn-secondary" type="submit" autofocus>Cancel</button></form>
+    <button class="btn btn-danger btn-primary" type="button" data-confirm-go>Remove</button>
+  </div>
+</dialog>
+<div class="ks-basis">
+  <b>One "are you sure", and it names the thing.</b> Signing out and every row-level remove, revoke
+  and delete ask in the same <code>&lt;dialog class="dialog"&gt;</code>: a title that names what goes
+  ("Revoke ‘e2e loop’?", "Delete Alex Rivera's card (Main)?"), one sentence on what happens next, then
+  Cancel and the action, last, under its own verb. Never "Are you sure?" and never OK. The page ships
+  the dialog once, in its own language; <code>ui.js</code> fills it from
+  <code>data-confirm-title</code>, <code>-detail</code> and <code>-action</code> on the form, the submit
+  button or the link that asked, and <code>data-confirm-tone="primary"</code> marks one that destroys
+  nothing. A native dialog, so Escape, the focus trap and the backdrop are the browser's; without the
+  script the form simply posts.
+</div>
+
+<h3 class="ks-h3">A row's menu</h3>
+<div class="ks-demo">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)">
+    <div><b>Alex Rivera</b><div class="ks-note" style="margin:0">alex@example.com</div></div>
+    <details class="row-menu">
+      <summary aria-label="Actions for Alex Rivera"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></summary>
+      <div class="menu">
+        <a href="#">Edit member</a>
+        <a href="#">New card</a>
+        <a href="#">Hand over ownership</a>
+        <div class="menu-sep" role="separator"></div>
+        <form data-ks-demo="Removed Alex Rivera." data-confirm-title="Remove Alex Rivera from the team?" data-confirm-detail="Their cards stay with the team, unassigned." data-confirm-action="Remove"><button class="is-danger" type="submit">Remove</button></form>
+      </div>
+    </details>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>A row's actions sit behind one trigger at its end.</b> <code>.row-menu</code> is a
+  <code>&lt;details&gt;</code> with a 32px trigger (40px on any touch screen), the fixed trailing control
+  a list's edge comes from. <code>ui.js</code> closes it on an outside click and on Escape, keeps one
+  open at a time, and near the bottom of the window opens it upward rather than off the page. A
+  destructive item goes last, in the danger colour, with a <code>.menu-sep</code> hairline above it, and
+  it asks first. A row's settings (a name, a role) are not menu items: they are a dialog with one Save.
 </div>

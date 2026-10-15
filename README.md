@@ -21,6 +21,12 @@ Mail: `import { renderEmail } from '@nfccool/design/email.js'` turns a heading
 and a list of blocks into `{ html, text }` in the NFC.cool mail style
 (recipe 5 in RECIPES.md; the guideline's Email page shows it in both themes).
 
+Behaviour: `src/nav.js` folds the nav; `src/ui.js` does what the console's
+components cannot do in CSS alone (the tab strip finds its current tab, a row's
+menu opens upward near the bottom, a remove asks first in the page's one
+dialog, the toast hides a success after five seconds). Both are ES modules
+that only enhance.
+
 Read [docs/GUIDELINE.md](docs/GUIDELINE.md) before changing anything, and
 [docs/RECIPES.md](docs/RECIPES.md) before building a page: it has the complete
 markup for a console list page, a console form page, an empty state and a

@@ -21,8 +21,9 @@ every piece in both themes, so anything you see there you can use verbatim.
 3. **The four breakpoints only**: 600, 768, 900, 1200 px. A layout question
    that needs a fifth is a layout question to ask differently.
 4. **The page's name is in the content**, in a `.page-head`. Never in the bar,
-   never with a back arrow in the bar. A page one level down carries a crumb
-   above its title.
+   never with a back arrow in the bar. A page below a list or a section
+   carries a crumb above its title, and that is its only way back: no back
+   button in the header, no "Back to …" at the foot.
 5. **Controls are the brand's.** A customer's own colour (an album's accent,
    an organisation's brand) appears on its own band or tile, never on a
    button, a link or a chip.
@@ -83,8 +84,37 @@ column.
     </main>
   </div>
 </div>
+
+<!-- Once per page, outside the content and outside anything a swap replaces:
+     the one feedback channel and the one confirm, in the page's language. -->
+<div class="toast" data-toast role="status" aria-live="polite" data-close-label="Close" hidden></div>
+<dialog class="dialog" data-confirm-dialog aria-labelledby="confirm-title">
+  <h2 class="dialog-title" id="confirm-title"></h2>
+  <p class="dialog-text"></p>
+  <div class="dialog-actions">
+    <form method="dialog"><button class="btn btn-secondary" autofocus>Cancel</button></form>
+    <button class="btn btn-danger btn-primary" type="button" data-confirm-go>Remove</button>
+  </div>
+</dialog>
 <script type="module" src="/assets/design/nav.js"></script>
+<script type="module" src="/assets/design/ui.js"></script>
 ```
+
+A message from the server after a redirect is that toast, rendered with its
+text and tone (`class="toast toast-success"`, `<span class="toast-text">Saved.</span>`,
+no `hidden`); `ui.js` gives it its close button and its five seconds. A row's
+destructive action asks first by naming the thing on its form:
+
+```html
+<form method="post" action="/tokens/7/revoke"
+      data-confirm-title="Revoke ‘e2e loop’?" data-confirm-detail="It stops working at once."
+      data-confirm-action="Revoke">
+  <button class="btn btn-danger btn-quiet btn-sm">Revoke</button>
+</form>
+```
+
+Sign out is the same, on its link or form, with `data-confirm-tone="primary"`
+because it destroys nothing.
 
 What the page may add: the rule that arranges ITS tiles (a `grid-template-
 columns` on its own list, stepping 2, 3, 4 across at 768 and 900). Nothing
@@ -107,11 +137,16 @@ foot away from its control. A page one level down carries the crumb.
 <div class="app-main">
   <div class="page-head form-narrow">
     <div class="page-head-text">
-      <a class="crumb" href="/cards"><svg …><path d="M15 5l-7 7 7 7"/></svg>Cards</a>
+      <a class="crumb" href="/cards"><svg …><path d="M15 5l-7 7 7 7"/></svg><span><span class="sr-only">Back to </span>Cards</span></a>
       <h1>Card settings</h1>
-      <span class="sub">Changes go live as soon as you save.</span>
+      <span class="sub">Alex Rivera · Main</span>
     </div>
   </div>
+  <!-- A thing with several pages: its tabs, under its head. -->
+  <nav class="section-nav form-narrow" aria-label="This card">
+    <a href="/cards/1">Details</a>
+    <a href="/cards/1/settings" aria-current="page">Settings</a>
+  </nav>
 
   <main class="form-narrow">
     <form class="panel" method="post">
@@ -133,15 +168,15 @@ foot away from its control. A page one level down carries the crumb.
         <button class="btn btn-primary btn-sm" type="submit">Save</button>
       </div>
     </form>
-
-    <div class="alert alert-success" role="status"><span><b class="alert-title">Saved.</b> Your card is live.</span></div>
   </main>
 </div>
 ```
 
-An error on a field: `aria-invalid="true"` on the control and a `.field-error`
-under it. A page-level failure: `.alert alert-danger`. A destructive action:
-`.btn btn-danger`, behind a confirmation that names what goes.
+"Saved." after the post is the toast from recipe 1, not something drawn in the
+page. An error on a field: `aria-invalid="true"` on the control and a
+`.field-error` under it. A standing problem with the page (a domain that will
+not verify): `.alert alert-danger`. A destructive action: `.btn btn-danger`,
+asking first with `data-confirm-*` and naming what goes.
 
 ## Recipe 3: an empty state, a refusal, a 404
 

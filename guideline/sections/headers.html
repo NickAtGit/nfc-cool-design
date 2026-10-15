@@ -43,3 +43,35 @@
   pages, which do not need the full hero. Tier 3 for the dashboard and the card page, where a gradient
   band above the fold would be marketing intruding on work.
 </div>
+
+<h3 class="ks-h3">The way back, and a thing's own tabs</h3>
+<div class="ks-demo is-plain">
+  <div class="page-head">
+    <div class="page-head-text">
+      <a class="crumb" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span><span class="sr-only">Back to </span>Cards</span></a>
+      <h1>Card settings</h1>
+      <span class="sub">Alex Rivera · Main</span>
+    </div>
+  </div>
+  <nav class="section-nav" aria-label="This card">
+    <a href="#">Details</a>
+    <a href="#" aria-current="page">Settings</a>
+    <a href="#">App Clip card</a>
+    <a href="#">Lead capture</a>
+    <a href="#">Share link and QR code</a>
+  </nav>
+  <div class="card" style="font-size:var(--text-sm);color:var(--color-text-secondary)">The page's cards start here.</div>
+</div>
+<div class="ks-basis">
+  <b>One way back, above the title.</b> Every page below a list or a section carries a
+  <code>.crumb</code>, "‹ Parent", first in <code>.page-head-text</code>, named with the parent's own
+  title word for word. There is no back button in the header and no "Back to …" at the foot of the
+  page: two ways back is one too many, and the header's buttons are for the page's own actions. A
+  top-level page and a tabbed section carry none. When the parent is a filtered list, the link keeps
+  its filters.
+  <br><br>
+  <b>A thing's pages are tabs.</b> The pages of one card (or one section) sit under its head as the
+  same <code>.section-nav</code> a settings section uses, so they read as siblings and each is one tap
+  from the others. On a phone the strip scrolls: <code>ui.js</code> brings the tab you are on into
+  view on load and fades the edge while more tabs wait past it. Narrow the window to see both.
+</div>

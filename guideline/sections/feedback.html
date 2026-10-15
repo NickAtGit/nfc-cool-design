@@ -13,5 +13,27 @@
 </div>
 <div class="ks-basis">
   <b>One alert per tone</b>, from the same ramp as the pills, a native progress bar for anything with a known
-  end, and a skeleton for anything still loading.
+  end, and a skeleton for anything still loading. An alert is for a standing state of the page (a limit
+  reached, a domain that will not verify); it is not how a page says that something just happened.
+</div>
+
+<h3 class="ks-h3">The toast: one feedback channel</h3>
+<div class="ks-demo">
+  <div class="ks-row">
+    <button class="btn btn-secondary btn-sm" type="button" data-ks-toast="Saved." data-ks-tone="success">Show a success</button>
+    <button class="btn btn-secondary btn-sm" type="button" data-ks-toast="Could not save. The name is already taken." data-ks-tone="danger">Show an error</button>
+  </div>
+  <div style="position:relative;display:grid;gap:var(--space-3);margin-top:var(--space-5)">
+    <div class="toast toast-success" style="position:static;animation:none;margin:0"><span class="toast-text">Invite sent to jordan@example.com.</span><button class="toast-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="toast toast-danger" style="position:static;animation:none;margin:0"><span class="toast-text">Could not remove the domain. Try again.</span><button class="toast-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>Everything that just happened is said in one place.</b> A save, a sent invite, a refused form after a
+  redirect: all of it goes to the one <code>.toast</code> at the foot of the window, never to a list
+  drawn in the page, where on a phone a confirmation landed below the figures and nobody saw it. A
+  success hides itself after five seconds; an error stays until its close button, because it has to be
+  read and may have to be acted on. The page ships the element empty, so the live region exists before
+  anything is announced, and <code>ui.js</code> fills it (<code>showToast</code>) or picks up one the
+  server rendered. A field's own error is not a toast: it is <code>.field-error</code> under the field.
 </div>
