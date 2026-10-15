@@ -71,3 +71,32 @@
   <b>One ramp per tone.</b> Foreground, background and border for success, warning, danger, info and
   neutral, and every pill, alert and status marker draws from the same five.
 </div>
+
+<h3 class="ks-h3">Workflow status</h3>
+<div class="ks-demo">
+  <div class="ks-row">
+    <span class="pill pill-status-blue">New</span>
+    <span class="pill pill-status-orange">Contacted</span>
+    <span class="pill pill-status-green">Qualified</span>
+    <span class="pill pill-status-purple">Converted</span>
+    <span class="pill pill-status-grey">Archived</span>
+  </div>
+</div>
+<div class="ks-demo is-plain">
+  <div class="ks-row">
+    <span class="pill pill-status-blue">New</span>
+    <span class="pill pill-status-orange">Contacted</span>
+    <span class="pill pill-status-green">Qualified</span>
+    <span class="pill pill-status-purple">Converted</span>
+    <span class="pill pill-status-grey">Archived</span>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>The apps' colours, a label per theme.</b> A status a person moves something through (a lead's New,
+  Contacted, Qualified, Converted, Archived) wears the iOS and Android apps' system blue, orange, green,
+  purple and grey as a 20% tint, the same in both themes. The app colour itself is no label: orange and
+  green measure 1.9:1 on white. So each <code>--status-*-fg</code> is the same hue darkened in light and
+  lightened in dark until it clears 4.5:1 on its tint, composited over the card (first row) and over the
+  page (second), which the contrast suite asserts for all ten pairs. Which hue means what is the
+  product's; the console's leads use the order above.
+</div>

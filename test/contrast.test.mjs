@@ -275,6 +275,24 @@ for (const [label, context, classes] of VARIANTS) {
   });
 }
 
+/* A status pill's label sits on a 20% tint of the app colour, and the pill
+   appears on a card and on the bare page alike. The console's first shades
+   passed on a card only (light orange and green measured 4.38 and 4.30 on the
+   page) and its dark grey was 3.67 on its own tint, because the tint was
+   never composited when they were measured. This composites it. */
+for (const hue of ['blue', 'orange', 'green', 'purple', 'grey']) {
+  test(`the ${hue} status pill's label clears 4.5:1 on its tint, on a card and on the page, in both themes`, () => {
+    for (const [theme, T] of [['light', L], ['dark', D]]) {
+      for (const surface of ['color-bg-card', 'color-bg']) {
+        const fg = T[`status-${hue}-fg`], bg = composite(T[`status-${hue}-bg`], T[surface]);
+        assert.ok(fg && /^#[0-9a-fA-F]{6}$/.test(bg), `${theme}: status-${hue} tokens are missing`);
+        const r = ratio(fg, bg);
+        assert.ok(r >= AA, `${theme} on ${surface}: ${fg} on ${bg} is ${r.toFixed(2)}:1`);
+      }
+    }
+  });
+}
+
 /* A read-only input must not pass for an editable one. In dark, the old rule
    (only a --color-bg-alt fill) sat a few levels from --field-bg and the two
    looked the same. The boundary carries the difference now: a dashed border

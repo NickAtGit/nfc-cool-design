@@ -217,6 +217,19 @@ theme instead, so the console obeys one palette rather than carrying a second
 dark surface family that has to be kept in contrast on its own. If that spec is
 revisited, this is the newer decision.
 
+**A workflow status wears the apps' colours, but not as its label.** A lead
+moves through New, Contacted, Qualified, Converted and Archived in the iOS app,
+the Android app and the console, in Apple's system blue, orange, green, purple
+and grey. As a 20% tint behind the pill those colours carry over unchanged and
+are the same in both themes. As text they cannot: orange and green measure
+1.9:1 on white. So `--status-<hue>-fg` is a shade of its own per theme, the
+same hue darkened in light and lightened in dark, and `--status-<hue>-bg` is
+the tint; `.pill-status-<hue>` pairs them. Measure a label against its tint
+COMPOSITED over the surface it sits on, card and page both: the console's
+first shades were measured on bare white and two of them failed on the page
+background, and its dark grey measured 3.67:1 once the tint was under it.
+`test/contrast.test.mjs` composites all ten pairs.
+
 **Three header tiers, not one.** `.hero-band` for marketing landings,
 `.hero-strip` for blog and secondary pages, `.app-header` for product UI and
 card pages. A gradient band above a data table is marketing intruding on work.

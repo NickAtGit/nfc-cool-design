@@ -410,6 +410,17 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 .pill-warning { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
 .pill-danger  { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
 .pill-info    { background: var(--color-info-bg);    color: var(--color-info-fg);    border-color: var(--color-info-border); }
+/* A WORKFLOW STATUS: the apps' colours as a tint, with a label shade of its
+   own per theme that clears 4.5:1 on that tint over a card and over the page
+   (--status-*, in the brand layer). Which hue means what is the product's:
+   the business console's leads read New blue, Contacted orange, Qualified
+   green, Converted purple, Archived grey, the same as the apps. No border:
+   the tint is the shape. */
+.pill-status-blue   { background: var(--status-blue-bg);   color: var(--status-blue-fg);   border-color: transparent; }
+.pill-status-orange { background: var(--status-orange-bg); color: var(--status-orange-fg); border-color: transparent; }
+.pill-status-green  { background: var(--status-green-bg);  color: var(--status-green-fg);  border-color: transparent; }
+.pill-status-purple { background: var(--status-purple-bg); color: var(--status-purple-fg); border-color: transparent; }
+.pill-status-grey   { background: var(--status-grey-bg);   color: var(--status-grey-fg);   border-color: transparent; }
 
 /* Round status marker, from the pricing table. */
 .status-dot {
