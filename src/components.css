@@ -397,6 +397,71 @@
 }
 .switch-row + .switch-row { border-block-start: 1px solid var(--color-border-light); }
 
+/* THE INFO TIP: where an explanation lives. What a setting does, a rule read
+   once, the consequence someone checks while deciding: behind a mark beside
+   the label (or after the button whose action it explains), not as standing
+   lines under every control (the business console, 2026-10-12). What stays
+   visible is not explanation: a page's subtitle, data, an empty state, a
+   status or the reason something is blocked, a one-time secret warning, a
+   destructive consequence, and any link, because a bubble only lives while
+   the mark holds focus and a link in one is close to untappable. The switch's
+   consequence line (.switch-hint) is the label's other half and stays too.
+   A real button, so it opens on hover, on keyboard focus AND on a tap (which
+   focuses it; :focus-visible alone does not reliably match a tap). Inside a
+   <label> a tap would activate the label and move focus to its field, closing
+   the bubble in the same gesture, so src/ui.js cancels that and focuses the
+   mark. aria-label names the mark; aria-describedby speaks the bubble.
+   type="button", or in a form it submits it. Markup:
+     <button type="button" class="info-tip" aria-label="About private cards" aria-describedby="tip-private">
+       <svg …circle and i…/>
+       <span class="info-tip-bubble" id="tip-private" role="tooltip">A private card opens only with its PIN.</span>
+     </button> */
+.info-tip {
+   position: relative;
+   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+   inline-size: 1.125rem; block-size: 1.125rem; padding: 0;
+   margin-inline-start: var(--space-1);
+   border: 0; border-radius: var(--radius-pill); background: transparent;
+   color: var(--color-text-muted); vertical-align: -3px; cursor: help;
+}
+.info-tip svg { inline-size: 1rem; block-size: 1rem; display: block; }
+.info-tip:focus-visible { color: var(--color-link-text); }
+/* Anchored to the mark's inline-start edge and opening toward the end: a
+   centred bubble on a mark early in a line reached back past the column. */
+.info-tip-bubble {
+   position: absolute; z-index: 60;
+   inset-block-end: calc(100% + var(--space-2)); inset-inline-start: calc(var(--space-2) * -1);
+   inline-size: max-content; max-inline-size: 16rem;
+   padding: var(--space-3);
+   border: 1px solid var(--color-border); border-radius: var(--radius);
+   background: var(--color-bg-card); box-shadow: var(--elev-2);
+   color: var(--color-text-secondary);
+   font-family: var(--font-sans); font-size: var(--text-2xs); font-weight: 400;
+   line-height: var(--leading-normal); letter-spacing: var(--tracking-normal);
+   text-align: start; text-transform: none; white-space: normal; overflow-wrap: anywhere;
+   opacity: 0; visibility: hidden;
+   transition: opacity var(--transition), visibility var(--transition);
+}
+.info-tip:focus .info-tip-bubble, .info-tip:focus-visible .info-tip-bubble { opacity: 1; visibility: visible; }
+@media (hover: hover) {
+   .info-tip:hover { color: var(--color-link-text); }
+   .info-tip:hover .info-tip-bubble { opacity: 1; visibility: visible; }
+}
+@media (prefers-reduced-motion: reduce) { .info-tip-bubble { transition: none; } }
+/* On a phone the bubble is framed by the CARD, not by the mark: anchored to
+   an 18-pixel mark it ran off whichever edge the mark was near. Pinned to the
+   card's padding it cannot leave the card wherever the mark sits, and it
+   still opens upward from the mark's own line. */
+@media (max-width: 767px) {
+   .card, .panel { position: relative; }
+   .info-tip { position: static; }
+   .info-tip-bubble {
+      inset-block: auto; inset-inline: var(--space-6);
+      inline-size: auto; max-inline-size: none;
+      transform: translateY(calc(-100% - var(--space-2)));
+   }
+}
+
 /* Pill-in-a-pill input group, as used by the newsletter form. */
 .input-group {
    display: flex; align-items: center;
@@ -528,6 +593,45 @@ a.card, a.card-interactive { color: var(--color-text); }
 }
 .table .num { text-align: end; font-variant-numeric: tabular-nums; }
 
+/* LIST ROWS: a list that is a card's content, one row per item. The shape a
+   table takes on a phone: a squeezed table is columns too narrow to read
+   with headings that no longer sit over them, and the business console's
+   token and webhook tables fell apart that way (2026-10-15). A row is the
+   item's name at the start and its one quiet action at the end on the first
+   line, then one muted line per fact under it, all hairline-divided inside
+   the card, with no box in the box. Use it at every width, or render it in
+   place of the table below md; the facts are written for the line, not
+   copied from the columns. Markup:
+     <ul class="list-rows">
+       <li class="list-row">
+         <span class="list-row-title">e2e loop</span>
+         <form class="list-row-action" …><button class="btn btn-danger btn-quiet btn-sm">Revoke</button></form>
+         <span class="list-row-meta"><span>Read and write</span><span>Last used 15 Oct, 12:45</span></span>
+       </li>
+     </ul> */
+.list-rows { list-style: none; margin: 0; padding: 0; }
+.list-row {
+   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+   gap: var(--space-1) var(--space-3);
+   padding-block: var(--space-3);
+   border-block-end: 1px solid var(--color-border-light);
+}
+.list-row:first-child { padding-block-start: 0; }
+.list-row:last-child { padding-block-end: 0; border-block-end: 0; }
+.list-row-title {
+   grid-column: 1; grid-row: 1; min-inline-size: 0;
+   font-weight: 600; font-size: var(--text-sm); color: var(--color-text); overflow-wrap: anywhere;
+}
+/* The quiet action's word lines up with the row's end at rest: its box is
+   pulled out by the button's own inline padding. */
+.list-row-action { grid-column: 2; grid-row: 1; justify-self: end; margin: 0; }
+.list-row-action .btn-quiet { margin-inline-end: calc(var(--space-4) * -1); }
+.list-row-meta {
+   grid-column: 1 / -1; min-inline-size: 0;
+   font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--color-text-muted);
+}
+.list-row-meta > span { display: block; overflow-wrap: anywhere; }
+
 .pill {
    display: inline-flex; align-items: center; gap: var(--space-1);
    padding: var(--space-1) var(--space-3);
@@ -608,6 +712,13 @@ a.card, a.card-interactive { color: var(--color-text); }
    color: var(--color-text); margin: 0 0 var(--space-2);
 }
 .empty-state p { margin: 0 auto var(--space-5); max-width: 34em; font-size: var(--text-sm); }
+/* An empty LIST inside its own titled card: the card keeps its head (the
+   list's name, so the page has the same cards whether or not they are empty)
+   and the empty state is one line, "No domains yet.", plus the next step,
+   a sentence pointing at the control or a button. A filtered list that comes
+   back empty says so ("No leads match this filter.") and offers the way out. */
+.card-head + .empty-state { padding: var(--space-6) var(--space-2) var(--space-2); }
+.card-head + .empty-state p:last-child { margin-block-end: 0; }
 
 /* ============================================================
    Feedback
@@ -992,10 +1103,13 @@ a.card, a.card-interactive { color: var(--color-text); }
 .card-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
 
 /* A FORM PAGE IN THE CONSOLE: the page head and the cards under it share one
-   reading column, centred in the page column, so a label is never a foot
-   away from its control on a wide screen. A list page takes the whole column
-   and needs no class. */
-.form-narrow { inline-size: 100%; max-inline-size: var(--measure-content); margin-inline: auto; }
+   reading column, so a label is never a foot away from its control on a wide
+   screen. A list page takes the whole column and needs no class. The column
+   starts at the page column's inline-start edge, NOT centred in it: centred,
+   a form page's title began at a different x from every list page's, and
+   moving between the two made the title jump sideways (business console,
+   2026-10-15). */
+.form-narrow { inline-size: 100%; max-inline-size: var(--measure-content); }
 
 /* ============================================================
    Layout helpers
@@ -1006,6 +1120,37 @@ a.card, a.card-interactive { color: var(--color-text); }
 .stack > * + * { margin-block-start: var(--space-5); }
 .cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
 .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); gap: var(--space-5); }
+/* Two columns of cards, one on a phone. Every track is minmax(0, 1fr), never
+   a bare 1fr, whose floor is the widest thing in it: one long option in a
+   select (a name and an email) widened the console's lead page past the
+   phone, 431 pixels on a 390 screen. No control can widen the page through
+   this grid. */
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); align-items: start; }
+@media (max-width: 767px) {
+   .grid-2 { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* A ONE-LINE FORM: a field and its one button on a row ("Create token",
+   "Add domain"). The field takes the room and may shrink; the button keeps
+   its word. On a phone the row wraps and the button takes a full-width line
+   of its own, so two such forms on one page end in buttons of one width
+   instead of whatever width each word happened to be. */
+.form-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); }
+.form-row > .field, .form-row > .input, .form-row > .select { flex: 1 1 12rem; min-inline-size: 0; }
+.form-row > .btn { flex: 0 0 auto; }
+/* THE ACTIONS THAT END A FORM, inside its card: in a row, wrapping, and
+   centred on one line so an info tip after a button sits level with it. On a
+   phone every button is full width, stacked, and a tip explaining an action
+   stays beside its button instead of dropping to a row of its own. */
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+@media (max-width: 767px) {
+   .form-row > .btn { flex: 1 1 100%; }
+   .form-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+   .form-actions > .btn { inline-size: 100%; }
+   .form-actions:has(> .info-tip) { grid-template-columns: minmax(0, 1fr) auto; }
+   .form-actions:has(> .info-tip) > :not(.info-tip) { grid-column: 1; }
+   .form-actions:has(> .info-tip) > .info-tip { grid-column: 2; }
+}
 
 /* ============================================================
    Navigation - one component, two modes.
@@ -1527,4 +1672,7 @@ a.card, a.card-interactive { color: var(--color-text); }
 @media (pointer: coarse) {
    .btn-sm { padding-block: var(--space-3); font-size: var(--text-sm); }
    .row-menu > summary { inline-size: 2.5rem; block-size: 2.5rem; }
+   /* The mark keeps its 1rem glyph, exactly where it was, inside a 2rem tap
+      area: the padding grows it and the negative margins give the room back. */
+   .info-tip { inline-size: 2rem; block-size: 2rem; padding: var(--space-2); margin-block: -7px; margin-inline: -3px -7px; }
 }

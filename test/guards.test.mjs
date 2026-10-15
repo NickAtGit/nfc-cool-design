@@ -461,6 +461,21 @@ test('ui.js ships, and the classes it sets are styled', () => {
   assert.match(js, /tone !== 'danger'\) toastTimer = setTimeout\([^,]+, 5000\)/, 'a success hides after five seconds and an error stays');
 });
 
+/* A bare 1fr is minmax(auto, 1fr): its floor is the widest thing in the
+   track, and one long option in a select widened the console's lead page to
+   431 pixels on a 390 screen. The grids that hold content and controls use
+   minmax(0, …) in every scope. */
+test('the content grids never let a control widen the page', () => {
+  const rules = scopedRules(read('src/components.css'));
+  const bad = rules
+    .filter(r => /^\.(grid-2|list-row|form-actions)$/.test(r.selector))
+    .filter(r => /grid-template-columns:[^;]*(^|[\s(,])1fr/.test(r.decl.replace(/minmax\(0,\s*1fr\)/g, '')))
+    .map(r => `${r.scope} ${r.selector}`.trim());
+  assert.deepEqual(bad, [], `a bare 1fr track:\n  ${bad.join('\n  ')}`);
+  assert.ok(rules.some(r => /max-width: 767px/.test(r.scope) && r.selector === '.form-row > .btn' && /flex:\s*1 1 100%/.test(r.decl)),
+    'a one-line form\'s button takes a full line on a phone');
+});
+
 /* Touch sizes follow the kind of screen, not its width: an iPad fell back to
    the mouse sizes at 768px when they lived in the phone breakpoint. */
 test('a small button grows to the standard control on any touch screen', () => {

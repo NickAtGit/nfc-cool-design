@@ -83,3 +83,35 @@
   <code>--text-md</code>, bold, tabular. The tracks are fixed, so the number field never asks for its
   min-content width and nothing is clipped off the end.
 </div>
+
+<h3 class="ks-h3">Explanations, one-line forms and a form's actions</h3>
+<div class="ks-demo">
+  <div style="display:grid;gap:var(--space-6);max-width:32rem">
+    <div class="field">
+      <label class="field-label" for="f8">Card name<button type="button" class="info-tip" aria-label="About the card name" aria-describedby="tip-f8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="info-tip-bubble" id="tip-f8" role="tooltip">A short name for this card, like Main or Sales. It is the end of the card's link.</span></button></label>
+      <input class="input" id="f8" value="Main">
+    </div>
+    <form class="form-row" data-ks-demo="Token created.">
+      <div class="field"><label class="field-label" for="f9">Token name</label><input class="input" id="f9" placeholder="e.g. Zapier"></div>
+      <button class="btn btn-primary" type="submit">Create token</button>
+    </form>
+    <div class="form-actions">
+      <button class="btn btn-secondary" type="button">Sign out everywhere</button>
+      <button type="button" class="info-tip" aria-label="About signing out everywhere" aria-describedby="tip-f10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span class="info-tip-bubble" id="tip-f10" role="tooltip">This browser stays signed in. Every other browser and the apps sign out.</span></button>
+    </div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>An explanation lives behind a mark.</b> What a field or a setting does, a rule read once, a
+  consequence checked while deciding: <code>.info-tip</code>, after the label it explains or after the
+  button whose action it explains. Hover, keyboard focus and a tap all open it, inside a label too
+  (<code>ui.js</code> keeps the label from taking its focus), and on a phone the bubble is framed by the
+  card rather than the mark, so it cannot leave the card. What stays visible is not explanation: a
+  subtitle, data, an empty state, why something is blocked, a one-time secret warning, a destructive
+  consequence, and any link, because a bubble only lives while it holds focus.
+  <br><br>
+  <b>A one-line form</b> (<code>.form-row</code>) gives the field the room and the button its word; on a
+  phone the button takes a full-width line, so every such form on a page ends in a button of one width.
+  A form's closing buttons (<code>.form-actions</code>) stack full width on a phone, and a tip on an
+  action stays beside its button.
+</div>

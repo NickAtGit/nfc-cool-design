@@ -23,7 +23,7 @@
     <div class="empty-state">
       <p class="empty-state-title">No cards yet</p>
       <p>Create your first card and assign it to a teammate.</p>
-      <button class="btn btn-primary">Create a card</button>
+      <button class="btn btn-primary">New card</button>
     </div>
   </div>
   <div class="ks-row" style="margin-top:var(--space-6)">
@@ -44,4 +44,46 @@
   hover lift to <code>--elev-1</code>. Table, panel, empty state and status markers share the pricing
   table's tinted header and its 1.6rem status pills, so the product UI inherits a shape the brand
   already owns.
+</div>
+
+<h3 class="ks-h3">List rows, and an empty list</h3>
+<div class="ks-demo is-plain">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><div class="card-head-text"><h3 class="panel-title">Access tokens</h3></div></div>
+      <ul class="list-rows" style="margin-top:var(--space-4)">
+        <li class="list-row">
+          <span class="list-row-title">e2e loop</span>
+          <form class="list-row-action" data-ks-demo="Revoked e2e loop." data-confirm-title="Revoke ‘e2e loop’?" data-confirm-detail="It stops working at once." data-confirm-action="Revoke"><button class="btn btn-danger btn-quiet btn-sm" type="submit">Revoke</button></form>
+          <span class="list-row-meta"><span>Read and write</span><span>Last used 15 Oct, 12:45</span><span>Ends 15 Jan 2027</span></span>
+        </li>
+        <li class="list-row">
+          <span class="list-row-title">Zapier</span>
+          <form class="list-row-action" data-ks-demo="Revoked Zapier." data-confirm-title="Revoke ‘Zapier’?" data-confirm-detail="It stops working at once." data-confirm-action="Revoke"><button class="btn btn-danger btn-quiet btn-sm" type="submit">Revoke</button></form>
+          <span class="list-row-meta"><span>Read only</span><span>Never used</span></span>
+        </li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-text"><h3 class="panel-title">Domains</h3></div></div>
+      <div class="empty-state">
+        <p>No domains yet. Add one above and we'll show the two DNS records to set.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>Rows, not a squeezed table.</b> On a phone a table that cannot fit becomes
+  <code>.list-rows</code>: the item's name and its one quiet action on the first line, then one muted
+  line per fact, hairline-divided inside the card with no box in the box. The facts are written for the
+  line, not copied out of the columns.
+  <br><br>
+  <b>An empty list keeps its card.</b> The card's head still names the list, so the page has the same
+  cards whether they are empty or not, and the empty state is one sentence: "No domains yet." plus the
+  next step. A filtered list that comes back empty says "No leads match this filter." and offers the
+  way out.
+  <br><br>
+  <b>Every grid track is <code>minmax(0, 1fr)</code>.</b> <code>.grid-2</code> is two columns and one
+  on a phone, and a bare <code>1fr</code> would let one long option in a select widen the page past the
+  screen.
 </div>

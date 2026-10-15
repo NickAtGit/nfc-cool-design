@@ -397,6 +397,25 @@ fixed 220px previews that wrap become 460px of scrolling. Both were written for 
 desktop and neither had a small-screen override. If a width is not a token, ask
 what it does at 340px.
 
+**A table that cannot fit becomes rows, not a squeezed table.** Added
+2026-10-15, when the console's token and webhook tables fell apart on a phone:
+columns too narrow to read, headings no longer over their values, three
+buttons crushing a URL to a sliver. `.list-rows` is one row per item: the
+name and its one quiet action on the first line, then one muted line per fact,
+hairline-divided inside the card with no box in the box. The facts are written
+for the line, not copied out of the columns.
+
+**A one-line form's button takes a full line when the row wraps.** A field
+and its button (`.form-row`) wrap on a phone, and the button then spans the
+row, so "Create token" and "Add domain" on one page end in buttons of one width
+rather than whatever width each word was. A form's closing buttons
+(`.form-actions`) stack full width the same way.
+
+**A form page starts where a list page does.** `.form-narrow` caps the
+reading measure but no longer centres the column: centred, a form page's title
+began at a different x from every list page's, and moving between them made
+the title jump sideways.
+
 ---
 
 ## Controls and touch
@@ -494,6 +513,56 @@ danger colour, after a `.menu-sep` hairline, and it asks first. Near the bottom
 of the window the menu opens upward; the last rows of the console's Cards list
 opened theirs off the page. A row's settings (a name, a role, an allowance) are
 not menu items that save on change: they are a dialog with one Save.
+
+**An empty list keeps its titled card.** The console's empty lists looked and
+read differently on every tab. One shape now: the card's head still names the
+list, so a page has the same cards whether they are empty or not, and the
+empty state is one sentence, "No domains yet.", plus the next step, pointing at
+the control or carrying a button ("Add one above and we'll show the two DNS
+records to set."). A filtered list that comes back empty says "No leads match
+this filter." and offers the way out.
+
+**An explanation lives behind a mark.** What a control does, a rule read once,
+a consequence checked while deciding: `.info-tip`, after the label it explains
+or after the button whose action it explains, never as standing lines of grey
+under every control. What stays visible is not explanation: a subtitle, data,
+an empty state, a status or why something is blocked, a one-time secret
+warning, a destructive consequence, and any link (a bubble only lives while
+the mark holds focus). A switch's consequence line is the label's other half
+and stays too.
+
+---
+
+## Words
+
+The mechanics of copy, settled across the business console (most of it on
+2026-10-15) and rendered with examples on the guideline's Writing page.
+
+**X of Y in a sentence; the slash only in a figure.** "12 of 20 seats used",
+"10 of 20 cards used, 10 available." The slash is for the big number in a stat
+tile ("12 / 20"), where it is a number, not prose. A subtitle that is a
+sentence ends with a period ("How Acme is doing."); one that is a label (a
+company name) has none.
+
+**One date style per kind of date.** A day heading a group of rows is
+"Thursday 15 October"; a moment is "15 Oct 2026, 12:45"; both drop the year
+while it is the current one ("15 Oct, 12:45"). A date with no time always
+keeps its year ("Ends 15 Jan 2027"), because it is usually a deadline. Each
+form comes from one helper in the product (the console's `|stamp`,
+`|day_header` and `|on_date`), so there is no second spelling to drift; the
+console had four or five.
+
+**One word per thing.** A thing has one name everywhere it appears. A link to a
+page uses that page's title ("New card", not "Create card" in one menu and "Add
+a card" in another); a concept is never two words in two places (a lead is
+never also a contact); a field is called the same on every form it is on.
+
+**No em dashes, and no dash for nothing.** In anything a person reads, a
+period, a colon or a comma does the job. A missing value is a word, "None" or
+"Not set", never a dash. A comment in code is not copy and keeps its dashes.
+
+**Explanations behind info tips.** See "An explanation lives behind a mark"
+above for what goes behind one and what stays on the page.
 
 ---
 

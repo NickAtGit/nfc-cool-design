@@ -26,6 +26,8 @@
  *   .toast            showToast(): a success hides after five seconds, an
  *                     error stays until its close button
  *   .stepper          its minus and plus step the number field
+ *   .info-tip         a tap opens it even inside a <label>, which would
+ *                     otherwise take the focus the bubble lives on
  *
  * No copy lives here. Every word a person reads (the dialog's Cancel, the
  * toast's close label) is in the page's own markup, in the page's language.
@@ -216,6 +218,16 @@ function bindDocument() {
   document.addEventListener('submit', onSubmit, true);
   document.addEventListener('click', onConfirmLink);
   document.addEventListener('click', onStep);
+  // The bubble shows while the mark holds focus. A tap on a mark inside a
+  // <label> runs the label's activation, which focuses the labelled field and
+  // closes the bubble in the same gesture; cancelling the click stops that,
+  // and the mark takes the focus itself.
+  document.addEventListener('click', (e) => {
+    const tip = e.target.closest ? e.target.closest('.info-tip') : null;
+    if (!tip) return;
+    e.preventDefault();
+    tip.focus();
+  });
 }
 
 export function initUI(root = document) {

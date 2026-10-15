@@ -130,8 +130,9 @@ burger, so Sign in stays visible on a phone.)
 ## Recipe 2: a console page with a form
 
 Same shell. The page head and the cards share `.form-narrow`, the system's
-reading measure centred in the column, so a label on a wide screen is never a
-foot away from its control. A page one level down carries the crumb.
+reading measure, starting at the column's edge like a list page, so a label on
+a wide screen is never a foot away from its control and the title does not
+jump sideways between pages. A page one level down carries the crumb.
 
 ```html
 <div class="app-main">
@@ -139,7 +140,7 @@ foot away from its control. A page one level down carries the crumb.
     <div class="page-head-text">
       <a class="crumb" href="/cards"><svg …><path d="M15 5l-7 7 7 7"/></svg><span><span class="sr-only">Back to </span>Cards</span></a>
       <h1>Card settings</h1>
-      <span class="sub">Alex Rivera · Main</span>
+      <span class="sub">Alex Rivera</span>
     </div>
   </div>
   <!-- A thing with several pages: its tabs, under its head. -->
@@ -186,11 +187,26 @@ One shape for all three. It always carries its action.
 <div class="card">
   <div class="empty-state">
     <p class="empty-state-title">No cards yet</p>
-    <p>Create your first card and assign it to a teammate.</p>
-    <a class="btn btn-primary" href="/cards/new">Create a card</a>
+    <p>Make the first one and assign it to a teammate.</p>
+    <a class="btn btn-primary" href="/cards/new">New card</a>
   </div>
 </div>
 ```
+
+The button says "New card" because that is the title of the page it opens: one
+word per thing. An empty LIST inside a page keeps its own titled card, so the
+page has the same cards whether or not they are empty, and says "No X yet."
+plus the next step:
+
+```html
+<div class="card">
+  <div class="card-head"><div class="card-head-text"><h2 class="panel-title">Domains</h2></div></div>
+  <div class="empty-state"><p>No domains yet. Add one above and we'll show the two DNS records to set.</p></div>
+</div>
+```
+
+A filtered list that comes back empty: "No leads match this filter." and a
+"Clear filters" link to the bare list.
 
 A refused render (no session, not a member) wears the same `.app-shell` and
 `.app-main` column, minus the nav: put an `.app-header` (brand, `.spacer`,
