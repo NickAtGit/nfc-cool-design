@@ -399,6 +399,55 @@ what it does at 340px.
 
 ---
 
+## Controls and touch
+
+Settled 2026-10-15, in the business console's screen-by-screen review on a
+phone, an iPad and a laptop. Each of these was a console bug first.
+
+**A label's capitals sit on the middle, and nothing nudges them.** Block
+padding on a button is even. Text snaps to whole pixels, so Titillium's
+capitals land within 0.25 to 0.5px of the middle, which is as close as it
+gets, and a label in lower case only sits about 1px low; that is the trade.
+The console tried the other one: two pixels of bottom padding to lift every
+label by one, splitting the difference between capitals and lower case. Next
+to chips and pills, which carry no nudge, its buttons read as text sitting
+high. Every control with a label centres it the same way, so they agree with
+each other, which matters more than any one of them being optically perfect.
+`test/guards.test.mjs` fails a button padded unevenly.
+
+**An icon button is a 36px square that never shrinks.** The burger, the theme
+icon, Sign out in a bar and `.btn-icon` are one shape: bordered, secondary
+ink, `flex-shrink: 0`. A flex bar short of room squeezes every item that lets
+it, and the console's theme icon measured 18px on a phone and 30px on an iPad,
+which is what made it look off centre beside a full-size neighbour. Two icon
+squares side by side share one centre line; a borderless glyph next to a
+bordered one reads as two different kinds of control.
+
+**Hover is for a pointer.** A touch screen keeps `:hover` on whatever was
+tapped last, so on an iPad a row or a button stayed lit after the finger
+lifted. Every hover style sits in `@media (hover: hover)`, in place, so the
+cascade order does not change, and a touch gets the hover look only while the
+finger is down (`:active`). An `[open]` state that shared a rule with
+`:hover` is split out so it stays on. The guard suite fails a bare `:hover`.
+
+**Touch sizes follow the kind of screen, not its width.** An iPad has a
+phone's finger at any width. The console grew its small controls in the phone
+breakpoint, so at 768px an iPad got mouse-sized targets back. Touch sizes live
+in `@media (pointer: coarse)`, at the end of the file so they outrank each
+control's own rule: a small button takes the standard height, a row's menu
+trigger grows to 40px, an info mark keeps its 16px glyph inside a 32px tap
+area. A target grows by giving the room back with negative margins, so the
+line it sits on does not move. No new touch size is invented; 42px is what
+every control already is.
+
+**A stepper is one control at the standard height, with drawn signs.** The
+console's seat stepper stood 56px tall around a 32px figure, with a typed minus
+Titillium does not have. `.stepper` is 42px, the figure is `--text-md` bold and
+tabular, the minus and plus are inline SVG, and its tracks are fixed so the
+number field never asks for its min-content width.
+
+---
+
 ## Building a page
 
 A page is assembled, not designed: the system owns the shell, the page head,

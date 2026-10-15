@@ -212,6 +212,9 @@ const VARIANTS = [
   ['ghost', [], ['btn', 'btn-ghost']],
   ['outlined danger', [], ['btn', 'btn-danger']],
   ['filled danger', [], ['btn', 'btn-danger', 'btn-primary']],
+  // Quiet means no border, not grey text: its resting label owes 4.5:1 too.
+  ['quiet danger', [], ['btn', 'btn-danger', 'btn-quiet']],
+  ['icon', [], ['btn', 'btn-icon']],
   ['outlined on brand band', ['on-brand'], ['btn']],
   ['filled primary on brand band', ['on-brand'], ['btn', 'btn-primary']],
 ];
@@ -244,7 +247,7 @@ const BUTTON_EXCEPTIONS = new Map([
   ['outlined on brand band/light/rest', 3.0],
   ['outlined on brand band/light/hover', 3.0],
 ]);
-const SURFACE = { 'outlined danger': 'color-bg-card', 'filled danger': 'color-bg-card',
+const SURFACE = { 'outlined danger': 'color-bg-card', 'filled danger': 'color-bg-card', 'quiet danger': 'color-bg-card',
   'outlined on brand band': 'brand-blue-2', 'filled primary on brand band': 'brand-blue-2' };
 /* Paint a translucent fill onto the surface behind it, so a tinted hover is
    measured as it actually renders. */

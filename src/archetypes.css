@@ -87,12 +87,19 @@
    box-shadow: var(--elev-0);
    transition: transform var(--transition), box-shadow var(--transition);
 }
-.feature-card:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+/* Every :hover here sits in @media (hover: hover), as in components.css: a
+   touch screen keeps :hover on the last thing tapped, so a card stayed lifted
+   after the finger left it. */
+@media (hover: hover) {
+   .feature-card:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+}
 /* A card may be a link, but only the affordance is a link - the copy inside
    it is still text. Without this the card's contents inherit the anchor
    colour and the title renders blue. */
 a.feature-card, a.blog-card { color: var(--color-text); }
-a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+@media (hover: hover) {
+   a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+}
 /* Script numeral watermark. Decorative only: always aria-hidden. */
 .feature-num {
    position: absolute; inset-block-start: var(--space-3); inset-inline-end: var(--space-5);
@@ -158,7 +165,9 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
    box-shadow: var(--elev-0);
    transition: transform var(--transition), box-shadow var(--transition);
 }
-.review-card:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+@media (hover: hover) {
+   .review-card:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+}
 .review-stars { color: var(--color-accent); font-size: var(--text-body); letter-spacing: 0.1em; }
 .review-quote { margin: var(--space-3) 0; font-size: var(--text-sm); line-height: var(--leading-body); color: var(--color-text-secondary); }
 .review-author { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-xs); }
@@ -175,7 +184,9 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 .faq-item + .faq-item { margin-block-start: var(--space-3); }
-.faq-item:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+@media (hover: hover) {
+   .faq-item:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+}
 .faq-item[open] { border-color: var(--color-link); box-shadow: var(--elev-1); }
 .faq-item summary {
    display: flex; justify-content: space-between; align-items: center; gap: var(--space-4);
@@ -276,7 +287,9 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
    display: inline-block; line-height: 0; border-radius: var(--radius-md);
    transition: transform var(--transition), box-shadow var(--transition);
 }
-.store-button:hover { transform: translateY(var(--lift-1)); box-shadow: var(--elev-1); }
+@media (hover: hover) {
+   .store-button:hover { transform: translateY(var(--lift-1)); box-shadow: var(--elev-1); }
+}
 .store-button img { block-size: 3.25rem; inline-size: auto; display: block; }
 @media (max-width: 599px) { .store-button img { block-size: 3rem; } }
 
@@ -306,7 +319,9 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
    border-radius: var(--radius-lg); box-shadow: var(--elev-0);
    transition: transform var(--transition), box-shadow var(--transition);
 }
-.blog-card:hover { transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+@media (hover: hover) {
+   .blog-card:hover { transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+}
 .blog-card-image { aspect-ratio: 4 / 3; background: var(--color-bg-alt); }
 .blog-card-image img { width: 100%; height: 100%; object-fit: cover; }
 .blog-card-image.is-placeholder { background: var(--brand-gradient); }
@@ -335,7 +350,9 @@ a.feature-card:hover { color: var(--color-text); transform: translateY(var(--lif
 .prose h3 { font-family: var(--font-heading); font-weight: 600; font-size: var(--text-md); color: var(--color-text); margin: var(--space-7) 0 var(--space-2); }
 .prose p { margin: 0 0 var(--space-5); }
 .prose a { color: var(--color-link-text); text-decoration: underline; text-underline-offset: 2px; }
-.prose a:hover { color: var(--color-link-text-hover); }
+@media (hover: hover) {
+   .prose a:hover { color: var(--color-link-text-hover); }
+}
 .prose blockquote { margin: var(--space-6) 0; padding-inline-start: var(--space-5); border-inline-start: 3px solid var(--color-accent); color: var(--color-text-secondary); }
 .prose code { background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.1em 0.35em; font-family: var(--font-mono); font-size: 0.875em; }
 .prose pre { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-5); background: var(--color-code-bg); color: var(--color-code-text); border-radius: var(--radius-lg); overflow-x: auto; font-family: var(--font-mono); font-size: var(--text-xs); line-height: var(--leading-normal); }

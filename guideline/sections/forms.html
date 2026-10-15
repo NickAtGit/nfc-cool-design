@@ -64,3 +64,22 @@
   <b>A setting that is on or off is a switch</b>, painted from the checkbox so the form, the keyboard
   and the screen reader are untouched; its consequence sits on the line beneath and does not fold.
 </div>
+
+<h3 class="ks-h3">Stepper</h3>
+<div class="ks-demo">
+  <div class="ks-row">
+    <div class="stepper">
+      <button type="button" aria-label="Fewer seats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+      <input type="number" inputmode="numeric" aria-label="Total seats" value="12" min="1" max="500">
+      <button type="button" aria-label="More seats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <input class="input" style="max-width:12rem" value="A field beside it" aria-label="A field, for height">
+  </div>
+</div>
+<div class="ks-basis">
+  <b>One control at the standard height, with drawn signs.</b> The minus and the plus are inline SVG,
+  not typed: Titillium has no minus sign, so a typed one falls back to another face at another weight
+  and baseline, which is exactly how the console's seat stepper looked off. The figure is
+  <code>--text-md</code>, bold, tabular. The tracks are fixed, so the number field never asks for its
+  min-content width and nothing is clipped off the end.
+</div>

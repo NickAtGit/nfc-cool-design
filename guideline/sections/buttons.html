@@ -75,6 +75,43 @@
   carries the affordance and takes the dark stop, like an inline link.
   <br><br>
   <b>Every state is defined</b>, including <code>:focus-visible</code>: tab through them.
+  <br><br>
+  <b>Capitals on the middle, no nudge.</b> Block padding is even, so Titillium's capitals land within
+  0.25 to 0.5px of the button's middle (text snaps to whole pixels, so that is as close as it gets) and
+  a label in lower case only sits about 1px low. Lifting every label with two pixels of bottom padding
+  was tried in the console and read as text sitting high beside the chips and pills next to it. The
+  guard suite fails a button padded unevenly.
+  <br><br>
+  <b>Hover is for a pointer.</b> Every hover style sits in <code>@media (hover: hover)</code>, so a tap
+  on an iPad does not leave a button lit; a touch gets the hover look only while the finger is down
+  (<code>:active</code>). On any touch screen, <code>(pointer: coarse)</code>, a small button takes the
+  standard control's height, whatever the width.
+</div>
+
+<h3 class="ks-h3">In a row: quiet danger and the icon square</h3>
+<div class="ks-demo">
+  <div class="ks-row">
+    <button class="btn btn-secondary btn-sm">Replace</button>
+    <button class="btn btn-danger btn-quiet btn-sm">Remove</button>
+    <span class="ks-note" style="margin:0">a destructive action beside what it acts on</span>
+  </div>
+  <div class="ks-row" style="margin-top:var(--space-4)">
+    <button class="nav-theme-toggle" type="button" aria-label="Toggle light or dark theme"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18V4a8 8 0 1 1 0 16z"/></svg></button>
+    <button class="btn btn-icon" type="button" aria-label="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    <button class="btn btn-icon" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="ks-note" style="margin:0">36px squares on one centre line</span>
+  </div>
+</div>
+<div class="ks-basis">
+  <b>Two volumes of danger.</b> <code>.btn-danger.btn-quiet</code> is the row-level Remove and Revoke:
+  the word without the box, in secondary ink that still clears 4.5:1, and the full danger border, label
+  and wash the moment a pointer or the keyboard arrives. It asks first, naming the thing (the
+  Overlay page). Full <code>.btn-danger</code> is kept for the action a page exists for.
+  <br><br>
+  <b>An icon button is a 36px square that never shrinks.</b> <code>.btn-icon</code> is the burger's and
+  the theme icon's shape for any control whose glyph is the whole label; its name goes in
+  <code>aria-label</code>. <code>flex-shrink: 0</code> on every one of them, because a bar short of room
+  squeezed the console's theme icon to 18px on a phone, which is what made it look off centre.
 </div>
 
 <h3 class="ks-h3">On a brand band</h3>

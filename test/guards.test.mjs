@@ -397,3 +397,61 @@ test('sync refreshes a vendored file but never creates one', () => {
   assert.match(src, /\.filter\(p => p\.present && existsSync\(p\.dst\)\)/,
     'drift() must only consider files that are already vendored');
 });
+
+/* ------------------------------------------------------------------
+   Guards added after the business console's 2026-10-15 review.
+   ------------------------------------------------------------------ */
+
+/* A button's label is centred by even block padding, never nudged. Text
+   snaps to whole pixels, so a two-pixel bottom pad lifted every label by one
+   and left the console's buttons reading high beside its chips and pills. */
+test('no button rule pads its block axis unevenly', () => {
+  const offenders = [];
+  for (const r of scopedRules(read('src/components.css'))) {
+    if (!/\.btn\b/.test(r.selector)) continue;
+    for (const d of r.decl.split(';').map(s => s.trim()).filter(Boolean)) {
+      const [prop, ...rest] = d.split(':');
+      const p = prop.trim(), v = rest.join(':').trim().split(/\s+/);
+      const uneven =
+        /^padding-(block-start|block-end|top|bottom)$/.test(p) ||
+        (p === 'padding-block' && v.length === 2 && v[0] !== v[1]) ||
+        (p === 'padding' && v.length >= 3 && v[0] !== v[2]);
+      if (uneven) offenders.push(`${r.selector} { ${d} }`);
+    }
+  }
+  assert.deepEqual(offenders, [], `a button padded unevenly on the block axis:\n  ${offenders.join('\n  ')}`);
+});
+
+/* An icon square that may shrink gets squeezed by any bar short of room: the
+   console's theme icon measured 18px on a phone and 30px on an iPad. */
+test('every icon square refuses to shrink', () => {
+  const rules = scopedRules(read('src/components.css')).filter(r => r.scope === '');
+  for (const sel of ['.btn-icon', '.nav-toggle', '.nav-theme-toggle', '.nav-account-out']) {
+    const rule = rules.find(r => r.selector === sel);
+    assert.ok(rule, `${sel} must exist`);
+    assert.match(rule.decl, /flex-shrink:\s*0/, `${sel} must declare flex-shrink: 0`);
+  }
+});
+
+/* A touch screen keeps :hover on the last thing tapped. Every hover style
+   is for a pointer that can hover, and nothing else. */
+for (const f of AUTHORED) {
+  test(`${f} only styles :hover under @media (hover: hover)`, () => {
+    const bare = scopedRules(read(f))
+      .filter(r => /:hover/.test(r.selector) && !/\(hover:\s*hover\)/.test(r.scope))
+      .map(r => r.selector);
+    assert.deepEqual(bare, [], `:hover outside @media (hover: hover):\n  ${bare.join('\n  ')}`);
+  });
+}
+
+/* Touch sizes follow the kind of screen, not its width: an iPad fell back to
+   the mouse sizes at 768px when they lived in the phone breakpoint. */
+test('a small button grows to the standard control on any touch screen', () => {
+  const rules = scopedRules(read('src/components.css'));
+  const grow = rules.find(r => /pointer:\s*coarse/.test(r.scope) && r.selector === '.btn-sm');
+  assert.ok(grow, 'expected a .btn-sm rule inside @media (pointer: coarse)');
+  const base = rules.find(r => r.scope === '' && r.selector === '.btn');
+  const basePad = /padding:\s*(var\(--space-\d+\))/.exec(base.decl)?.[1];
+  assert.ok(grow.decl.includes(`padding-block: ${basePad}`),
+    `.btn-sm on touch must take the standard button's block padding (${basePad})`);
+});

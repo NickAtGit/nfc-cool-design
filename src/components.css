@@ -67,13 +67,38 @@
    transition: background var(--transition), border-color var(--transition),
                color var(--transition), transform var(--transition);
 }
-.btn:hover:not(:disabled):not([aria-disabled="true"]) {
+/* CENTRING: even padding on the block axis, and never a nudge. Titillium's
+   capitals land on the button's middle, within 0.25 to 0.5px, which is as
+   close as anything gets because text snaps to whole pixels; a label in
+   lower case only sits about 1px low, and that is the trade. The business
+   console took the other one on 2026-10-13, two pixels of bottom padding to
+   lift every label by one (half the nudge, after the snap), and measured it
+   again on 2026-10-15: button text sat visibly high beside the chips and
+   pills next to it, which carry no nudge. A label is centred the same way in
+   every control that has one: capitals on the middle. test/guards.test.mjs
+   fails a button rule that pads its block axis unevenly. */
+
+/* HOVER IS FOR A POINTER. A touch screen keeps :hover on whatever was tapped
+   last, so on an iPad a button or a row stayed lit after the finger lifted
+   (business console, 2026-10-15). Every :hover in the authored layers sits in
+   an @media (hover: hover) block, in place, so the cascade order is what it
+   was; test/guards.test.mjs fails one that does not. Touch gets a press
+   instead: :active takes the hover look while the finger is down, and it is
+   gone when it lifts. */
+@media (hover: hover) {
+   .btn:hover:not(:disabled):not([aria-disabled="true"]) {
+      background: var(--btn-bg-hover);
+      color: var(--btn-fg-hover);
+      border-color: var(--btn-border-hover);
+      transform: translateY(var(--lift-1));
+   }
+}
+.btn:active:not(:disabled) {
    background: var(--btn-bg-hover);
    color: var(--btn-fg-hover);
    border-color: var(--btn-border-hover);
-   transform: translateY(var(--lift-1));
+   transform: translateY(0);
 }
-.btn:active:not(:disabled) { transform: translateY(0); }
 .btn:disabled, .btn[aria-disabled="true"] {
    opacity: 0.55; cursor: not-allowed; transform: none;
 }
@@ -124,6 +149,47 @@
       variant above wins, and its red label vanishes into this red fill. */
    --btn-fg-hover: var(--color-danger-on);
    --btn-border-hover: var(--color-danger-fg);
+}
+/* QUIET DANGER: a destructive action that shares a row with what it acts on,
+   the row-level Remove and Revoke. It keeps the word and drops the box, and
+   takes the danger border, label and wash back the moment a pointer or the
+   keyboard arrives. Its resting label is secondary ink, not a hint grey: quiet
+   means no border, and a control's label owes 4.5:1 at rest. In a row it is
+   .btn-sm, and it asks first (.dialog, data-confirm-* in ui.js). Full
+   .btn-danger is for the one action a page exists for, like deleting a team. */
+.btn-danger.btn-quiet {
+   --btn-border: transparent;
+   --btn-fg: var(--color-text-secondary);
+}
+.btn-danger.btn-quiet:focus-visible {
+   background: var(--color-danger-bg);
+   color: var(--color-danger-fg);
+   border-color: var(--color-danger-fg);
+}
+
+/* AN ICON BUTTON is a 36px square that never shrinks: a quiet bordered box in
+   secondary ink, the burger's and the theme icon's shape, for a control whose
+   glyph is the whole label (Sign out in a bar, Close on a toast). flex-shrink:
+   0 because a bar that is short of room squeezes every flex item it can, and
+   the console's theme icon measured 18 pixels on a phone and 30 on an iPad
+   until it was told not to, which is what made it look off centre. The name goes in
+   aria-label or a .sr-only span. test/guards.test.mjs asserts every icon
+   square in this file refuses to shrink. */
+.btn-icon {
+   --btn-border: var(--color-border);
+   --btn-fg: var(--color-text-secondary);
+   --btn-border-hover: var(--color-link);
+   --btn-fg-hover: var(--color-text);
+   inline-size: 2.25rem;
+   block-size: 2.25rem;
+   padding: 0;
+   flex-shrink: 0;
+   border-width: 1px;
+   letter-spacing: 0;
+}
+.btn-icon svg { inline-size: 1rem; block-size: 1rem; }
+@media (hover: hover) {
+   .btn-icon:hover:not(:disabled):not([aria-disabled="true"]) { transform: none; }
 }
 
 .btn-sm { padding: var(--space-2) var(--space-4); font-size: var(--text-xs); }
@@ -189,8 +255,10 @@
 }
 .textarea { min-height: 6rem; resize: vertical; }
 .input::placeholder, .textarea::placeholder { color: var(--color-text-muted); }
-.input:hover:not(:disabled), .textarea:hover:not(:disabled), .select:hover:not(:disabled) {
-   border-color: var(--color-text-secondary);
+@media (hover: hover) {
+   .input:hover:not(:disabled), .textarea:hover:not(:disabled), .select:hover:not(:disabled) {
+      border-color: var(--color-text-secondary);
+   }
 }
 /* Generalised from nfc.cool's newsletter :focus-within, the nicest
    interaction already on the site. */
@@ -213,8 +281,10 @@
    border-color: var(--field-border);
    box-shadow: none;
 }
-:root[data-focus="pointer"] .select:focus:hover {
-   border-color: var(--color-text-secondary);
+@media (hover: hover) {
+   :root[data-focus="pointer"] .select:focus:hover {
+      border-color: var(--color-text-secondary);
+   }
 }
 
 .input[aria-invalid="true"], .textarea[aria-invalid="true"], .select[aria-invalid="true"] {
@@ -238,8 +308,10 @@
    border-color: var(--color-border);
    color: var(--color-text-secondary);
 }
-.input[readonly]:hover:not(:disabled):not(:focus), .textarea[readonly]:hover:not(:disabled):not(:focus) {
-   border-color: var(--color-border);
+@media (hover: hover) {
+   .input[readonly]:hover:not(:disabled):not(:focus), .textarea[readonly]:hover:not(:disabled):not(:focus) {
+      border-color: var(--color-border);
+   }
 }
 .input[readonly]:focus, .textarea[readonly]:focus { border-color: var(--color-link); }
 
@@ -339,6 +411,61 @@
 .input-group .input:focus { box-shadow: none; }
 .input-group .btn { flex-shrink: 0; border-radius: var(--radius-pill); }
 
+/* THE STEPPER: a number between a minus and a plus, one control inside one
+   border, at the standard control height. The business console's seat
+   stepper stood 56 pixels tall around a 32-pixel figure with typed minus and
+   plus signs, and the minus came from another font because Titillium has
+   none. It is the 42-pixel control now, the figure at --text-md, and both
+   signs are drawn (an inline SVG at 1rem, stroke currentColor), so they share
+   one weight and baseline in both themes. Fixed tracks, so the input never
+   asks for its min-content width: in a 1fr track a number input sized itself
+   to about 327 pixels and overflow: hidden clipped the plus off the end (see
+   "overflow: hidden turns an overflow into a disappearance" in GUIDELINE.md).
+   Markup:
+     <div class="stepper">
+       <button type="button" aria-label="Fewer seats"><svg …><path d="M5 12h14"/></svg></button>
+       <input type="number" inputmode="numeric" aria-label="Seats" value="12" min="1">
+       <button type="button" aria-label="More seats"><svg …><path d="M12 5v14M5 12h14"/></svg></button>
+     </div>
+   The buttons need a few lines of the page's own script (stepUp/stepDown and
+   an input event); the field alone still works without it. */
+.stepper {
+   display: inline-grid;
+   grid-template-columns: 2.625rem 4rem 2.625rem;
+   block-size: 2.625rem;
+   border: 1px solid var(--field-border);
+   border-radius: var(--radius-md);
+   background: var(--field-bg);
+   overflow: hidden;
+   transition: border-color var(--transition), box-shadow var(--transition);
+}
+.stepper:focus-within { border-color: var(--color-link); box-shadow: 0 0 0 4px var(--color-link-light); }
+.stepper button {
+   display: inline-flex; align-items: center; justify-content: center;
+   padding: 0; border: 0; background: transparent;
+   color: var(--color-text-secondary); cursor: pointer;
+   transition: background var(--transition), color var(--transition);
+}
+.stepper button svg { inline-size: 1rem; block-size: 1rem; }
+/* Inside a clipped box an outer ring would be cut off; the whole stepper
+   rings instead (:focus-within above) and the focused half takes the wash. */
+.stepper button:focus-visible { box-shadow: none; border-radius: 0; background: var(--color-link-light); color: var(--color-text); }
+.stepper button:active:not(:disabled) { background: var(--color-link-light); color: var(--color-text); }
+.stepper button:disabled { opacity: 0.4; cursor: not-allowed; }
+.stepper input {
+   min-inline-size: 0; inline-size: 100%; margin: 0; padding: 0;
+   border: 0; border-inline: 1px solid var(--color-border); border-radius: 0;
+   background: transparent; color: var(--color-text);
+   font-family: var(--font-heading); font-size: var(--text-md); font-weight: 700;
+   font-variant-numeric: tabular-nums; text-align: center;
+   appearance: textfield; -moz-appearance: textfield;
+}
+.stepper input:focus { outline: none; box-shadow: none; }
+.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+@media (hover: hover) {
+   .stepper button:hover:not(:disabled) { background: var(--color-link-light); color: var(--color-text); }
+}
+
 /* ============================================================
    Surfaces
    ============================================================ */
@@ -350,9 +477,13 @@
    box-shadow: var(--elev-0);
    transition: transform var(--transition), box-shadow var(--transition);
 }
-.card-interactive:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+@media (hover: hover) {
+   .card-interactive:hover { transform: translateY(var(--lift-2)); box-shadow: var(--elev-1); }
+}
 a.card, a.card-interactive { color: var(--color-text); }
-a.card-interactive:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+@media (hover: hover) {
+   a.card-interactive:hover { color: var(--color-text); transform: translateY(var(--lift-3)); box-shadow: var(--elev-2); }
+}
 .card-flush { padding: 0; overflow: hidden; }
 
 .panel {
@@ -392,7 +523,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    border-bottom: 1px solid var(--color-border);
 }
 .table tbody tr:last-child td { border-bottom: 0; }
-.table tbody tr:hover { background: var(--color-neutral-bg); }
+@media (hover: hover) {
+   .table tbody tr:hover { background: var(--color-neutral-bg); }
+}
 .table .num { text-align: end; font-variant-numeric: tabular-nums; }
 
 .pill {
@@ -572,7 +705,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    border-radius: var(--radius-sm);
    font-size: var(--text-sm); color: var(--color-text);
 }
-.menu a:hover, .menu button:hover { background: var(--color-link-light); color: var(--color-link-text); }
+@media (hover: hover) {
+   .menu a:hover, .menu button:hover { background: var(--color-link-light); color: var(--color-link-text); }
+}
 
 /* ============================================================
    Header tiers
@@ -653,7 +788,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    font-size: var(--text-xs); font-weight: 600; color: var(--color-link-text);
    text-decoration: none;
 }
-.page-head .crumb:hover { color: var(--color-link-text-hover); }
+@media (hover: hover) {
+   .page-head .crumb:hover { color: var(--color-link-text-hover); }
+}
 .page-head .crumb svg { inline-size: 1em; block-size: 1em; }
 [dir="rtl"] .page-head .crumb svg { transform: scaleX(-1); }
 .page-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
@@ -679,7 +816,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    color: var(--color-text-muted); font-size: var(--text-sm); font-weight: 600;
    text-decoration: none; white-space: nowrap;
 }
-.section-nav a:hover { color: var(--color-text); }
+@media (hover: hover) {
+   .section-nav a:hover { color: var(--color-text); }
+}
 .section-nav a[aria-current="page"] { color: var(--color-text); border-block-end-color: var(--color-primary-bg); }
 
 /* A CARD'S OWN HEAD: its title and the line under it INSIDE the card, and the
@@ -780,7 +919,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    white-space: nowrap;
    transition: color var(--transition), background var(--transition);
 }
-.nav-link:hover { color: var(--nav-fg-active); background: var(--nav-fill-active); }
+@media (hover: hover) {
+   .nav-link:hover { color: var(--nav-fg-active); background: var(--nav-fill-active); }
+}
 .nav-link.is-active { color: var(--nav-fg-active); background: var(--nav-fill-active); }
 .nav-icon { inline-size: 1.15rem; block-size: 1.15rem; flex-shrink: 0; }
 .nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -818,7 +959,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1);
    border-radius: var(--radius); color: inherit; text-decoration: none;
 }
-.nav-account-link:hover { background: var(--nav-fill-active); }
+@media (hover: hover) {
+   .nav-account-link:hover { background: var(--nav-fill-active); }
+}
 /* min-inline-size: 0 on both the row and the column, or a long address refuses
    to ellipsize and widens the column instead: a flex item's floor is its
    content, and `overflow: hidden` on the text alone never reaches it. */
@@ -828,15 +971,22 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 }
 .nav-account-name { font-weight: 600; color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-account-email { font-size: var(--text-3xs); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Sign out is the icon square every bar control is, the theme icon's twin:
+   2.25rem, bordered, secondary ink, and it never shrinks. On the business
+   console's phone and iPad bars the two sit side by side on one centre line
+   (2026-10-15); a smaller borderless glyph beside a bordered square read as
+   two different controls. It asks first: data-confirm-* on it opens .dialog. */
 .nav-account-out {
    display: inline-flex; align-items: center; justify-content: center;
-   flex-shrink: 0; inline-size: 1.875rem; block-size: 1.875rem; padding: 0;
-   border: 0; border-radius: var(--radius); background: transparent;
-   color: var(--color-text-muted); cursor: pointer;
-   transition: color var(--transition), background var(--transition);
+   flex-shrink: 0; inline-size: 2.25rem; block-size: 2.25rem; padding: 0;
+   border: 1px solid var(--color-border); border-radius: var(--radius); background: transparent;
+   color: var(--nav-fg); cursor: pointer;
+   transition: color var(--transition), background var(--transition), border-color var(--transition);
 }
-.nav-account-out svg { inline-size: 0.9375rem; block-size: 0.9375rem; }
-.nav-account-out:hover { background: var(--nav-fill-active); color: var(--color-text); }
+.nav-account-out svg { inline-size: 1rem; block-size: 1rem; }
+@media (hover: hover) {
+   .nav-account-out:hover { background: var(--nav-fill-active); border-color: var(--color-link); color: var(--color-text); }
+}
 
 .nav-utility { display: flex; align-items: center; gap: var(--space-2); margin-inline-start: auto; }
 /* The burger, matching nfc.cool's shipped .sk-nav-toggle: a quiet bordered
@@ -846,6 +996,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    display: none;
    align-items: center;
    justify-content: center;
+   flex-shrink: 0;
    inline-size: 2.25rem;
    block-size: 2.25rem;
    padding: 0;
@@ -856,7 +1007,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    cursor: pointer;
    transition: color var(--transition), border-color var(--transition);
 }
-.nav-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
+@media (hover: hover) {
+   .nav-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
+}
 /* Open and close both ship in the markup and swap on .is-open, the same
    technique as the two wordmarks above: no script rewriting an icon, and no
    frame where the button shows the wrong one. Keep .is-open in step with
@@ -891,6 +1044,7 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    display: inline-flex;
    align-items: center;
    justify-content: center;
+   flex-shrink: 0;
    inline-size: 2.25rem;
    block-size: 2.25rem;
    padding: 0;
@@ -901,7 +1055,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    cursor: pointer;
    transition: color var(--transition), border-color var(--transition);
 }
-.nav-theme-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
+@media (hover: hover) {
+   .nav-theme-toggle:hover { border-color: var(--color-link); color: var(--nav-fg-active); }
+}
 .nav-theme-toggle svg { inline-size: 1rem; block-size: 1rem; }
 
 /* business.nfc.cool's switch, measured 2026-09-23: a slim track with a hair
@@ -935,7 +1091,9 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
    transition: color var(--transition), background var(--transition);
 }
 .nav-theme-switch button svg { inline-size: 0.875rem; block-size: 0.875rem; flex-shrink: 0; }
-.nav-theme-switch button:hover { color: var(--color-text); }
+@media (hover: hover) {
+   .nav-theme-switch button:hover { color: var(--color-text); }
+}
 /* The lit half. Written against the stamped attribute rather than a class the
    page has to keep in sync, so it is correct in the first painted frame. */
 [data-theme="light"] .nav-theme-switch [data-theme-set="light"],
@@ -1193,4 +1351,20 @@ a.card-interactive:hover { color: var(--color-text); transform: translateY(var(-
 .app-shell > .app-main { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; }
 @media (max-width: 767px) {
    .app-shell { flex-direction: column; align-items: stretch; gap: var(--space-4); padding: var(--space-4); }
+}
+
+/* ============================================================
+   Touch: controls stop shrinking on any touch screen
+   ============================================================
+   Asked of what the screen IS, not how wide it is: an iPad has a phone's
+   finger at any width, and the business console's controls fell back to
+   their mouse sizes at md until this moved out of the phone breakpoint into
+   (pointer: coarse) on 2026-10-15. Nothing here invents a touch size: a
+   small button takes the standard control's height, because it sits beside
+   standard controls ("Add" next to a field, "Upload" under a logo), and the
+   small targets grow while giving the room back with negative margins so the
+   line they sit on does not move. Last in the file, so it outranks each
+   control's own rule at the same weight. */
+@media (pointer: coarse) {
+   .btn-sm { padding-block: var(--space-3); font-size: var(--text-sm); }
 }
