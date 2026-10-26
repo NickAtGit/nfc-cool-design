@@ -487,3 +487,19 @@ test('a small button grows to the standard control on any touch screen', () => {
   assert.ok(grow.decl.includes(`padding-block: ${basePad}`),
     `.btn-sm on touch must take the standard button's block padding (${basePad})`);
 });
+
+/* A fact's value is read as one thing ("25 Nov 2026", an email address): it
+   broke at its space or its hyphen with room to spare when an `auto` track sat
+   beside a `1fr` one (Safari, the business console, 2026-10-26). */
+test('a fact list keeps its value whole while the row has room', () => {
+  const rules = scopedRules(read('src/components.css'));
+  const row = rules.find(r => r.selector === '.facts > div');
+  assert.ok(row, 'no .facts > div rule');
+  assert.match(row.decl, /display:\s*flex/, 'a flex row, not grid tracks Safari sizes differently');
+  const value = rules.find(r => r.selector === '.facts dd');
+  assert.ok(value, 'no .facts dd rule');
+  assert.match(value.decl, /flex:\s*0 1 auto/, 'the value starts at its whole width and only shrinks');
+  assert.match(value.decl, /margin-inline-start:\s*auto/);
+  assert.ok(/min-inline-size:\s*0/.test(value.decl) && /overflow-wrap:\s*anywhere/.test(value.decl),
+    'a value too long for the row breaks rather than spilling');
+});

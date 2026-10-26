@@ -550,7 +550,9 @@ while it is the current one ("15 Oct, 12:45"). A date with no time always
 keeps its year ("Ends 15 Jan 2027"), because it is usually a deadline. Each
 form comes from one helper in the product (the console's `|stamp`,
 `|day_header` and `|on_date`), so there is no second spelling to drift; the
-console had four or five.
+console had four or five. A date is read as one thing, so it never breaks across lines: the helpers
+join its parts with no-break spaces, and a `.facts` value takes its whole width
+whenever the row has it (2026-10-26, "25 Nov" over "2026" with room to spare).
 
 **One word per thing.** A thing has one name everywhere it appears. A link to a
 page uses that page's title ("New card", not "Create card" in one menu and "Add

@@ -632,6 +632,32 @@ a.card, a.card-interactive { color: var(--color-text); }
 }
 .list-row-meta > span { display: block; overflow-wrap: anywhere; }
 
+/* FACTS: a card's label and value pairs, one per line ("Renews  25 Nov 2026",
+   "Address  ana@example.com"), hairline-divided like .list-rows. A value is read
+   as one thing: a flex row starts it at its whole width, and it shrinks,
+   breaking, only when the row cannot hold it (a long address on a phone). As a
+   `1fr auto` grid Safari gave it its min-content, so the business console's
+   dates and addresses broke at a space or a hyphen with room to spare
+   (2026-10-26); Chrome did not, so nothing here leans on track sizing. A date's own spaces are no-break spaces besides (Words: one
+   date style). Markup:
+     <dl class="facts">
+       <div><dt>Renews</dt><dd>25&nbsp;Nov&nbsp;2026</dd></div>
+     </dl> */
+.facts { margin: 0; }
+.facts > div {
+   display: flex; align-items: baseline;
+   gap: 0 var(--space-3);
+   padding-block: var(--space-3);
+   border-block-start: 1px solid var(--color-border-light);
+}
+.facts > div:first-child { padding-block-start: 0; border-block-start: 0; }
+.facts dt { font-size: var(--text-sm); color: var(--color-text-muted); }
+.facts dd {
+   flex: 0 1 auto; min-inline-size: 0; margin: 0; margin-inline-start: auto;
+   text-align: end; font-weight: 600; font-size: var(--text-sm); color: var(--color-text);
+   font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+
 .pill {
    display: inline-flex; align-items: center; gap: var(--space-1);
    padding: var(--space-1) var(--space-3);
