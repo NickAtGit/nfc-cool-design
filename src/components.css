@@ -55,7 +55,7 @@
    background: var(--btn-bg);
    color: var(--btn-fg);
    border: 1.5px solid var(--btn-border);
-   border-radius: var(--radius-md);
+   border-radius: var(--radius-control);
    font-family: var(--font-heading);
    font-weight: 600;
    font-size: var(--text-sm);
@@ -195,7 +195,6 @@
 .btn-sm { padding: var(--space-2) var(--space-4); font-size: var(--text-xs); }
 .btn-lg { padding: var(--space-4) var(--space-7); font-size: var(--text-body); }
 .btn-block { width: 100%; }
-.btn-pill { border-radius: var(--radius-pill); }
 
 /* On a brand gradient band both tiers invert. */
 .on-brand .btn {
@@ -241,19 +240,24 @@
 .field-hint { font-size: var(--text-xs); color: var(--color-text-muted); line-height: var(--leading-normal); }
 .field-error { font-size: var(--text-xs); color: var(--color-danger-fg); line-height: var(--leading-normal); }
 
+/* A one-line field is a capsule, like a button: --radius-control. Its text
+   starts further in than a square field's would, so it clears the curve. A
+   .textarea is not one line: a capsule's corner on a tall box bites into the
+   text, so it keeps a rounded rectangle, with the same padding so text in a
+   form starts on one edge. */
 .input, .textarea, .select {
    width: 100%;
-   padding: var(--space-3) var(--space-4);
+   padding: var(--space-3) var(--space-5);
    background: var(--field-bg);
    color: var(--color-text);
    border: 1px solid var(--field-border);
-   border-radius: var(--radius-md);
+   border-radius: var(--radius-control);
    font-family: var(--font-sans);
    font-size: var(--text-body); /* 16px - anything smaller zooms iOS Safari on focus */
    line-height: var(--leading-normal);
    transition: border-color var(--transition), box-shadow var(--transition);
 }
-.textarea { min-height: 6rem; resize: vertical; }
+.textarea { min-height: 6rem; resize: vertical; border-radius: var(--radius-lg); }
 .input::placeholder, .textarea::placeholder { color: var(--color-text-muted); }
 @media (hover: hover) {
    .input:hover:not(:disabled), .textarea:hover:not(:disabled), .select:hover:not(:disabled) {
@@ -320,12 +324,12 @@
    padding-inline-end: var(--space-8);
    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
                      linear-gradient(135deg, currentColor 50%, transparent 50%);
-   background-position: right var(--space-5) center, right var(--space-4) center;
+   background-position: right var(--space-6) center, right var(--space-5) center;
    background-size: 5px 5px, 5px 5px;
    background-repeat: no-repeat;
 }
 [dir="rtl"] .select {
-   background-position: left var(--space-4) center, left var(--space-5) center;
+   background-position: left var(--space-5) center, left var(--space-6) center;
 }
 
 .checkbox-row { display: flex; align-items: flex-start; gap: var(--space-3); }
@@ -467,14 +471,14 @@
    display: flex; align-items: center;
    background: var(--field-bg);
    border: 1px solid var(--color-border);
-   border-radius: var(--radius-pill);
+   border-radius: var(--radius-control);
    padding: var(--space-1);
    transition: border-color var(--transition), box-shadow var(--transition);
 }
 .input-group:focus-within { border-color: var(--color-link); box-shadow: 0 0 0 4px var(--color-link-light); }
 .input-group .input { border: 0; background: transparent; box-shadow: none; }
 .input-group .input:focus { box-shadow: none; }
-.input-group .btn { flex-shrink: 0; border-radius: var(--radius-pill); }
+.input-group .btn { flex-shrink: 0; }
 
 /* THE STEPPER: a number between a minus and a plus, one control inside one
    border, at the standard control height. The business console's seat
@@ -499,7 +503,7 @@
    grid-template-columns: 2.625rem 4rem 2.625rem;
    block-size: 2.625rem;
    border: 1px solid var(--field-border);
-   border-radius: var(--radius-md);
+   border-radius: var(--radius-control);
    background: var(--field-bg);
    overflow: hidden;
    transition: border-color var(--transition), box-shadow var(--transition);

@@ -9,8 +9,13 @@
 <h3 class="ks-h3">Radius</h3>
 <div class="ks-demo ks-row" id="ks-radius"></div>
 <div class="ks-basis">
-  <b>Six radii.</b> <code>--radius-md</code> (10px) matches the App Store badge corner, which is why
-  buttons use it.
+  <b>Six radii and one role.</b> <code>--radius-control</code> is the pill, and it is the corner of every
+  one-line control: <code>.btn</code>, <code>.input</code>, <code>.select</code>, <code>.input-group</code>
+  and <code>.stepper</code>, to match the iOS app, whose buttons are capsules. Fields follow, so a row of
+  controls shares one shape. A multi-line
+  <code>.textarea</code> takes <code>--radius-lg</code>, since a capsule's corner on a tall box bites into
+  the text. <code>--radius-md</code> (10px) matches the App Store badge corner; a mail button keeps it, since the
+  capsule was decided for the web controls and mail has its own layer.
 </div>
 
 <h3 class="ks-h3">Elevation</h3>

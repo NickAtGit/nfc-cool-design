@@ -124,6 +124,20 @@ wherever the next step is installing the app, the console included: the
 official artwork ships as `images/AppStore.svg` and `images/GooglePlay.svg`, and
 a text button reading "App Store" is never a stand-in for it.
 
+**A one-line control is a capsule.** `--radius-control` is the one corner of
+`.btn`, `.input`, `.select`, `.input-group` and `.stepper`. The iOS app's buttons
+are capsules (system buttons on iOS 26, and its own `FilledCapsuleButtonStyle`),
+and Nico decided on 2026-11-03 that the web's follow and that text fields go with
+them, so a field and its button beside it read as one family. This replaces the
+10px corner buttons took from the App Store badge. It is a role and not a size:
+never type `--radius-pill` or 999px on a control, so the next decision changes
+one token. Three things stay out. A `.textarea` is multi-line, and a capsule's
+corner on a tall box bites into the text, so it takes `--radius-lg`. Surfaces and
+menus keep their own steps. A mail button keeps `--radius-md`: the decision was
+for the web's controls, and mail has its own layer. A capsule's text starts
+further in (`--space-5` on a field) so it clears the curve. A console with its
+own `:root` takes the value from `dist/design-control.css` rather than typing it.
+
 **No control sits on top of the media it acts on.** A thumbnail's ✕, hung off
 its corner, is the one control with nowhere to come from: it is smaller than the
 smallest button, rounder than the roundest radius, and positioned with

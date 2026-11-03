@@ -503,3 +503,25 @@ test('a fact list keeps its value whole while the row has room', () => {
   assert.ok(/min-inline-size:\s*0/.test(value.decl) && /overflow-wrap:\s*anywhere/.test(value.decl),
     'a value too long for the row breaks rather than spilling');
 });
+
+/* A one-line control has one corner, a role and not a size (GUIDELINE.md, "A
+   one-line control is a capsule"), so the next decision changes one token. */
+test('every one-line control takes --radius-control and a textarea does not', () => {
+  const css = read('src/components.css');
+  const block = selector => {
+    const at = css.search(new RegExp(`^${selector.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')} \\{`, 'm'));
+    assert.notEqual(at, -1, `no rule opening with ${selector}`);
+    return css.slice(at, css.indexOf('}', at));
+  };
+  for (const s of ['.btn', '.input, .textarea, .select', '.input-group', '.stepper']) {
+    assert.match(block(s), /border-radius: var\(--radius-control\)/, s);
+  }
+  assert.match(block('.textarea'), /border-radius: var\(--radius-lg\)/);
+  assert.doesNotMatch(css, /\.btn-pill/, 'every .btn is a capsule now, so a class for it says nothing');
+});
+
+test('the vendored control token is the literal behind the semantic token', () => {
+  const { primitives } = JSON.parse(read('src/tokens.json'));
+  assert.equal(primitives.radius.control, 'var(--radius-pill)');
+  assert.ok(read('dist/design-control.css').includes(`--radius-control: ${primitives.radius.pill};`));
+});

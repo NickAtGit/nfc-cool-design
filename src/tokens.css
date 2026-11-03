@@ -78,6 +78,7 @@
    --radius-lg: 14px;
    --radius-xl: 32px;
    --radius-pill: 999px;
+   --radius-control: var(--radius-pill);
    --radius: var(--radius-base);
 
    /* Elevation - resolves against brand-layer shadow colours */

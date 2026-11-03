@@ -77,7 +77,7 @@
         <span class="ks-note" style="margin:0">${css('--space-'+n)}</span></div>`).join('');
 
     const radius = document.getElementById('ks-radius');
-    if (radius) radius.innerHTML = ['sm','base','md','lg','xl','pill'].map(r =>
+    if (radius) radius.innerHTML = ['sm','base','md','lg','xl','pill','control'].map(r =>
       `<div style="text-align:center"><div style="width:5rem;height:3.5rem;background:var(--color-bg-alt);
         border:1px solid var(--color-border);border-radius:var(--radius-${r})"></div>
         <span class="ks-note">--radius-${r}</span></div>`).join('');
