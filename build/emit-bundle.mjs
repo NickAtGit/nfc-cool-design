@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const { defaultBrand, primitives } = JSON.parse(readFileSync(join(root, 'src/tokens.json'), 'utf8'));
+const { defaultBrand } = JSON.parse(readFileSync(join(root, 'src/tokens.json'), 'utf8'));
 const brand = `src/brands/${defaultBrand}.css`;
 /* Two bundles, because not every consumer wants the component layer.
    A page that already owns a full set of components (the public card page)
@@ -33,18 +33,6 @@ for (const f of readdirSync(join(root, 'src', 'images'))) {
   copyFileSync(join(root, 'src', 'images', f), join(root, 'dist', 'images', f));
   console.log(`wrote dist/images/${f}`);
 }
-/* The one token a console with its own :root takes from here. The business
-   console draws everything from dashboard.css and its own --radius ramp, so
-   design-tokens.css would hand it a second --radius and the whole palette to
-   get one value. This is that value alone, resolved to a literal because the
-   console has no --radius-pill for an alias to read. Vendored and watched like
-   any other built file (consumers.json), so the corner is never retyped. */
-const controlRadius = primitives.radius.control.replace(/^var\(--radius-(\w+)\)$/, (_, k) => primitives.radius[k]);
-writeFileSync(join(root, 'dist', 'design-control.css'),
-  `/* @nfccool/design v${version} - generated from src/tokens.json by build/emit-bundle.mjs, do not edit.\n`
-  + `   The corner of a one-line control. See "A one-line control is a capsule" in docs/GUIDELINE.md. */\n`
-  + `:root { --radius-control: ${controlRadius}; }\n`);
-console.log('wrote dist/design-control.css');
 for (const [name, files] of Object.entries(BUNDLES)) {
   const out = `/* @nfccool/design v${version} - generated bundle, do not edit.\n   Layers: ${files.join(', ')} */\n\n`
     + files.map(f => `/* ===== ${f} ===== */\n` + readFileSync(join(root, f), 'utf8')).join('\n');

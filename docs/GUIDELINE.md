@@ -138,8 +138,8 @@ one token. Three things stay out. A `.textarea` is multi-line, and a capsule's
 corner on a tall box bites into the text, so it takes `--radius-lg`. Surfaces and
 menus keep their own steps. A mail button keeps `--radius-md`: the decision was
 for the web's controls, and mail has its own layer. A capsule's text starts
-further in (`--space-5` on a field) so it clears the curve. A console with its
-own `:root` takes the value from `dist/design-control.css` rather than typing it.
+further in (`--space-5` on a field) so it clears the curve. The business console
+reads it from the `dist/design-tokens.css` it vendors, like every other token.
 
 **No control sits on top of the media it acts on.** A thumbnail's ✕, hung off
 its corner, is the one control with nowhere to come from: it is smaller than the

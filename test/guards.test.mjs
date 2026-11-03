@@ -519,9 +519,3 @@ test('every one-line control takes --radius-control and a textarea does not', ()
   assert.match(block('.textarea'), /border-radius: var\(--radius-lg\)/);
   assert.doesNotMatch(css, /\.btn-pill/, 'every .btn is a capsule now, so a class for it says nothing');
 });
-
-test('the vendored control token is the literal behind the semantic token', () => {
-  const { primitives } = JSON.parse(read('src/tokens.json'));
-  assert.equal(primitives.radius.control, 'var(--radius-pill)');
-  assert.ok(read('dist/design-control.css').includes(`--radius-control: ${primitives.radius.pill};`));
-});
