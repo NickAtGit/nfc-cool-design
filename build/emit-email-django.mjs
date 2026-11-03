@@ -56,7 +56,9 @@ if (!linkStyle) throw new Error('footer link not found: src/email.js changed sha
 html = html.replace(linkAnchor, '{% block footer_links %}{% endblock %}');
 html = swap(html, [
   [`<title>${S('TITLE')}</title>`, '<title>{% block title %}{{ email_title }}{% endblock %}</title>'],
-  [`aria-label="${S('TITLE')}"`, 'aria-label="{{ email_title }}"'],
+  [`aria-label="${S('TITLE')}"`, 'aria-label="{% block aria_label %}{{ email_title }}{% endblock %}"'],
+  // A consumer's own <head> additions, such as webfonts.
+  ['</head>', '{% block head %}{% endblock %}\n</head>'],
   [S('PREHEADER'), '{% block preheader %}{% endblock %}'],
   [S('HEADING'), '{% block heading %}{% endblock %}'],
   [`${URL_('ASSETS')}/`, '{{ email_asset_base }}'],
