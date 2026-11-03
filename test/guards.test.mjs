@@ -17,6 +17,19 @@ test('src/email.js declares no literal colour', () => {
   assert.deepEqual(hits, [], `literal colour found:\n${hits.map(([n, l]) => `  src/email.js:${n} ${l.trim()}`).join('\n')}`);
 });
 
+/* --elev-0 is the business console's small shadow (Nico, 2026-11-03). Its colour
+   is read by that one step alone, so a change to it means one thing. */
+test('--elev-0 is the one small shadow, and the only reader of --color-shadow', () => {
+  const t = JSON.parse(read('src/tokens.json'));
+  const b = t.brands[t.defaultBrand];
+  assert.equal(t.primitives.elevation['0'], '0 1px 3px var(--color-shadow)');
+  assert.equal(b.light['color-shadow'], 'rgba(33, 37, 41, 0.18)');
+  assert.equal(b.dark['color-shadow'], 'rgba(0, 0, 0, 0.30)');
+  for (const f of [...AUTHORED, 'src/email.css']) {
+    assert.doesNotMatch(read(f), /--color-shadow\b/, f);
+  }
+});
+
 /* Colour lives in the brand layer. A literal in a component means that
    component cannot be re-skinned, which is how a shared system dies. */
 for (const f of AUTHORED) {

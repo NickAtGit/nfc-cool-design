@@ -124,6 +124,19 @@ wherever the next step is installing the app, the console included: the
 official artwork ships as `images/AppStore.svg` and `images/GooglePlay.svg`, and
 a text button reading "App Store" is never a stand-in for it.
 
+**One small shadow, and it is visible.** `--elev-0` is `0 1px 3px` in
+`--color-shadow`, `rgba(33, 37, 41, 0.18)` by day and `rgba(0, 0, 0, 0.30)` at
+night. It was `0 1px 2px` at 0.06 by day, and the business console drew its own
+at 0.18, so on 2026-11-03 Nico chose the console's for both, knowing it
+strengthens every resting card, panel and table the kit draws. The same day the
+console took the kit's values for the other four it had nearly the same: the
+active nav label in the text blue (`--color-link-text`, 4.89:1 on its pill, where
+the area blue it used measured 2.92:1), the red wash
+`--color-danger-bg`, the pop shadow `--elev-2` and the veil `--nav-scrim`, which
+for all its name is also what sits behind a `.dialog`. By day `--color-shadow` is
+heavier than `--color-shadow-lg` (0.16), whose steps blur far wider. Only
+`--elev-0` reads it, so a new shadow reads an elevation step and not the colour.
+
 **A one-line control is a capsule.** `--radius-control` is the one corner of
 `.btn`, `.input`, `.select`, `.input-group` and `.stepper`. The iOS app's buttons
 are capsules (system buttons on iOS 26, and its own `FilledCapsuleButtonStyle`),
