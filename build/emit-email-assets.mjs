@@ -49,8 +49,29 @@ async function draw(b64, halo, W, H, pad, radius) {
   return out.toDataURL('image/png').split(',')[1];
 }
 
+/* The store buttons, from the official artwork the web pages show
+   (src/images), as PNGs because Gmail refuses SVG. 3x their 40px display height. */
+const STORE_BUTTONS = [
+  { out: 'store-app-store.png', src: 'src/images/AppStore.svg', w: 119.66 },
+  { out: 'store-google-play.png', src: 'src/images/GooglePlay.svg', w: 132.66 },
+];
+async function drawSvg(b64, W, H) {
+  const img = new Image();
+  img.src = `data:image/svg+xml;base64,${b64}`;
+  await img.decode();
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  c.getContext('2d').drawImage(img, 0, 0, W, H);
+  return c.toDataURL('image/png').split(',')[1];
+}
+
 const page = await openPage({ port: 9334 });
 try {
+  for (const { out, src, w } of STORE_BUTTONS) {
+    const b64 = readFileSync(join(root, src)).toString('base64');
+    const buf = Buffer.from(await page.evaluate(drawSvg, b64, Math.round(w * 3), 120), 'base64');
+    writeFileSync(join(root, 'src/email', out), buf);
+    console.log(`wrote src/email/${out} (${buf.length} bytes)`);
+  }
   for (const { out, src, halo } of SOURCES) {
     const b64 = readFileSync(join(root, src)).toString('base64');
     const png = await page.evaluate(draw, b64, halo, WORDMARK.width * SCALE, WORDMARK.height * SCALE, PAD * SCALE, HALO * SCALE);

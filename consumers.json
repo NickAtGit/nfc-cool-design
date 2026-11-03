@@ -3,11 +3,13 @@
   "consumers": {
     "business_card_service": {
       "root": "business_card_service",
-      "why": "Django, no npm at all: the built files are copied into its static folder and linked from the templates. dist/design-tokens.css is vendored on main since 2026-11-03: base_dashboard.html links it before dashboard.css, and the console's :root is aliases of these tokens, so a colour or radius the kit has is not typed in the console. dist/design.css is deliberately not vendored: the console still draws its components from its own dashboard.css, and the bundle would add 112 KB nothing reads. The store badges are vendored on main since 2026-10-13: the console's invite page shows them.",
+      "why": "Django, no npm at all: the built files are copied into its static folder and linked from the templates. dist/design-tokens.css is vendored on main since 2026-11-03: base_dashboard.html links it before dashboard.css, and the console's :root is aliases of these tokens, so a colour or radius the kit has is not typed in the console. dist/design.css is deliberately not vendored: the console still draws its components from its own dashboard.css, and the bundle would add 112 KB nothing reads. The store badges are vendored on main since 2026-10-13: the console's invite page shows them, and their PNGs since 2026-11-03: its mails do.",
       "files": {
         "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css",
         "dist/images/AppStore.svg": "web/static/images/AppStore.svg",
-        "dist/images/GooglePlay.svg": "web/static/images/GooglePlay.svg"
+        "dist/images/GooglePlay.svg": "web/static/images/GooglePlay.svg",
+        "dist/email/store-app-store.png": "web/static/images/email/store-app-store.png",
+        "dist/email/store-google-play.png": "web/static/images/email/store-google-play.png"
       }
     }
   }

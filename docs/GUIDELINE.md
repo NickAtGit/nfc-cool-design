@@ -722,18 +722,23 @@ values are a `prefers-color-scheme` block keyed on classes, repeated under
 literal, and `test/email.test.mjs` fails on any colour in a rendered mail that
 is not a token value.
 
-**The mail button is the link blue, not the web's filled primary.** Blue as
-text is the gradient's dark stop, and a mail button is only ever seen at rest:
-there is no hover to lift the web primary's 3.48:1 label to AA. So the mail
-button fills with `--color-link-text` (`#1A60CE`, white label 5.82:1) and one
-blue carries every action in a mail. In dark mode it is brand yellow with an ink
-label, the web's own flip. Every pair a mail paints clears 4.5:1 in both
-themes, with no exception.
+**The mail button is the web's filled primary.** It fills with
+`--color-primary-bg` (`#128CF0`), the same blue as the onboarding's and every other
+web button, and Nico chose it over the darker link blue on 2026-11-03 so a mail and
+the page it opens look alike. The cost is known: the white label is 3.48:1 by day,
+under AA, the one pair in a mail that does not clear 4.5:1, and a mail button has
+no hover to lift it. Link text stays `--color-link-text`. In dark mode the button
+is brand yellow with an ink label, the web's own flip.
 
 **The mail button is a capsule, like every other control.** Its corner is
 `--radius-control` resolved to a literal by `build/emit-css.mjs`, so the next
 decision about the control radius reaches every mail on the next build. Outlook
 desktop ignores the radius and shows a square button, which still works.
+
+**The store buttons are hosted PNGs too.** `npm run email:assets` draws
+`store-app-store.png` and `store-google-play.png` from the same official artwork
+the web pages show (`src/images/`), at 3x their 40px height, because Gmail blocks
+SVG. Use them at 120 by 40 and 133 by 40.
 
 **The header is a hosted PNG.** Gmail blocks SVG and no client loads a webfont
 reliably, so the wordmark ships as `src/email/wordmark-on-light.png` and

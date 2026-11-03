@@ -25,6 +25,8 @@
     },
     "./email/wordmark-on-light.png": "./src/email/wordmark-on-light.png",
     "./email/wordmark-on-dark.png": "./src/email/wordmark-on-dark.png",
+    "./email/store-app-store.png": "./src/email/store-app-store.png",
+    "./email/store-google-play.png": "./src/email/store-google-play.png",
     "./tokens.json": "./src/tokens.json",
     "./nav.js": "./src/nav.js",
     "./ui.js": "./src/ui.js",

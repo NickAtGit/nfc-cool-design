@@ -43,7 +43,9 @@ export const WORDMARK = Object.freeze({
 });
 
 /* Every file a consumer has to host at `assetBaseUrl`. */
-export const EMAIL_ASSETS = Object.freeze([WORDMARK.onLight, WORDMARK.onDark]);
+/* The store buttons, for a mail that sends someone to the app: 120x40 and 133x40. */
+export const STORE_BUTTONS = Object.freeze(['store-app-store.png', 'store-google-play.png']);
+export const EMAIL_ASSETS = Object.freeze([WORDMARK.onLight, WORDMARK.onDark, ...STORE_BUTTONS]);
 
 const FONT = palette.font.replaceAll('"', "'");
 

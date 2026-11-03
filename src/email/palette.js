@@ -9,7 +9,7 @@
  *   text     --color-text-secondary  body copy
  *   muted    --color-text-muted      notes, the fallback link's label, the footer
  *   link     --color-link-text       link text: the gradient's dark stop in light, yellow in dark
- *   buttonBg --color-link-text       the button's fill
+ *   buttonBg --color-primary-bg      the button's fill
  *   buttonFg --color-primary-fg      the button's label
  *   quoteBg  --color-bg              a quoted title's panel
  *   quoteBar --color-link            a quoted title's edge
@@ -30,7 +30,7 @@ export const palette = {
     "text": "#495057",
     "muted": "#666D74",
     "link": "#1A60CE",
-    "buttonBg": "#1A60CE",
+    "buttonBg": "#128CF0",
     "buttonFg": "#FFFFFF",
     "quoteBg": "#F5F6F8",
     "quoteBar": "#128CF0"

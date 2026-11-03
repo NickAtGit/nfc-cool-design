@@ -81,6 +81,7 @@ export function renderEmail(options: EmailOptions): { html: string; text: string
 /** The header wordmark's files and display size (the PNGs are 2x). */
 export const WORDMARK: Readonly<{ onLight: string; onDark: string; width: number; height: number }>;
 /** Every file a consumer hosts at `assetBaseUrl`. They ship in this package as `@nfccool/design/email/<file>`. */
+export const STORE_BUTTONS: readonly string[];
 export const EMAIL_ASSETS: readonly string[];
 
 export function escapeHtml(value: unknown): string;

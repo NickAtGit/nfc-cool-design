@@ -119,11 +119,10 @@ const EMAIL_ROLES = {
   text:     ['color-text-secondary', 'body copy'],
   muted:    ['color-text-muted',     'notes, the fallback link\'s label, the footer'],
   link:     ['color-link-text',      'link text: the gradient\'s dark stop in light, yellow in dark'],
-  /* Blue as text is the dark stop, and a mail button is read at rest only:
-     there is no hover to lift the light stop's 3.48:1 label to AA. So the
-     button fills with the link colour, which clears AA in both themes and is
-     itself a brand value, and one blue carries every action in a mail. */
-  buttonBg: ['color-link-text',      'the button\'s fill'],
+  /* The filled primary, the same blue as every web button (Nico, 2026-11-03).
+     White on it is 3.48:1 by day, under AA; test/email.test.mjs names that one
+     pair. Link text stays the dark stop. */
+  buttonBg: ['color-primary-bg',     'the button\'s fill'],
   buttonFg: ['color-primary-fg',     'the button\'s label'],
   quoteBg:  ['color-bg',             'a quoted title\'s panel'],
   quoteBar: ['color-link',           'a quoted title\'s edge'],

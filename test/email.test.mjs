@@ -172,18 +172,21 @@ test('no custom property reaches a mail client', () => {
   assert.ok(!read('src/email/palette.js').includes('var('), 'var( in the palette');
 });
 
-/* Every pair a mail actually paints, in both themes, at 4.5:1. The mail
-   button has no recorded exception: it is read at rest only. */
+/* Every pair a mail actually paints, in both themes, at 4.5:1. One recorded
+   exception, the day button: white on the filled primary, the web's own blue
+   (Nico, 2026-11-03, docs/GUIDELINE.md). It may not get any lower. */
 const PAIRS = [
   ['heading', 'card'], ['text', 'card'], ['muted', 'card'], ['link', 'card'],
   ['muted', 'page'], ['buttonFg', 'buttonBg'], ['heading', 'quoteBg'], ['link', 'quoteBg'],
 ];
+const DAY_BUTTON_FLOOR = 3.4;
 for (const theme of ['light', 'dark']) {
   for (const [fg, bg] of PAIRS) {
     test(`email contrast: ${theme} ${fg} on ${bg}`, () => {
       const P = palette[theme];
       const r = ratio(P[fg], P[bg]);
-      assert.ok(r >= AA, `${P[fg]} on ${P[bg]} is ${r.toFixed(2)}:1, needs ${AA}:1`);
+      const need = theme === 'light' && fg === 'buttonFg' ? DAY_BUTTON_FLOOR : AA;
+      assert.ok(r >= need, `${P[fg]} on ${P[bg]} is ${r.toFixed(2)}:1, needs ${need}:1`);
     });
   }
 }
@@ -220,7 +223,7 @@ test('without an asset base the header is the brand name in text', () => {
 
 /* The wordmark PNGs are the size the renderer declares, at 2x. */
 test('the wordmark PNGs are 2x the size the renderer draws them at', () => {
-  for (const f of EMAIL_ASSETS) {
+  for (const f of [WORDMARK.onLight, WORDMARK.onDark]) {
     const b = readFileSync(new URL(`../src/email/${f}`, import.meta.url));
     assert.equal(b.toString('latin1', 1, 4), 'PNG', `${f} is not a PNG`);
     assert.equal(b.readUInt32BE(16), WORDMARK.width * 2, `${f} width`);
