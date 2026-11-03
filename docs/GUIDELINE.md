@@ -131,8 +131,8 @@ and Nico decided on 2026-11-03 that the web's follow and that text fields go wit
 them, so a field and its button beside it read as one family. This replaces the
 10px corner buttons took from the App Store badge. A segmented switch counts too,
 its track and its segments both, which keeps them concentric at any inset: the
-console's switches took the token the same day, and the kit's one such control,
-`.nav-theme-switch`, has not followed yet. It is a role and not a size:
+console's switches and the kit's `.nav-theme-switch` took the token the same day.
+It is a role and not a size:
 never type `--radius-pill` or 999px on a control, so the next decision changes
 one token. Three things stay out. A `.textarea` is multi-line, and a capsule's
 corner on a tall box bites into the text, so it takes `--radius-lg`. Surfaces and
