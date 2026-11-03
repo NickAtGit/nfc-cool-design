@@ -19,7 +19,7 @@ export const palette = {
   "font": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
   "radius": {
     "card": "14px",
-    "button": "10px"
+    "button": "999px"
   },
   "light": {
     "page": "#F5F6F8",

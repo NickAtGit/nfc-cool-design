@@ -131,12 +131,15 @@ const EMAIL_ROLES = {
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 const emailTheme = theme => Object.fromEntries(Object.entries(EMAIL_ROLES).map(([role, [token]]) => [role, theme[token]]));
 
+/* Mail clients strip custom properties, so a role's var() is resolved to its literal. */
+const emailControlRadius = p.radius.control.replace(/^var\(--radius-(\w+)\)$/, (_, k) => p.radius[k]);
+
 function emailPaletteJS(b) {
   const r = p.radius;
   const body = {
     label: b.label,
     font: FONT_STACK,
-    radius: { card: r.lg, button: r.md },
+    radius: { card: r.lg, button: emailControlRadius },
     light: emailTheme(b.light),
     dark: emailTheme(b.dark),
   };
@@ -166,7 +169,7 @@ function emailCSS(b) {
 .email-btn { display:inline-block; background:${L.buttonBg}; color:${L.buttonFg};
    font-family:${f};
    font-size:16px; font-weight:600; text-decoration:none;
-   padding:13px 28px; border-radius:${r.md}; }
+   padding:13px 28px; border-radius:${emailControlRadius}; }
 .email-link { color:${L.link}; }
 .email-muted { font-size:13px; line-height:1.5; color:${L.muted}; }
 .email-hr { border:0; border-top:1px solid ${L.rule}; margin:24px 0; }

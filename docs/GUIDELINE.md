@@ -730,6 +730,11 @@ blue carries every action in a mail. In dark mode it is brand yellow with an ink
 label, the web's own flip. Every pair a mail paints clears 4.5:1 in both
 themes, with no exception.
 
+**The mail button is a capsule, like every other control.** Its corner is
+`--radius-control` resolved to a literal by `build/emit-css.mjs`, so the next
+decision about the control radius reaches every mail on the next build. Outlook
+desktop ignores the radius and shows a square button, which still works.
+
 **The header is a hosted PNG.** Gmail blocks SVG and no client loads a webfont
 reliably, so the wordmark ships as `src/email/wordmark-on-light.png` and
 `wordmark-on-dark.png` (2x, exported as `@nfccool/design/email/…`), drawn from

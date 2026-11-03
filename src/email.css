@@ -16,7 +16,7 @@
 .email-btn { display:inline-block; background:#1A60CE; color:#FFFFFF;
    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
    font-size:16px; font-weight:600; text-decoration:none;
-   padding:13px 28px; border-radius:10px; }
+   padding:13px 28px; border-radius:999px; }
 .email-link { color:#1A60CE; }
 .email-muted { font-size:13px; line-height:1.5; color:#666D74; }
 .email-hr { border:0; border-top:1px solid #F0F1F3; margin:24px 0; }
