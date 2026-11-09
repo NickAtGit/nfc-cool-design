@@ -43,6 +43,21 @@ export const CLASSES = {
 export const WORDS = {
   close: 'Close',
   cancel: 'Cancel',
+  undo: 'Undo',
+  signIn: 'Sign in',
+  moveItem: 'Move {name}',
+  actionsFor: 'Actions for {name}',
+  moveLifted: '{name}, lifted. Position {position} of {total}.',
+  moveMoved: 'Moved to position {position} of {total}.',
+  moveDropped: '{name}, dropped.',
+  moveCancelled: 'Move cancelled.',
+  status_saving: 'Saving\u2026',
+  status_saved: 'Saved',
+  status_retrying: 'Not saved, retrying',
+  status_failed: 'Not saved',
+  status_updated: 'Updated from another device',
+  status_signedOut: 'Signed out. Sign in again to keep editing.',
+  status_readOnly: "You can't change this page.",
 };
 
 const classes = { ...CLASSES };

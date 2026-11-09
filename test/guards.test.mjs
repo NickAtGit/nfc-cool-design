@@ -145,7 +145,7 @@ test('no authored layer references an undefined token', () => {
   for (const f of ['src/tokens.css', 'src/brands/nfccool.css']) {
     for (const m of read(f).matchAll(/^\s*(--[\w-]+)\s*:/gm)) defined.add(m[1]);
   }
-  const local = /^--(btn|cta|focus)-/;
+  const local = /^--(btn|cta|focus|ed)-/;
   const missing = new Set();
   for (const f of AUTHORED) {
     for (const m of read(f).matchAll(/var\(\s*(--[\w-]+)/g)) {

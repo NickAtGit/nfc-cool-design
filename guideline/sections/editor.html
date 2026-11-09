@@ -10,3 +10,27 @@ names its classes differently says so once, with <code class="ks-code">configure
     <button class="btn btn-danger btn-primary" type="button" data-confirm-go>Remove</button>
   </div>
 </dialog>
+
+<h3 class="ks-h3">Block rows and Sortable</h3>
+<div class="ks-demo"><div data-ed-demo="rows"></div></div>
+<div class="ks-basis"><b>Drag from the handle</b> with a mouse or a finger, or hold a finger on a row for 300 ms; until then the
+list scrolls. On the keyboard, Space lifts, the arrows move, Space drops and Escape cancels, and one live region says each step.
+Contact details stays first. Delete asks first, then the toast offers Undo for eight seconds.</div>
+
+<h3 class="ks-h3">The sheet</h3>
+<div class="ks-demo"><div data-ed-demo="sheet"></div></div>
+<div class="ks-basis"><b>A native dialog</b>, centred on a laptop and bottom-anchored under 900 px, where it rises above the keyboard.</div>
+
+<h3 class="ks-h3">Autosave status</h3>
+<div class="ks-demo"><div data-ed-demo="status" style="display:grid;gap:var(--space-3)"></div></div>
+<div class="ks-basis"><b>Seen at every step, spoken at the end of a burst.</b> Errors are spoken at once.</div>
+
+<h3 class="ks-h3">The editor split</h3>
+<div class="ks-demo" data-ed-demo="split">
+  <div class="ks-row" style="margin-block-end:var(--space-3)"><button class="btn btn-secondary btn-sm" type="button" data-view-set="blocks">Blocks</button><button class="btn btn-secondary btn-sm" type="button" data-view-set="page">Page</button></div>
+  <div class="ed-split" data-view="blocks">
+    <div class="ed-split-list"><div class="card">The list</div></div>
+    <div class="ed-split-frame"><div class="card">The page</div></div>
+  </div>
+</div>
+<div class="ks-basis"><b>Side by side from 900 px</b>, the page sticking as the list scrolls. Below that, one at a time.</div>
