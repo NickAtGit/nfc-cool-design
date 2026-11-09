@@ -128,7 +128,47 @@
    .ed-undo { inset-block-end: var(--space-4); inline-size: auto; max-inline-size: none; }
 }
 
+/* ---- Segmented control: the console's .fu-switch, moved as it was ---- */
+.fu-switch { display: inline-grid; grid-auto-flow: column; gap: 3px; padding: 3px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-bg); }
+.fu-switch button { padding: 5px var(--space-3); border: 0; border-radius: var(--radius-control); background: transparent; color: var(--color-text-muted); font: inherit; font-size: var(--text-xs); font-weight: 600; cursor: pointer; }
+.fu-switch button[aria-pressed="true"] { background: var(--color-bg-card); color: var(--color-text); box-shadow: var(--elev-0); }
+.fu-switch button:focus-visible { outline: 2px solid var(--color-primary-bg); outline-offset: 2px; }
+
+/* ---- Repeater ---- */
+.ed-rep { display: grid; gap: var(--space-3); }
+.ed-rep-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.ed-rep-row { display: grid; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-card); }
+.ed-rep-head { display: flex; align-items: center; gap: var(--space-2); }
+.ed-rep-held { margin-inline-start: auto; }
+/* A display on the class would beat the browser's own [hidden]. */
+.ed-rep-held[hidden], .ed-rep-fields[hidden] { display: none; }
+.ed-rep-remove { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-inline-start: auto; inline-size: 2rem; block-size: 2rem; padding: 0; border: 0; border-radius: var(--radius-base); background: transparent; color: var(--color-text-muted); cursor: pointer; }
+.ed-rep-held + .ed-rep-remove, .ed-rep-toggle ~ .ed-rep-remove { margin-inline-start: 0; }
+.ed-rep-remove svg { inline-size: 1rem; block-size: 1rem; }
+.ed-rep-remove:focus-visible, .ed-rep-toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.ed-rep-fields { display: grid; gap: var(--space-3); min-inline-size: 0; }
+.ed-rep-toggle { flex: 1; min-inline-size: 0; display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1); border: 0; border-radius: var(--radius-base); background: transparent; color: var(--color-text); font: inherit; font-size: var(--text-sm); font-weight: 600; text-align: start; cursor: pointer; }
+.ed-rep-toggle svg { inline-size: 1rem; block-size: 1rem; flex-shrink: 0; transform: rotate(-90deg); transition: transform var(--transition); }
+[dir="rtl"] .ed-rep-toggle svg { transform: rotate(90deg); }
+.ed-rep-toggle[aria-expanded="true"] svg { transform: none; }
+.ed-rep-summary { min-inline-size: 0; overflow-wrap: anywhere; }
+.ed-rep-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.ed-rep-limit { margin: 0; }
+@media (hover: hover) {
+   .ed-rep-remove:hover { background: var(--color-danger-bg); color: var(--color-danger-fg); }
+   .ed-rep-toggle:hover { background: var(--color-link-light); }
+}
+
+/* ---- Rating ---- */
+.ed-rating { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.ed-stars { position: relative; display: inline-block; inline-size: 7.5rem; block-size: 1.5rem; flex-shrink: 0; }
+.ed-stars-base, .ed-stars-fill { position: absolute; inset-block-start: 0; inset-inline-start: 0; display: flex; block-size: 100%; overflow: hidden; }
+.ed-stars-base { inline-size: 100%; color: var(--color-border); }
+.ed-stars-fill { color: var(--color-link); }
+.ed-stars svg { inline-size: 1.5rem; block-size: 1.5rem; flex-shrink: 0; }
+
 /* ---- Touch: asked of the screen, not its width ---- */
 @media (pointer: coarse) {
    .ed-handle { inline-size: 2.5rem; block-size: 2.5rem; }
+   .ed-rep-remove { inline-size: 2.5rem; block-size: 2.5rem; }
 }

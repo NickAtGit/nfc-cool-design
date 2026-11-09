@@ -82,3 +82,83 @@ test('in a grid the side of a tile decides, mirrored in RTL', () => {
   assert.equal(drop(130, 50, true), 1, 'in RTL the near half is on the other side');
   assert.equal(drop(105, 50), 0, 'in a gap');
 });
+
+/* ---- price, link, rating ---- */
+import { formatPrice, parsePrice, PRICE_MAX } from '../src/editor/price.js';
+import { normalizeUrl } from '../src/editor/url.js';
+import { cleanRating } from '../src/editor/rating.js';
+
+test('a price reads a comma or a point', () => {
+  assert.equal(parsePrice('12,50', 'pt-PT'), 12.5);
+  assert.equal(parsePrice('12.50', 'pt-PT'), 12.5);
+  assert.equal(parsePrice('12,5', 'en'), 12.5);
+  assert.equal(parsePrice('.5'), 0.5);
+  assert.equal(parsePrice(' 7 '), 7);
+  assert.equal(parsePrice(''), null);
+  assert.equal(parsePrice('   '), null);
+});
+
+test('a price with both marks takes the last as the decimal', () => {
+  assert.equal(parsePrice('1.234,50', 'en'), 1234.5);
+  assert.equal(parsePrice('1,234.50', 'pt-PT'), 1234.5);
+  assert.equal(parsePrice('1,234,567', 'en'), 1234567);
+  assert.equal(parsePrice('1 234,50', 'pt-PT'), 1234.5);
+});
+
+test('three digits after one mark: the locale says which it is', () => {
+  assert.equal(parsePrice('1,234', 'en'), 1234);
+  assert.equal(parsePrice('1.234', 'en'), 1.234);
+  assert.equal(parsePrice('1.234', 'de-DE'), 1234);
+  assert.equal(parsePrice('1,234', 'de-DE'), 1.234);
+  assert.equal(parsePrice('0,125', 'en'), 0.125, 'a leading zero is never a thousand');
+});
+
+test('what is not a price says so rather than guessing', () => {
+  for (const bad of ['abc', '12a', '-3', '1.2.3', '1,23,4', '1.2,3.4', '.', ',']) {
+    assert.equal(parsePrice(bad, 'en'), undefined, bad);
+  }
+  assert.equal(PRICE_MAX, 100000000);
+});
+
+test('a price shows in the page\'s locale, with no grouping and no padding', () => {
+  assert.equal(formatPrice(12.5, 'pt-PT'), '12,5');
+  assert.equal(formatPrice(1234.5, 'en'), '1234.5');
+  assert.equal(formatPrice(null), '');
+  assert.equal(formatPrice(0, 'en'), '0');
+});
+
+test('a link gains https://, keeps http://, and is null when empty', () => {
+  assert.deepEqual(normalizeUrl(''), { ok: true, value: null });
+  assert.deepEqual(normalizeUrl('   '), { ok: true, value: null });
+  assert.equal(normalizeUrl('nfc.cool/menu').value, 'https://nfc.cool/menu');
+  assert.equal(normalizeUrl('http://nfc.cool').value, 'http://nfc.cool');
+  assert.equal(normalizeUrl('HTTPS://NFC.cool/a').value, 'HTTPS://NFC.cool/a');
+  assert.equal(normalizeUrl('nfc.cool:8080/a').value, 'https://nfc.cool:8080/a', 'a port is not a scheme');
+});
+
+test('a link is refused for its scheme or its host', () => {
+  assert.equal(normalizeUrl('javascript:alert(1)').reason, 'scheme');
+  assert.equal(normalizeUrl('mailto:a@b.co').reason, 'scheme');
+  assert.equal(normalizeUrl('tel:+351900').reason, 'scheme');
+  assert.equal(normalizeUrl('localhost').reason, 'host');
+  assert.equal(normalizeUrl('not a link').reason, 'host');
+  assert.equal(normalizeUrl('https://.com').reason, 'host');
+});
+
+test('a host list refuses anything else, on the exact host as the server does', () => {
+  const hosts = ['youtube.com', 'www.youtube.com', 'youtu.be', 'vimeo.com'];
+  assert.equal(normalizeUrl('youtu.be/abc', { hosts }).value, 'https://youtu.be/abc');
+  assert.equal(normalizeUrl('https://WWW.YouTube.com/watch?v=1', { hosts }).ok, true);
+  assert.equal(normalizeUrl('https://evil.com/youtube.com', { hosts }).reason, 'allowed');
+  assert.equal(normalizeUrl('https://notyoutube.com', { hosts }).reason, 'allowed');
+});
+
+test('a rating is 0 to 5 by 0.1, or nothing', () => {
+  assert.equal(cleanRating('4.8'), 4.8);
+  assert.equal(cleanRating('4,8'), 4.8);
+  assert.equal(cleanRating('4.86'), 4.9);
+  assert.equal(cleanRating('9'), 5);
+  assert.equal(cleanRating('-1'), 0);
+  assert.equal(cleanRating(''), null);
+  assert.equal(cleanRating('x'), null);
+});

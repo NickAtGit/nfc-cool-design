@@ -72,6 +72,56 @@
       row.append(out);
       root.append(row, status.el);
     },
+    repeater(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'repeater';
+      const seed = [{ q: 'Do you deliver?', a: 'Inside Lisbon.' }, { q: 'Is there parking?', a: 'Behind the shop.' }, { q: '', a: '' }];
+      const show = items => { log.textContent = JSON.stringify(items.filter(i => i.q).map(i => i.q)); };
+      const r = kit.repeater({
+        items: seed, max: 5, addLabel: 'Add a question', newItem: () => ({ q: '', a: '' }),
+        name: i => i.q || 'New question',
+        confirmRemove: i => ({ title: `Remove ${i.q ? `"${i.q}"` : 'this question'}?`, detail: 'It leaves the page.', action: 'Remove' }),
+        renderRow(fields, item, row) {
+          const f = el('div', 'field');
+          const l = el('span', 'field-label', 'Question');
+          const input = el('input', 'input');
+          input.value = item.q;
+          input.addEventListener('input', () => { item.q = input.value; row.setHeld(!item.q); row.refresh(); row.changed(); });
+          f.append(l, input);
+          fields.append(f);
+          row.setHeld(!item.q);
+        },
+        onChange: show,
+      });
+      show(seed);
+      root.append(r.el, log);
+    },
+    fold(root) {
+      const sections = [{ title: 'Starters', n: 8 }, { title: 'Mains', n: 16 }];
+      const r = kit.repeater({
+        items: sections, addLabel: 'Add a section', newItem: () => ({ title: 'New section', n: 0 }),
+        name: i => i.title, collapse: { summary: i => `${i.title}: ${i.n} items` },
+        renderRow(fields, item) { const input = el('input', 'input'); input.value = item.title; input.setAttribute('aria-label', 'Section name'); fields.append(input); },
+      });
+      root.append(r.el);
+    },
+    fields(root) {
+      const out = el('p', 'ks-note');
+      out.dataset.edLog = 'fields';
+      const show = (k, v, ok) => { out.textContent = `${k}: ${JSON.stringify(v)} ${ok === false ? '(invalid)' : ''}`; };
+      const price = kit.priceField({ label: 'Price', value: 12.5, locale: 'pt-PT', onChange: (v, ok) => show('price', v, ok) });
+      const url = kit.urlField({ label: 'YouTube or Vimeo link', hosts: ['youtube.com', 'www.youtube.com', 'youtu.be', 'vimeo.com'], hostError: 'Use a YouTube or Vimeo link.', onChange: (v, ok) => show('url', v, ok) });
+      const site = kit.urlField({ label: 'Website', onChange: (v, ok) => show('site', v, ok) });
+      const rating = kit.ratingField({ label: 'Score', value: 4.8, onChange: v => show('rating', v) });
+      const grid = el('div', 'stack');
+      grid.append(price.el, url.el, site.el, rating.el, out);
+      root.append(grid);
+    },
+    segmented(root) {
+      const out = el('p', 'ks-note');
+      kit.segmented(root.querySelector('.fu-switch'), { value: 'blocks', onChange: v => { out.textContent = `Now showing ${v}`; } });
+      root.append(out);
+    },
     split(root) {
       const split = kit.split(root.querySelector('.ed-split'));
       root.querySelectorAll('[data-view-set]').forEach(b => b.addEventListener('click', () => split.setView(b.dataset.viewSet)));
