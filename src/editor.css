@@ -1,0 +1,7 @@
+/* The web block editor's layer (business_card_service spec 2026-11-09, section
+   6). Parts here are .ed-*, read tokens only, use logical properties and the
+   four breakpoints, and keep :hover under (hover: hover): the same guards as
+   components.css. A console that vendors only the tokens loads this next to
+   its own stylesheet, which is why the classes are prefixed and why the markup
+   comes from src/editor/*.js through configure() rather than being typed by
+   the host. */

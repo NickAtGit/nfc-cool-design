@@ -4,6 +4,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { bundleEditorKit } from './editor-bundle.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const { defaultBrand } = JSON.parse(readFileSync(join(root, 'src/tokens.json'), 'utf8'));
@@ -15,6 +16,9 @@ const brand = `src/brands/${defaultBrand}.css`;
 const BUNDLES = {
   'design-tokens.css': ['src/tokens.css', brand],
   'design.css': ['src/tokens.css', brand, 'src/components.css', 'src/archetypes.css'],
+  /* The web block editor's layer, for a console that vendors only the tokens
+     and draws its own components. No tokens inside: the host has them. */
+  'editor-kit.css': ['src/editor.css'],
 };
 mkdirSync(join(root, 'dist'), { recursive: true });
 /* The two scripts travel with the bundle. They are authored, not generated,
@@ -39,3 +43,7 @@ for (const [name, files] of Object.entries(BUNDLES)) {
   writeFileSync(join(root, 'dist', name), out);
   console.log(`wrote dist/${name} (${out.length} bytes) from ${files.length} layers`);
 }
+/* The editor's parts in one classic script (see build/editor-bundle.mjs). */
+const editorKit = bundleEditorKit(root, `/* @nfccool/design v${version} - generated from src/editor/*.js by build/emit-bundle.mjs, do not edit. */\n`);
+writeFileSync(join(root, 'dist', 'editor-kit.js'), editorKit);
+console.log(`wrote dist/editor-kit.js (${editorKit.length} bytes)`);

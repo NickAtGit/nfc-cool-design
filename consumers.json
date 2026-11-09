@@ -3,9 +3,11 @@
   "consumers": {
     "business_card_service": {
       "root": "business_card_service",
-      "why": "Django, no npm at all: the built files are copied into its static folder and linked from the templates. dist/design-tokens.css is vendored on main since 2026-11-03: base_dashboard.html links it before dashboard.css, and the console's :root is aliases of these tokens, so a colour or radius the kit has is not typed in the console. dist/design.css is deliberately not vendored: the console still draws its components from its own dashboard.css, and the bundle would add 112 KB nothing reads. The store badges are vendored on main since 2026-10-13: the console's invite page shows them, and their PNGs since 2026-11-03: its mails do. Its mail shells extend dist/email/django/layout.html since then too, vendored as templates/nfccool_email/.",
+      "why": "Django, no npm at all: the built files are copied into its static folder and linked from the templates. dist/design-tokens.css is vendored on main since 2026-11-03: base_dashboard.html links it before dashboard.css, and the console's :root is aliases of these tokens, so a colour or radius the kit has is not typed in the console. dist/design.css is deliberately not vendored: the console still draws its components from its own dashboard.css, and the bundle would add 112 KB nothing reads. The store badges are vendored on main since 2026-10-13: the console's invite page shows them, and their PNGs since 2026-11-03: its mails do. Its mail shells extend dist/email/django/layout.html since then too, vendored as templates/nfccool_email/. dist/editor-kit.css and dist/editor-kit.js are the web block editor's parts (spec 2026-11-09): the stylesheet links in base_dashboard.html after dashboard.css and the script only on the editor page. They are adopted by copying into the feat/page-tab worktree, not with --adopt, and every build during that work runs with NFCCOOL_DESIGN_CONSUMER_ROOT on a folder holding a symlink to that worktree, because this entry's root is the main checkout.",
       "files": {
         "dist/design-tokens.css": "web/static/stylesheets/design-tokens.css",
+        "dist/editor-kit.css": "web/static/stylesheets/editor-kit.css",
+        "dist/editor-kit.js": "web/static/js/editor-kit.js",
         "dist/images/AppStore.svg": "web/static/images/AppStore.svg",
         "dist/images/GooglePlay.svg": "web/static/images/GooglePlay.svg",
         "dist/email/django/button.html": "web/templates/nfccool_email/button.html",

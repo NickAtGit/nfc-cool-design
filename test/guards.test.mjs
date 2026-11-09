@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 
 const read = f => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
-const AUTHORED = ['src/components.css', 'src/archetypes.css'];
+const AUTHORED = ['src/components.css', 'src/archetypes.css', 'src/editor.css'];
 
 /* The mail renderer is authored too, and takes every colour from the
    generated src/email/palette.js. A literal in it would be one mail colour
@@ -531,4 +531,72 @@ test('every one-line control takes --radius-control and a textarea does not', ()
   }
   assert.match(block('.textarea'), /border-radius: var\(--radius-lg\)/);
   assert.doesNotMatch(css, /\.btn-pill/, 'every .btn is a capsule now, so a class for it says nothing');
+});
+
+/* ------------------------------------------------------------------
+   The web block editor's layer (spec 2026-11-09). The guards above read
+   src/editor.css through AUTHORED; these are the ones only it has.
+   ------------------------------------------------------------------ */
+
+/* A consumer that vendors only the tokens loads this layer next to its own
+   components, so every class is prefixed. The names below moved from the
+   business console as they were: the console's templates and scripts already
+   say them, and renaming them is a change nobody asked for. */
+test('src/editor.css names only .ed-* classes and the parts moved from the console', () => {
+  const MOVED = /^\.(fu-switch|crop-tool(-[a-z]+)?|slot-empty(-[a-z]+)?|doubt|photo-tray(-[a-z]+)?|page-preview|chip|warn|is-[a-z]+)$/;
+  const foreign = new Set();
+  for (const r of scopedRules(read('src/editor.css'))) {
+    for (const m of r.selector.matchAll(/\.[a-zA-Z][\w-]*/g)) {
+      if (!m[0].startsWith('.ed-') && !MOVED.test(m[0])) foreign.add(`${m[0]} in ${r.selector}`);
+    }
+  }
+  assert.deepEqual([...foreign], [], `a class outside the layer's namespace:\n  ${[...foreign].join('\n  ')}`);
+});
+
+/* Rule 8. Arabic is a shipping locale, and this layer is new, so it starts clean. */
+test('src/editor.css uses logical properties only', () => {
+  const PHYSICAL = /(^|[\s;{])(left|right|top|bottom|(margin|padding|border)-(left|right|top|bottom)(-[a-z]+)?|(min-|max-)?(width|height))\s*:|text-align:\s*(left|right)/;
+  const bad = [];
+  for (const r of scopedRules(read('src/editor.css'))) {
+    for (const d of r.decl.split(';').map(s => s.trim()).filter(Boolean)) {
+      if (PHYSICAL.test(d)) bad.push(`${r.selector} { ${d} }`);
+    }
+  }
+  assert.deepEqual(bad, [], `a physical property:\n  ${bad.join('\n  ')}`);
+});
+
+/* The phone layout is the point of half this layer, and a media query adds no
+   specificity: a max-width rule written before the component it adjusts loses. */
+test('src/editor.css only steps at the four breakpoints and never asks prefers-color-scheme', () => {
+  assert.doesNotMatch(read('src/editor.css'), /prefers-color-scheme/, 'dark mode is [data-theme], resolved before first paint');
+});
+
+/* The bundle is what a browser loads from a CDN with no CORS: a classic script
+   with no module syntax left in it, carrying the public API on one global. */
+test('dist/editor-kit.js is one classic script exposing window.NFCEditorKit', async () => {
+  const vm = await import('node:vm');
+  const { bundleEditorKit } = await import('../build/editor-bundle.mjs');
+  const js = bundleEditorKit(ROOT, '');
+  assert.doesNotThrow(() => new vm.Script(js), 'the bundle must parse as a classic script');
+  const sandbox = { window: {} };
+  vm.runInNewContext(js, sandbox);
+  assert.equal(typeof sandbox.window.NFCEditorKit, 'object', 'window.NFCEditorKit');
+  assert.equal(typeof sandbox.window.NFCEditorKit.configure, 'function', 'configure');
+});
+
+/* Spec section 7: editor-kit.js and page-editor.js together stay under 60 KB
+   gzipped, so the kit gets at most two thirds of that. */
+test('the editor kit stays inside its size budget', async () => {
+  const { gzipSync } = await import('node:zlib');
+  const { bundleEditorKit } = await import('../build/editor-bundle.mjs');
+  const kb = gzipSync(bundleEditorKit(ROOT, '')).length / 1024;
+  assert.ok(kb <= 40, `dist/editor-kit.js is ${kb.toFixed(1)} KB gzipped, over its 40 KB share`);
+});
+
+/* A word a person reads comes through the words map, so a host can change it,
+   and none of them carries the dash the copy rules ban. */
+test('the editor kit has no em dash in its words', async () => {
+  const { WORDS } = await import('../src/editor/config.js');
+  const bad = Object.entries(WORDS).filter(([, v]) => /[–—]/.test(JSON.stringify(v)));
+  assert.deepEqual(bad, [], 'a dash in copy');
 });

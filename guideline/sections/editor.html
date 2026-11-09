@@ -1,0 +1,12 @@
+<p class="ks-lede">The parts of the web block editor: one layer, <code class="ks-code">src/editor.css</code> and
+<code class="ks-code">src/editor/*.js</code>, built into <code class="ks-code">dist/editor-kit.css</code> and one classic
+script, <code class="ks-code">dist/editor-kit.js</code> (<code class="ks-code">window.NFCEditorKit</code>). A host that
+names its classes differently says so once, with <code class="ks-code">configure()</code>.</p>
+<dialog class="dialog" data-confirm-dialog aria-labelledby="ed-confirm-title">
+  <h2 class="dialog-title" id="ed-confirm-title"></h2>
+  <p class="dialog-text"></p>
+  <div class="dialog-actions">
+    <form method="dialog"><button class="btn btn-secondary" type="submit" autofocus>Cancel</button></form>
+    <button class="btn btn-danger btn-primary" type="button" data-confirm-go>Remove</button>
+  </div>
+</dialog>
