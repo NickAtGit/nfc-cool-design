@@ -162,3 +162,78 @@ test('a rating is 0 to 5 by 0.1, or nothing', () => {
   assert.equal(cleanRating(''), null);
   assert.equal(cleanRating('x'), null);
 });
+
+/* ---- hours and days off ---- */
+import { checkWindows, fromInput, minutes, SHAPES, toInput, weekIsValid } from '../src/editor/hours.js';
+import { compareRanges, rangeProblem, readRanges, serializeRanges } from '../src/editor/dates.js';
+
+const w = (open, close) => ({ open, close });
+
+test('hours are checked as the server checks them', () => {
+  assert.deepEqual([...checkWindows([w('09:00', '12:00'), w('13:00', '17:00')])], []);
+  assert.deepEqual([...checkWindows([w('12:00', '09:00')])], [[0, 'hoursOrder']]);
+  assert.deepEqual([...checkWindows([w('09:00', '09:00')])], [[0, 'hoursOrder']], 'closing as it opens');
+  assert.deepEqual([...checkWindows([w('09:00', '13:00'), w('12:00', '17:00')])], [[1, 'hoursOverlap']]);
+  assert.deepEqual([...checkWindows([w('12:00', '17:00'), w('09:00', '13:00')])], [[0, 'hoursOverlap']], 'whatever order they were typed');
+  assert.deepEqual([...checkWindows([w('09:00', '13:00'), w('13:00', '17:00')])], [], 'touching is not overlapping');
+  assert.deepEqual([...checkWindows([w('', '13:00')])], [[0, 'hoursMissing']]);
+  assert.equal(minutes('24:00'), 1440);
+});
+
+test('a booking may end at midnight, shown as 00:00; a place may not', () => {
+  assert.equal(toInput('24:00'), '00:00');
+  assert.equal(fromInput('00:00', true, true), '24:00');
+  assert.equal(fromInput('00:00', false, true), '00:00', 'an opening time stays 00:00');
+  assert.equal(fromInput('00:00', true, false), '00:00');
+  assert.equal(checkWindows([w('18:00', fromInput('00:00', true, true))]).size, 0);
+  assert.equal(checkWindows([w('18:00', fromInput('00:00', true, false))]).get(0), 'hoursOrder');
+});
+
+test('the booking shape round-trips and leaves closed days out', () => {
+  const week = [{ day: 3, windows: [w('14:00', '24:00'), w('09:00', '12:00')] }];
+  const model = SHAPES.booking.read(week);
+  assert.equal(model.length, 7);
+  assert.deepEqual(model[0], { day: 1, windows: [] });
+  assert.deepEqual(SHAPES.booking.write(model), [{ day: 3, windows: [w('09:00', '12:00'), w('14:00', '24:00')] }], 'sorted by opening');
+});
+
+test('the place shape is flat, sorted by day then time', () => {
+  const rows = [{ day: 2, open: '14:00', close: '18:00' }, { day: 1, open: '09:00', close: '12:00' }, { day: 2, open: '09:00', close: '12:00' }];
+  assert.deepEqual(SHAPES.place.write(SHAPES.place.read(rows)), [
+    { day: 1, open: '09:00', close: '12:00' }, { day: 2, open: '09:00', close: '12:00' }, { day: 2, open: '14:00', close: '18:00' },
+  ]);
+  assert.equal(SHAPES.place.allow24, false);
+});
+
+test('a half-filled window is not sent and marks the week invalid', () => {
+  const model = SHAPES.booking.read([{ day: 1, windows: [w('09:00', '12:00')] }]);
+  model[0].windows.push(w('', '17:00'));
+  assert.equal(weekIsValid(model), false);
+  assert.deepEqual(SHAPES.booking.write(model), [{ day: 1, windows: [w('09:00', '12:00')] }]);
+});
+
+test('days off are sent sorted, complete and with a single day as from = to', () => {
+  const rows = [
+    { from: '2026-12-24', to: '2026-12-26', note: ' Christmas ', multi: true },
+    { from: '', to: '', note: 'not yet', multi: false },
+    { from: '2026-11-20', to: '2026-11-22', note: '', multi: false },
+  ];
+  assert.deepEqual(serializeRanges(rows), [
+    { from: '2026-11-20', to: '2026-11-20', note: null },
+    { from: '2026-12-24', to: '2026-12-26', note: 'Christmas' },
+  ]);
+});
+
+test('a range cannot end before it starts, and an open range is one day', () => {
+  assert.equal(rangeProblem({ from: '2026-12-24', to: '2026-12-20', multi: true }), 'datesOrder');
+  assert.equal(rangeProblem({ from: '2026-12-24', to: '2026-12-24', multi: true }), null);
+  assert.equal(rangeProblem({ from: '2026-12-24', to: '', multi: true }), null);
+  assert.deepEqual(serializeRanges([{ from: '2026-12-24', to: '', note: '', multi: true }]), [{ from: '2026-12-24', to: '2026-12-24', note: null }]);
+});
+
+test('reading days off notices the ones that span more than a day', () => {
+  const [one, many] = readRanges([{ from: '2026-11-20', to: '2026-11-20' }, { from: '2026-12-24', to: '2026-12-26', note: 'x' }]);
+  assert.equal(one.multi, false);
+  assert.equal(many.multi, true);
+  assert.ok(compareRanges({ from: '' }, { from: '2026-01-01' }) > 0, 'a row with no date yet sorts last');
+});

@@ -167,6 +167,27 @@
 .ed-stars-fill { color: var(--color-link); }
 .ed-stars svg { inline-size: 1.5rem; block-size: 1.5rem; flex-shrink: 0; }
 
+/* ---- Hours and days off ---- */
+.ed-hours { display: grid; gap: var(--space-3); }
+.ed-hours-day { display: grid; gap: var(--space-2); padding-block-end: var(--space-3); border-block-end: 1px solid var(--color-border-light); }
+.ed-hours-day:last-child { padding-block-end: 0; border-block-end: 0; }
+.ed-hours-head { display: flex; align-items: center; gap: var(--space-3); }
+.ed-hours-name { font-weight: 600; font-size: var(--text-sm); }
+.ed-hours-closed { font-size: var(--text-xs); color: var(--color-text-muted); }
+.ed-hours-head > input { margin-inline-start: auto; }
+.ed-hours-windows { display: grid; gap: var(--space-2); }
+.ed-hours-window { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-1) var(--space-2); }
+.ed-hours-times { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--space-2); min-inline-size: 0; }
+.ed-hours-times input { min-inline-size: 0; inline-size: 100%; }
+.ed-hours-to { font-size: var(--text-xs); color: var(--color-text-muted); }
+.ed-hours-window > p { grid-column: 1 / -1; margin: 0; }
+.ed-hours-window > p[hidden] { display: none; }
+.ed-hours-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ed-hours-foot[hidden] { display: none; }
+.ed-dates-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.ed-dates-pair > [hidden] { display: none; }
+.ed-dates-pair input { min-inline-size: 0; inline-size: 100%; }
+
 /* ---- Touch: asked of the screen, not its width ---- */
 @media (pointer: coarse) {
    .ed-handle { inline-size: 2.5rem; block-size: 2.5rem; }

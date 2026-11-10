@@ -128,6 +128,12 @@ export function repeater(options) {
     el,
     value: () => items.slice(),
     rowOf: item => rows.get(item),
+    /* Puts the rows in this order without firing onChange: the value's meaning
+       did not change, only where the rows stand. */
+    sort(compare) {
+      items = items.slice().sort(compare);
+      items.forEach(item => list.append(rows.get(item).el));
+    },
     destroy() { if (sorter) sorter.destroy(); },
   };
 }

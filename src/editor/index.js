@@ -2,6 +2,8 @@
    that is not listed here is not there for a host. */
 import { configure } from './config.js';
 import { ask } from './confirm.js';
+import { dateRanges } from './dates.js';
+import { hoursEditor } from './hours.js';
 import { formatPrice, parsePrice, priceField } from './price.js';
 import { ratingField } from './rating.js';
 import { repeater } from './repeater.js';
@@ -20,7 +22,9 @@ export const kit = {
   ask,
   autosaveStatus,
   blockRow,
+  dateRanges,
   formatPrice,
+  hoursEditor,
   normalizeUrl,
   parsePrice,
   priceField,

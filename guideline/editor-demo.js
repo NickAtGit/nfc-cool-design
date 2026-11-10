@@ -122,6 +122,30 @@
       kit.segmented(root.querySelector('.fu-switch'), { value: 'blocks', onChange: v => { out.textContent = `Now showing ${v}`; } });
       root.append(out);
     },
+    hours(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'hours';
+      const show = (v, ok) => { log.textContent = `${ok ? 'valid' : 'invalid'} ${JSON.stringify(v)}`; };
+      const e = kit.hoursEditor({ shape: 'booking', value: [{ day: 1, windows: [{ open: '09:00', close: '13:00' }, { open: '14:00', close: '24:00' }] }, { day: 2, windows: [{ open: '10:00', close: '18:00' }] }], onChange: show });
+      show(e.value(), e.valid());
+      root.append(e.el, log);
+    },
+    hoursPlace(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'hoursPlace';
+      const show = (v, ok) => { log.textContent = `${ok ? 'valid' : 'invalid'} ${JSON.stringify(v)}`; };
+      const e = kit.hoursEditor({ shape: 'place', value: [{ day: 1, open: '07:30', close: '19:00' }], onChange: show });
+      show(e.value(), e.valid());
+      root.append(e.el, log);
+    },
+    dates(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'dates';
+      const show = (v, ok) => { log.textContent = `${ok ? 'valid' : 'invalid'} ${JSON.stringify(v)}`; };
+      const e = kit.dateRanges({ value: [{ from: '2026-12-24', to: '2026-12-26', note: 'Christmas' }, { from: '2026-11-20', to: '2026-11-20', note: null }], onChange: show });
+      show(e.value(), e.valid());
+      root.append(e.el, log);
+    },
     split(root) {
       const split = kit.split(root.querySelector('.ed-split'));
       root.querySelectorAll('[data-view-set]').forEach(b => b.addEventListener('click', () => split.setView(b.dataset.viewSet)));
