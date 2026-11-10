@@ -543,7 +543,7 @@ test('every one-line control takes --radius-control and a textarea does not', ()
    business console as they were: the console's templates and scripts already
    say them, and renaming them is a change nobody asked for. */
 test('src/editor.css names only .ed-* classes and the parts moved from the console', () => {
-  const MOVED = /^\.(fu-switch|crop-tool(-[a-z]+)?|slot-empty(-[a-z]+)?|doubt|photo-tray(-[a-z]+)?|page-preview|chip|warn|is-[a-z]+)$/;
+  const MOVED = /^\.(fu-switch|crop-tool(-[a-z]+)?|slot-empty(-[a-z]+)?|doubt|photo-tray(-[a-z]+)*|page-preview|chip|warn|hint|is-[a-z]+)$/;
   const foreign = new Set();
   for (const r of scopedRules(read('src/editor.css'))) {
     for (const m of r.selector.matchAll(/\.[a-zA-Z][\w-]*/g)) {
@@ -591,6 +591,18 @@ test('the editor kit stays inside its size budget', async () => {
   const { bundleEditorKit } = await import('../build/editor-bundle.mjs');
   const kb = gzipSync(bundleEditorKit(ROOT, '')).length / 1024;
   assert.ok(kb <= 40, `dist/editor-kit.js is ${kb.toFixed(1)} KB gzipped, over its 40 KB share`);
+});
+
+/* The scripts moved from the console stay at the console's paths, and stay
+   byte for byte what their source is, or the sync would rewrite the console's
+   file on every build with nothing having changed. */
+test('the moved console scripts are vendored at their old paths, unstamped', () => {
+  const { consumers } = JSON.parse(read('consumers.json'));
+  const files = consumers.business_card_service.files;
+  for (const f of readdirSync(join(ROOT, 'src/editor/classic'))) {
+    assert.equal(files[`dist/${f}`], `web/static/js/${f}`, f);
+  }
+  assert.match(read('build/emit-bundle.mjs'), /copyFileSync\(join\(root, 'src\/editor\/classic', f\)/, 'copied, not stamped');
 });
 
 /* A word a person reads comes through the words map, so a host can change it,

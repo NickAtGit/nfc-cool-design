@@ -179,7 +179,7 @@ const uiScript = () => '<script type="module">\n'
 /* The editor's parts, as the classic script a console loads, and the demos on
    their page. Only where that page is, since it is the one that drives them. */
 const editorScript = sections => (sections.some(s => s.slug === 'editor')
-  ? `<script>\n${bundleEditorKit(root, '').replace(/<\/script/gi, '<\\/script')}\n</script>\n<script>\n${r('guideline/editor-demo.js')}\n</script>`
+  ? `<script>\n${bundleEditorKit(root, '').replace(/<\/script/gi, '<\\/script')}\n</script>\n<script>\n${r('guideline/editor-demo.js')}\n</script>\n<script>\n${r('src/editor/classic/image-crop.js')}\n${r('src/editor/classic/slot-drop.js')}\n</script>`
   : '');
 
 const MIME = { svg: 'image/svg+xml', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg' };

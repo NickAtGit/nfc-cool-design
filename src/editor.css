@@ -291,6 +291,41 @@
 .ed-bar-save svg { inline-size: 1.125rem; block-size: 1.125rem; }
 .ed-bar-none { flex: 1; padding: var(--space-2) var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted); text-align: center; }
 
+/* ---- Moved from the console: the crop tool (classic/image-crop.js). The
+   crop is drawn on white in both themes, so its ground and the veil around the
+   round window are --switch-knob, the one token that is white in both. ---- */
+.crop-tool { inline-size: 100%; max-inline-size: 30rem; display: flex; flex-direction: column; gap: 0.625rem; padding: var(--space-3); margin-block-start: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); }
+.crop-tool[hidden] { display: none; }
+.crop-tool-note { margin: 0; font-size: var(--text-xs); color: var(--color-text-secondary); }
+.crop-tool-frame { position: relative; border-radius: var(--radius-base); overflow: hidden; border: 1px solid var(--color-border); background: var(--switch-knob); }
+.crop-tool canvas { display: block; inline-size: 100%; block-size: auto; cursor: grab; touch-action: none; }
+.crop-tool canvas:active { cursor: grabbing; }
+.crop-tool.is-round .crop-tool-frame::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--switch-knob) 60%, transparent); pointer-events: none; }
+.crop-tool-controls { display: flex; flex-wrap: wrap; gap: 0.625rem; align-items: center; }
+.crop-tool-zoom { display: flex; align-items: center; gap: var(--space-2); flex: 1 1 10rem; min-inline-size: 0; }
+.crop-tool-zoom input[type=range] { flex: 1; min-inline-size: 0; margin: 0; }
+.crop-tool .hint { margin: 0; }
+.crop-tool.is-round { margin-inline: auto; }
+.crop-tool.is-round .crop-tool-note, .crop-tool.is-round .hint { text-align: center; }
+.crop-tool.is-round .crop-tool-controls { justify-content: center; }
+.crop-tool.is-round .crop-tool-zoom { flex-basis: 100%; }
+
+/* ---- Moved: the doubt mark, the warning chip, the live page frame ---- */
+.chip.warn, .doubt { background: var(--status-orange-bg); color: var(--status-orange-fg); border-color: transparent; }
+.doubt { display: inline-block; border-radius: var(--radius-base); padding: 1px 6px; font-weight: 700; }
+.page-preview { display: block; inline-size: 100%; block-size: 40rem; border: 1px solid var(--color-border-light); border-radius: var(--radius-lg); background: transparent; }
+
+/* ---- Moved: the photo tray (classic/photo-tray.js) ---- */
+.photo-tray { display: grid; gap: var(--space-3); }
+.photo-tray-drop { display: grid; gap: var(--space-1); padding: 1.125rem; border: 2px dashed var(--color-border); border-radius: var(--radius-lg); cursor: pointer; text-align: center; }
+.photo-tray-drop-title { font-weight: 700; }
+.photo-tray-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); gap: 0.625rem; }
+.photo-tray-item { position: relative; display: grid; gap: var(--space-1); font-size: var(--text-2xs); color: var(--color-text-secondary); }
+.photo-tray-item img { inline-size: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-md); }
+.photo-tray-item.is-uploading img { opacity: 0.5; }
+.photo-tray-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.photo-tray-remove { position: absolute; inset-block-start: var(--space-1); inset-inline-end: var(--space-1); inline-size: 1.5rem; block-size: 1.5rem; border-radius: 50%; border: 0; background: var(--nav-scrim); color: var(--switch-knob); cursor: pointer; }
+
 /* ---- Touch: asked of the screen, not its width ---- */
 @media (pointer: coarse) {
    .ed-handle { inline-size: 2.5rem; block-size: 2.5rem; }

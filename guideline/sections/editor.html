@@ -80,3 +80,32 @@ Contact details stays first. Delete asks first, then the toast offers Undo for e
 <h3 class="ks-h3">Bar preview</h3>
 <div class="ks-demo is-plain"><div data-ed-demo="bar"></div></div>
 <div class="ks-basis"><b>A picture of the page's bottom bar</b>: nothing in it can be pressed.</div>
+
+<h3 class="ks-h3">Moved from the console</h3>
+<div class="ks-demo" style="display:grid;gap:var(--space-5)">
+  <div>
+    <div style="position:relative;inline-size:10rem;aspect-ratio:1;border-radius:var(--radius-md)" id="ed-demo-slot">
+      <label class="slot-empty" for="ed-demo-crop-input" data-empty data-slot-drop>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <span class="slot-empty-word">Upload</span><span class="slot-empty-spec">Square</span>
+      </label>
+    </div>
+    <input class="sr-only" id="ed-demo-crop-input" type="file" accept="image/*">
+    <div class="crop-tool is-round" id="ed-demo-crop" hidden data-input="ed-demo-crop-input" data-width="400" data-height="400" data-max-bytes="1048576" data-mode="fit" data-format="jpeg" data-preview="#ed-demo-slot">
+      <p class="crop-tool-note" data-editor-note></p>
+      <div class="crop-tool-frame"><canvas aria-label="Crop area. Drag to move the image"></canvas></div>
+      <div class="crop-tool-controls">
+        <label class="crop-tool-zoom"><span>Zoom</span><input type="range" min="1" max="4" step="0.01" value="1" aria-label="Zoom"></label>
+        <button class="btn btn-primary btn-sm" type="button" data-editor-use>Use this crop</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-editor-cancel>Cancel</button>
+      </div>
+      <p class="hint" data-editor-warning hidden></p>
+    </div>
+  </div>
+  <div class="ks-row"><span class="doubt">12,50?</span><span class="pill chip warn">Check this</span></div>
+  <div class="photo-tray">
+    <label class="photo-tray-drop"><span class="photo-tray-drop-title">Add from photos</span><span>Up to 15.</span></label>
+  </div>
+  <iframe class="page-preview" style="block-size:10rem" title="The live page" srcdoc="&lt;p&gt;The page, framed.&lt;/p&gt;"></iframe>
+</div>
+<div class="ks-basis"><b>These keep the console's class names</b> and, for the crop tool, the file drop and the photo tray, its scripts at their paths, so no template changes when the kit becomes their source.</div>

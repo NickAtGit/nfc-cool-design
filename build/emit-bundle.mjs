@@ -43,6 +43,13 @@ for (const [name, files] of Object.entries(BUNDLES)) {
   writeFileSync(join(root, 'dist', name), out);
   console.log(`wrote dist/${name} (${out.length} bytes) from ${files.length} layers`);
 }
+/* The console's own scripts, moved here as they were. Copied byte for byte with
+   no stamp, so taking them back into the console changes nothing there and the
+   sync's drift check stays quiet. */
+for (const f of readdirSync(join(root, 'src/editor/classic'))) {
+  copyFileSync(join(root, 'src/editor/classic', f), join(root, 'dist', f));
+  console.log(`wrote dist/${f}`);
+}
 /* The editor's parts in one classic script (see build/editor-bundle.mjs). */
 const editorKit = bundleEditorKit(root, `/* @nfccool/design v${version} - generated from src/editor/*.js by build/emit-bundle.mjs, do not edit. */\n`);
 writeFileSync(join(root, 'dist', 'editor-kit.js'), editorKit);
