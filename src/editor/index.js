@@ -2,10 +2,13 @@
    that is not listed here is not there for a host. */
 import { configure } from './config.js';
 import { ask } from './confirm.js';
+import { barPreview } from './bar.js';
 import { dateRanges } from './dates.js';
 import { hoursEditor } from './hours.js';
+import { blockLibrary } from './library.js';
 import { mapPin } from './map.js';
 import { fileList, mediaGrid } from './media.js';
+import { fontPicker, swatches, templateCards } from './pickers.js';
 import { formatPrice, parsePrice, priceField } from './price.js';
 import { ratingField } from './rating.js';
 import { repeater } from './repeater.js';
@@ -23,9 +26,12 @@ export const kit = {
   configure,
   ask,
   autosaveStatus,
+  barPreview,
+  blockLibrary,
   blockRow,
   dateRanges,
   fileList,
+  fontPicker,
   formatPrice,
   hoursEditor,
   mapPin,
@@ -40,6 +46,8 @@ export const kit = {
   sheet,
   sortable,
   split,
+  swatches,
+  templateCards,
   undoToast,
   urlField,
 };

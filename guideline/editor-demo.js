@@ -212,6 +212,49 @@
       root.style.display = 'grid';
       root.style.gap = 'var(--space-3)';
     },
+    look(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'look';
+      const show = (k, v) => { log.textContent = `${k}=${v}`; };
+      const sw = kit.swatches({ legend: 'Presets', value: 'ocean', onChange: v => show('swatch', v), options: [
+        { value: 'ocean', label: 'Ocean', color: '#0B4F6C', accent: '#01BAEF' }, { value: 'paper', label: 'Paper', color: '#FFFFFF', accent: '#F5F6F8' },
+        { value: 'ink', label: 'Ink', color: '#1C2128', accent: '#1C2128' }, { value: 'sun', label: 'Sun', color: '#FFC700', accent: '#E85D04' } ] });
+      const t = kit.templateCards({ legend: 'Template', value: 'brand', onChange: v => show('template', v), options: [{ value: 'brand', name: 'Brand-led', note: 'Your colours up front' }, { value: 'menu', name: 'Menu card', note: 'Paper and type' }, { value: 'bento', name: 'Bento', note: 'Tiles' }] });
+      const locked = kit.templateCards({ legend: 'Template, chosen by the team', value: 'menu', disabled: true, disabledNote: 'Your team chose this template.', options: [{ value: 'brand', name: 'Brand-led' }, { value: 'menu', name: 'Menu card' }, { value: 'bento', name: 'Bento' }] });
+      const loaded = [];
+      const f = kit.fontPicker({ legend: 'Font', value: null, onChange: v => show('font', v), load: (font) => { loaded.push(font.name); root.dataset.loaded = String(loaded.length); return Promise.resolve(false); },
+        catalog: Array.from({ length: 40 }, (_, i) => ({ name: `Face ${i + 1}`, category: i < 20 ? 'sans' : 'script', files: {} })) });
+      const stack = el('div', 'stack');
+      stack.style.display = 'grid'; stack.style.gap = 'var(--space-5)';
+      stack.append(sw.el, t.el, locked.el, f.el, log);
+      root.append(stack);
+    },
+    library(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'library';
+      const all = [
+        { kind: 'book', name: 'Booking', summary: 'Take bookings on the page', pill: 'Page plan' },
+        { kind: 'offer', name: 'Menu & prices', summary: 'What you sell and for how much', added: true },
+        { kind: 'find', name: 'Location', summary: 'Where you are and when' },
+        { kind: 'questions', name: 'Questions', summary: 'What people ask' },
+      ];
+      const open = (full) => kit.sheet({ title: 'Add block', body: kit.blockLibrary({ suggested: ['find'], all, full, onPick: (k) => { log.textContent = k; document.querySelector('dialog.ed-sheet').close(); } }).el }).open();
+      const row = el('div', 'ks-row');
+      const a = el('button', 'btn btn-secondary btn-sm', 'Add block');
+      const b = el('button', 'btn btn-secondary btn-sm', 'Add block, page full');
+      a.type = b.type = 'button';
+      a.addEventListener('click', () => open(false));
+      b.addEventListener('click', () => open(true));
+      row.append(a, b);
+      root.append(row, kit.blockLibrary({ suggested: ['find'], all, onPick: (k) => { log.textContent = k; } }).el, log);
+    },
+    bar(root) {
+      const a = kit.barPreview({ main: 'Book a table', save: true });
+      const c = kit.barPreview({ main: 'A very long main button label that has to be cut short on a phone', save: true });
+      const b = kit.barPreview({ main: null, save: false });
+      root.style.display = 'grid'; root.style.gap = 'var(--space-3)';
+      root.append(a.el, c.el, b.el);
+    },
     split(root) {
       const split = kit.split(root.querySelector('.ed-split'));
       root.querySelectorAll('[data-view-set]').forEach(b => b.addEventListener('click', () => split.setView(b.dataset.viewSet)));

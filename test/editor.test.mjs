@@ -297,3 +297,14 @@ test('the token route has three answers', () => {
   assert.equal(tokenFrom({ available: false }), null);
   assert.equal(tokenFrom(null), null);
 });
+
+/* ---- the Look panel ---- */
+import { groupFonts } from '../src/editor/pickers.js';
+
+test('fonts are grouped by category, in the order the catalog names them', () => {
+  const f = (name, category) => ({ name, category });
+  const groups = groupFonts([f('A', 'sans'), f('B', 'script'), f('C', 'sans'), f('D', 'display')]);
+  assert.deepEqual(groups.map(g => g.category), ['sans', 'script', 'display']);
+  assert.deepEqual(groups[0].fonts.map(x => x.name), ['A', 'C']);
+  assert.deepEqual(groupFonts([]), []);
+});
