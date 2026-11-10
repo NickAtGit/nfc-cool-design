@@ -113,8 +113,9 @@
       const url = kit.urlField({ label: 'YouTube or Vimeo link', hosts: ['youtube.com', 'www.youtube.com', 'youtu.be', 'vimeo.com'], hostError: 'Use a YouTube or Vimeo link.', onChange: (v, ok) => show('url', v, ok) });
       const site = kit.urlField({ label: 'Website', onChange: (v, ok) => show('site', v, ok) });
       const rating = kit.ratingField({ label: 'Score', value: 4.8, onChange: v => show('rating', v) });
+      const party = kit.stepper({ label: 'Largest party', value: 8, min: 1, max: 50, onChange: v => show('party', v) });
       const grid = el('div', 'stack');
-      grid.append(price.el, url.el, site.el, rating.el, out);
+      grid.append(price.el, url.el, site.el, rating.el, party.el, out);
       root.append(grid);
     },
     segmented(root) {

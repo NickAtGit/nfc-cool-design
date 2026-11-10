@@ -16,6 +16,7 @@ import { blockRow } from './row.js';
 import { segmented } from './segmented.js';
 import { sheet } from './sheet.js';
 import { sortable } from './sortable.js';
+import { stepper } from './stepper.js';
 import { reorder } from './sortable-core.js';
 import { split } from './split.js';
 import { autosaveStatus } from './status.js';
@@ -46,6 +47,7 @@ export const kit = {
   sheet,
   sortable,
   split,
+  stepper,
   swatches,
   templateCards,
   undoToast,

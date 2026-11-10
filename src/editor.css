@@ -334,3 +334,14 @@
    .ed-handle { inline-size: 2.5rem; block-size: 2.5rem; }
    .ed-rep-remove { inline-size: 2.5rem; block-size: 2.5rem; }
 }
+
+/* Stepper: the host's stepper keeps its own width in a field's column. */
+.ed-stepper { justify-self: start; align-self: flex-start; }
+
+/* A review beside its source (the menu import): what was read on the right
+   of where it was read from on a laptop, under it on a phone. A PDF's tile
+   is its word, not a picture. */
+.ed-menu-review { display: grid; gap: var(--space-4); }
+@media (min-width: 900px) { .ed-menu-review { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; } }
+.ed-menu-sources .photo-tray-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ed-menu-pdf { display: grid; place-items: center; aspect-ratio: 1; border-radius: var(--radius-md); background: var(--color-link-light); color: var(--color-link-text); font-weight: 700; }

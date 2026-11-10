@@ -163,6 +163,17 @@ test('a rating is 0 to 5 by 0.1, or nothing', () => {
   assert.equal(cleanRating('x'), null);
 });
 
+import { clampWhole } from '../src/editor/stepper.js';
+
+test('a stepper keeps a whole number in its range, and keeps the last one for junk', () => {
+  assert.equal(clampWhole('8', 1, 50, 8), 8);
+  assert.equal(clampWhole('51', 1, 50, 8), 50);
+  assert.equal(clampWhole('0', 1, 50, 8), 1);
+  assert.equal(clampWhole('7.6', 1, 50, 8), 8);
+  assert.equal(clampWhole('', 1, 50, 9), 9);
+  assert.equal(clampWhole('x', 1, 50, 9), 9);
+});
+
 /* ---- hours and days off ---- */
 import { checkWindows, fromInput, minutes, SHAPES, toInput, weekIsValid } from '../src/editor/hours.js';
 import { compareRanges, rangeProblem, readRanges, serializeRanges } from '../src/editor/dates.js';

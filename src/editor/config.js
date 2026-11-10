@@ -55,6 +55,8 @@ export const WORDS = {
   removeAsk: 'Remove {name}?',
   ratingLess: 'Lower {name}',
   ratingMore: 'Raise {name}',
+  stepLess: 'One fewer: {name}',
+  stepMore: 'One more: {name}',
   priceInvalid: 'Use a price like 12.50.',
   priceTooHigh: 'That price is too high.',
   urlInvalid: 'Use a link that starts with https://.',

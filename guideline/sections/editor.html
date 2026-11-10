@@ -42,9 +42,9 @@ Contact details stays first. Delete asks first, then the toast offers Undo for e
 <div class="ks-demo"><div data-ed-demo="fold"></div></div>
 <div class="ks-basis"><b>The fields of a folded row do not exist</b>, which is what keeps a 24-dish menu's form light.</div>
 
-<h3 class="ks-h3">Price, link and rating</h3>
+<h3 class="ks-h3">Price, link, rating and stepper</h3>
 <div class="ks-demo"><div data-ed-demo="fields"></div></div>
-<div class="ks-basis"><b>A price reads a comma or a point</b> and shows in the page's locale. A link gains its https://, has its host checked and is null when empty. The rating's number is the control, the stars only show it.</div>
+<div class="ks-basis"><b>A price reads a comma or a point</b> and shows in the page's locale. A link gains its https://, has its host checked and is null when empty. The rating's number is the control, the stars only show it. The stepper is the host's own (the console's seat stepper), kept to its width in a field's column, and its number can be typed.</div>
 
 <h3 class="ks-h3">Segmented control</h3>
 <div class="ks-demo" data-ed-demo="segmented"><span class="fu-switch" role="group" aria-label="Show"><button type="button" data-value="blocks">Blocks</button><button type="button" data-value="page">Page</button></span></div>
@@ -53,6 +53,8 @@ Contact details stays first. Delete asks first, then the toast offers Undo for e
 <div class="ks-demo"><div data-ed-demo="hours"></div></div>
 <div class="ks-basis"><b>One editor, two shapes on the wire</b>: a booking's week of windows, where a day may end at midnight (shown as 00:00, which a native time input can say and a closing time otherwise cannot), and a place's flat rows, where it may not. Closing a day, removing a window and copying to every day all ask first.</div>
 <div class="ks-demo"><div data-ed-demo="hoursPlace"></div></div>
+
+<div class="ks-basis"><b>A day is the host's switch row</b>, so its switch is drawn like every other switch the host has. A booking's hours are taken by a button, never by opening the form: autosave has no Save moment, and opening a form must not publish a booking.</div>
 
 <h3 class="ks-h3">Days off</h3>
 <div class="ks-demo"><div data-ed-demo="dates"></div></div>
@@ -69,6 +71,15 @@ Contact details stays first. Delete asks first, then the toast offers Undo for e
 <div class="ks-demo"><div data-ed-demo="mapOff"></div></div>
 <div class="ks-basis"><b>No key, no fallback map.</b> The part says so and the address still works. Below is a stand-in for MapKit JS with the same calls, since a real map needs a key.</div>
 <div class="ks-demo"><div data-ed-demo="mapFake"></div></div>
+
+<h3 class="ks-h3">A review beside its source</h3>
+<div class="ks-demo">
+  <div class="ed-menu-review">
+    <div class="ed-menu-sources"><ul class="photo-tray-grid"><li class="photo-tray-item"><span class="ed-menu-pdf">PDF</span><span>menu.pdf</span></li></ul></div>
+    <div class="stack"><p class="ks-note">What was read, as the block's own form: editable, a dish without a price marked "no price?", then Use this menu, Add to menu or Replace current menu (asks first).</p></div>
+  </div>
+</div>
+<div class="ks-basis"><b>The menu import's review</b>: the photos or the PDF beside what the server read from them on a laptop, under them on a phone. The server reads photos and PDFs, and the sheet says so.</div>
 
 <h3 class="ks-h3">Colour swatches, template cards, fonts</h3>
 <div class="ks-demo"><div data-ed-demo="look"></div></div>
