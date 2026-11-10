@@ -23,7 +23,7 @@ function menuOf(name, items) {
     if (item.danger && panel.children.length) panel.append(h('div', { class: cls('rowMenuSeparator'), role: 'separator' }));
     panel.append(h('button', {
       type: 'button',
-      class: item.danger ? cls('rowMenuDanger') : '',
+      class: item.danger ? cls('rowMenuDanger') : cls('rowMenuItem'),
       onclick: async () => {
         details.open = false;
         if (item.confirm && !(await ask(item.confirm))) return;

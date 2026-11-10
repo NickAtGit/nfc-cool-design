@@ -32,12 +32,14 @@ export const CLASSES = {
   rowMenu: 'row-menu',
   rowMenuPanel: 'menu',
   rowMenuSeparator: 'menu-sep',
+  rowMenuItem: '',
   rowMenuDanger: 'is-danger',
   /* The page's one confirm dialog, by selector, because a host ships its own. */
   confirmDialog: 'dialog[data-confirm-dialog]',
   confirmTitle: '.dialog-title',
   confirmDetail: '.dialog-text',
   confirmGo: '[data-confirm-go]',
+  confirmGoDanger: 'btn-danger',
 };
 
 export const WORDS = {

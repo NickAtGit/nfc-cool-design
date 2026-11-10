@@ -16,7 +16,7 @@ export function ask({ title, detail = '', action, tone = 'danger' }) {
   if (detailEl) { detailEl.textContent = detail; detailEl.hidden = !detail; }
   if (!go.dataset.label) go.dataset.label = go.textContent;
   go.textContent = action || go.dataset.label;
-  go.classList.toggle('btn-danger', tone !== 'primary');
+  go.classList.toggle(cls('confirmGoDanger'), tone !== 'primary');
   return new Promise((resolve) => {
     let answer = false;
     go.onclick = () => { answer = true; dialog.close(); };
