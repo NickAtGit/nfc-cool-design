@@ -188,6 +188,46 @@
 .ed-dates-pair > [hidden] { display: none; }
 .ed-dates-pair input { min-inline-size: 0; inline-size: 100%; }
 
+/* ---- The empty slot: the console's .slot-empty, moved. It fills a slot that
+   keeps its own shape, and it is the label of the slot's file input. ---- */
+.slot-empty { position: absolute; inset: 0; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: var(--space-3); box-sizing: border-box; border: 1.5px dashed color-mix(in srgb, var(--color-text-muted) 55%, transparent); border-radius: inherit; color: var(--color-text); text-align: center; cursor: pointer; transition: border-color var(--transition), background var(--transition); }
+.slot-empty svg { inline-size: 1.625rem; block-size: 1.625rem; color: var(--color-text-muted); }
+.slot-empty-word { font-size: 0.875rem; font-weight: 600; line-height: 1.2; }
+.slot-empty-spec { font-size: var(--text-2xs); font-weight: 400; line-height: 1.3; color: var(--color-text-muted); }
+.slot-empty.is-dragover { border-color: var(--color-primary-bg); background: var(--color-link-light); }
+@media (hover: hover) {
+   .slot-empty:hover { border-color: var(--color-primary-bg); }
+}
+
+/* ---- Media grid and file list ---- */
+.ed-media, .ed-files { display: grid; gap: var(--space-3); }
+.ed-media-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr)); gap: var(--space-3); }
+.ed-media-item { display: grid; gap: var(--space-2); align-content: start; min-inline-size: 0; -webkit-touch-callout: none; }
+.ed-media-frame { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; background: var(--color-bg-alt); }
+.ed-media-frame img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.ed-media-item.is-uploading img { opacity: 0.5; }
+.ed-media-actions { display: flex; align-items: center; justify-content: space-between; }
+.ed-media-add { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); }
+.ed-media-add[hidden], .ed-file-add[hidden], .ed-map-actions[hidden], .ed-map-canvas[hidden] { display: none; }
+.ed-media-add:has(input:focus-visible) .slot-empty, .ed-file-add:has(input:focus-visible) .slot-empty { outline: 2px solid var(--color-primary-bg); outline-offset: 2px; }
+.ed-file-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.ed-file-rows:empty { display: none; }
+.ed-file-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-card); }
+.ed-file-icon { display: inline-flex; flex-shrink: 0; color: var(--color-text-muted); }
+.ed-file-icon svg { inline-size: 1.25rem; block-size: 1.25rem; }
+.ed-file-main { flex: 1; min-inline-size: 0; display: grid; gap: var(--space-1); }
+.ed-file-main .ed-rep-held { margin-inline-start: 0; justify-self: start; }
+.ed-file-main input { min-inline-size: 0; inline-size: 100%; }
+.ed-file-status { font-size: var(--text-xs); color: var(--color-text-muted); }
+.ed-file-actions { display: inline-flex; flex-shrink: 0; }
+.ed-file-add { position: relative; block-size: 6.5rem; border-radius: var(--radius-md); }
+
+/* ---- Map pin ---- */
+.ed-map { display: grid; gap: var(--space-3); }
+.ed-map-canvas { block-size: 16rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-bg-alt); }
+.ed-map-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ed-map-actions > [hidden] { display: none; }
+
 /* ---- Touch: asked of the screen, not its width ---- */
 @media (pointer: coarse) {
    .ed-handle { inline-size: 2.5rem; block-size: 2.5rem; }

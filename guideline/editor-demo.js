@@ -146,6 +146,72 @@
       show(e.value(), e.valid());
       root.append(e.el, log);
     },
+    media(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'media';
+      const swatch = hue => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><rect width="4" height="4" fill="hsl(${hue} 70% 55%)"/></svg>`)}`;
+      const show = v => { log.textContent = JSON.stringify(v.map(i => i.id)); };
+      let next = 10;
+      const g = kit.mediaGrid({
+        items: [{ id: 1, url: swatch(10) }, { id: 2, url: swatch(130) }, { id: 3, url: swatch(220) }, { id: 4, url: swatch(300) }],
+        captions: true, maxItems: 8, pickMax: 3, maxBytes: 1024 * 1024, spec: 'Up to 1 MB',
+        upload: file => new Promise((res, rej) => setTimeout(() => (file.name.includes('fail') ? rej(new Error(`${file.name} was refused.`)) : res({ id: next++, url: swatch(next * 37) })), 150)),
+        onChange: show,
+      });
+      show(g.value());
+      root.append(g.el, log);
+    },
+    files(root) {
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'files';
+      const show = v => { log.textContent = JSON.stringify(v.map(i => i.title)); };
+      let next = 100;
+      const f = kit.fileList({ items: [{ id: 1, url: '#', title: 'Wine list' }, { id: 2, url: '#', title: '' }], maxItems: 4, spec: 'PDF, up to 20 MB', upload: () => new Promise(res => setTimeout(() => res({ id: next++, url: '#' }), 100)), onChange: show });
+      show(f.value());
+      root.append(f.el, log);
+    },
+    mapOff(root) {
+      const address = el('input', 'input');
+      address.setAttribute('aria-label', 'Address');
+      const pin = kit.mapPin({ getAddress: () => address.value, token: () => Promise.resolve({ available: false }) });
+      address.addEventListener('input', pin.addressChanged);
+      root.append(address, pin.el);
+      root.style.display = 'grid';
+      root.style.gap = 'var(--space-3)';
+    },
+    mapFake(root) {
+      /* A stand-in for MapKit JS, which needs a real key: the same calls, no tiles. */
+      const lookups = [];
+      const mapkit = {
+        FeatureVisibility: { Hidden: 'hidden' },
+        init(o) { o.authorizationCallback(() => {}); },
+        Coordinate: function (a, b) { this.latitude = a; this.longitude = b; },
+        MarkerAnnotation: function (c) { this.coordinate = c; this.addEventListener = () => {}; },
+        Geocoder: function () { this.lookup = (a, cb) => { lookups.push(a); root.dataset.lookups = String(lookups.length); setTimeout(() => (a.includes('nowhere') ? cb(null, { results: [] }) : cb(null, { results: [{ coordinate: { latitude: 38.7, longitude: -9.1 } }] })), 10); }; },
+        Map: function (node) {
+          node.textContent = 'MapKit stand-in: click to place the pin';
+          node.style.cursor = 'pointer';
+          const hs = {};
+          this.addEventListener = (t, f) => { hs[t] = f; };
+          this.addAnnotation = (m) => { root.dataset.marker = `${m.coordinate.latitude},${m.coordinate.longitude}`; };
+          this.removeAnnotation = () => { delete root.dataset.marker; };
+          this.setCenterAnimated = () => {};
+          this.convertPointOnPageToCoordinate = () => ({ latitude: 41.15, longitude: -8.61 });
+          this.destroy = () => {};
+          node.addEventListener('click', () => hs['single-tap'] && hs['single-tap']({ pointOnPage: {} }));
+        },
+      };
+      mapkit.Map.ColorSchemes = { Dark: 'dark', Light: 'light' };
+      const address = el('input', 'input');
+      address.setAttribute('aria-label', 'Address');
+      const log = el('p', 'ks-note');
+      log.dataset.edLog = 'map';
+      const pin = kit.mapPin({ getAddress: () => address.value, token: () => Promise.resolve('token'), loadMapKit: () => Promise.resolve(mapkit), onChange: v => { log.textContent = JSON.stringify(v); } });
+      address.addEventListener('input', pin.addressChanged);
+      root.append(address, pin.el, log);
+      root.style.display = 'grid';
+      root.style.gap = 'var(--space-3)';
+    },
     split(root) {
       const split = kit.split(root.querySelector('.ed-split'));
       root.querySelectorAll('[data-view-set]').forEach(b => b.addEventListener('click', () => split.setView(b.dataset.viewSet)));

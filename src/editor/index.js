@@ -4,6 +4,8 @@ import { configure } from './config.js';
 import { ask } from './confirm.js';
 import { dateRanges } from './dates.js';
 import { hoursEditor } from './hours.js';
+import { mapPin } from './map.js';
+import { fileList, mediaGrid } from './media.js';
 import { formatPrice, parsePrice, priceField } from './price.js';
 import { ratingField } from './rating.js';
 import { repeater } from './repeater.js';
@@ -23,8 +25,11 @@ export const kit = {
   autosaveStatus,
   blockRow,
   dateRanges,
+  fileList,
   formatPrice,
   hoursEditor,
+  mapPin,
+  mediaGrid,
   normalizeUrl,
   parsePrice,
   priceField,

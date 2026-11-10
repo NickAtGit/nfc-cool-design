@@ -237,3 +237,63 @@ test('reading days off notices the ones that span more than a day', () => {
   assert.equal(many.multi, true);
   assert.ok(compareRanges({ from: '' }, { from: '2026-01-01' }) > 0, 'a row with no date yet sorts last');
 });
+
+/* ---- media and the map ---- */
+import { isImage, isPdf, runPool, triage } from '../src/editor/media.js';
+import { shouldLookUp, tokenFrom } from '../src/editor/map.js';
+
+test('uploads run three at a time, all of them, in order of starting', async () => {
+  let running = 0, peak = 0;
+  const started = [];
+  await runPool([0, 1, 2, 3, 4, 5, 6], 3, async (n) => {
+    started.push(n);
+    running += 1; peak = Math.max(peak, running);
+    await new Promise(r => setTimeout(r, 5));
+    running -= 1;
+  });
+  assert.equal(peak, 3);
+  assert.deepEqual(started, [0, 1, 2, 3, 4, 5, 6]);
+  await runPool([], 3, async () => assert.fail('nothing to do'));
+});
+
+test('the size is checked before anything goes up', () => {
+  const f = (name, size) => ({ name, size, type: 'image/png' });
+  const r = triage([f('a.png', 10), f('big.png', 2000), f('c.png', 10)], { room: 10, maxBytes: 1000, fits: isImage });
+  assert.deepEqual(r.accepted.map(x => x.name), ['a.png', 'c.png']);
+  assert.deepEqual(r.refusal, { key: 'tooBig', name: 'big.png' });
+});
+
+test('a pick is cut to the room left and to the pick limit, and says which', () => {
+  const files = n => Array.from({ length: n }, (_, i) => ({ name: `${i}.png`, size: 1, type: 'image/png' }));
+  const full = triage(files(5), { room: 2, pickMax: 20, maxBytes: 9 });
+  assert.equal(full.accepted.length, 2);
+  assert.equal(full.error, 'full');
+  const pick = triage(files(25), { room: 100, pickMax: 20, maxBytes: 9 });
+  assert.equal(pick.accepted.length, 20);
+  assert.equal(pick.error, 'pickMax');
+  assert.equal(triage(files(2), { room: 0, maxBytes: 9 }).accepted.length, 0);
+});
+
+test('only a picture goes in the grid and only a PDF in the list', () => {
+  assert.ok(isImage({ name: 'a.jpg', type: 'image/jpeg' }));
+  assert.ok(isImage({ name: 'IMG.HEIC', type: '' }), 'Chrome gives a HEIC no type');
+  assert.ok(!isImage({ name: 'a.pdf', type: 'application/pdf' }));
+  assert.ok(isPdf({ name: 'menu.PDF', type: '' }));
+  assert.ok(!isPdf({ name: 'a.png', type: 'image/png' }));
+  assert.equal(triage([{ name: 'a.png', size: 1, type: 'image/png' }], { room: 5, maxBytes: 9, fits: isPdf }).refusal.key, 'wrongType');
+});
+
+test('an address is looked up once, and never over a pin placed by hand', () => {
+  assert.equal(shouldLookUp({ address: 'Rua 1', lastLooked: null, byHand: false }), true);
+  assert.equal(shouldLookUp({ address: 'Rua 1 ', lastLooked: 'Rua 1', byHand: false }), false, 'once per address');
+  assert.equal(shouldLookUp({ address: 'Rua 2', lastLooked: 'Rua 1', byHand: true }), false, 'typing does not move a hand-placed pin');
+  assert.equal(shouldLookUp({ address: 'Rua 2', lastLooked: 'Rua 2', byHand: true, force: true }), true, 'the button always asks');
+  assert.equal(shouldLookUp({ address: '  ', lastLooked: null, byHand: false, force: true }), false);
+});
+
+test('the token route has three answers', () => {
+  assert.equal(tokenFrom('abc'), 'abc');
+  assert.equal(tokenFrom({ token: 'abc' }), 'abc');
+  assert.equal(tokenFrom({ available: false }), null);
+  assert.equal(tokenFrom(null), null);
+});
