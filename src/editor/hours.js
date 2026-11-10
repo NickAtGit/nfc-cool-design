@@ -117,7 +117,7 @@ export function hoursEditor({ shape = 'booking', value, onChange }) {
       emit();
     });
     const block = h('section', { class: 'ed-hours-day', 'aria-label': dayName },
-      h('div', { class: 'ed-hours-head' }, h('span', { class: 'ed-hours-name' }, dayName), h('span', { class: 'ed-hours-closed', hidden: true }, word('hoursClosed')), toggle),
+      h('div', { class: `${cls('switchRow')} ed-hours-head` }, h('span', { class: `${cls('switchLabel')} ed-hours-label` }, h('span', { class: 'ed-hours-name' }, dayName), h('span', { class: 'ed-hours-closed', hidden: true }, word('hoursClosed'))), toggle),
       windowsEl, foot);
 
     function showProblems() {

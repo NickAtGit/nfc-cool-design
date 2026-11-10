@@ -171,7 +171,10 @@
 .ed-hours { display: grid; gap: var(--space-3); }
 .ed-hours-day { display: grid; gap: var(--space-2); padding-block-end: var(--space-3); border-block-end: 1px solid var(--color-border-light); }
 .ed-hours-day:last-child { padding-block-end: 0; border-block-end: 0; }
-.ed-hours-head { display: flex; align-items: center; gap: var(--space-3); }
+/* The host's switch row, so the day's switch is the host's switch; the row's
+   own padding and rule give way to the day's. */
+.ed-hours-head { display: flex; align-items: center; gap: var(--space-3); padding-block: 0; border-block-start: 0; cursor: default; }
+.ed-hours-label { display: flex; flex: 1; align-items: baseline; gap: var(--space-3); }
 .ed-hours-name { font-weight: 600; font-size: var(--text-sm); }
 .ed-hours-closed { font-size: var(--text-xs); color: var(--color-text-muted); }
 .ed-hours-head > input { margin-inline-start: auto; }
