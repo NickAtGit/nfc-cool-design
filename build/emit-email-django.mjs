@@ -14,7 +14,9 @@
      carries `email_logo_src` (plus `email_logo_src_dark`, `email_logo_width`,
      `email_logo_height`, `email_logo_alt`, `email_brand_name`), and the
      NFC.cool wordmark otherwise;
-   - one partial per block type, included with `with label=… href=…`;
+   - `email_font_base` (absolute https folder ending in `/`) turns on the Titillium Web
+     @font-face rules behind Outlook's conditional; without it the system stack stays;
+   - one partial per block type (store_badges.html takes ios_url and android_url), included with `with label=… href=…`;
    - Django's autoescape does the escaping. It does NOT validate links the way
      renderEmail does, and it writes no plain-text part: a Django mail keeps
      its own .txt template, as it already does for subjects. */
@@ -44,12 +46,17 @@ function swap(html, pairs) {
 let { html } = renderEmail({
   title: S('TITLE'), heading: S('HEADING'), preheader: S('PREHEADER'),
   assetBaseUrl: `${URL_('ASSETS')}/`,
+  fontBaseUrl: `${URL_('FONTS')}/`,
   blocks: [{ type: 'text', text: S('CONTENT') }],
   footer: { product: S('PRODUCT'), reason: S('REASON'), links: [{ label: S('LINKS'), href: URL_('LINK') }] },
 });
 const contentRow = new RegExp(`<tr><td[^>]*><p class="em-t"[^>]*>${S('CONTENT')}</p></td></tr>`);
 if (!contentRow.test(html)) throw new Error('content row not found: src/email.js changed shape, update this generator');
 html = html.replace(contentRow, '{% block content %}{% endblock %}');
+// The webfont rules only ship when the context carries email_font_base.
+const fontHead = /<!--\[if !mso\]><!-->\n<style type="text\/css">[\s\S]*?<!--<!\[endif\]-->\n/.exec(html)?.[0];
+if (!fontHead) throw new Error('font styles not found: src/email.js changed shape, update this generator');
+html = html.replace(fontHead, `{% if email_font_base %}${fontHead.trimEnd()}{% endif %}\n`);
 const linkAnchor = new RegExp(`<a class="em-m" href="${URL_('LINK')}" style="([^"]*)">${S('LINKS')}</a>`);
 const linkStyle = linkAnchor.exec(html)?.[1];
 if (!linkStyle) throw new Error('footer link not found: src/email.js changed shape, update this generator');
@@ -62,6 +69,7 @@ html = swap(html, [
   [S('PREHEADER'), '{% block preheader %}{% endblock %}'],
   [S('HEADING'), '{% block heading %}{% endblock %}'],
   [`${URL_('ASSETS')}/`, '{{ email_asset_base }}'],
+  [`${URL_('FONTS')}/`, '{{ email_font_base }}'],
   [S('PRODUCT'), `{% block footer_product %}${palette.label}{% endblock %}`],
   [S('REASON'), '{% block footer_reason %}{% endblock %}'],
 ]);
@@ -105,6 +113,9 @@ const files = { 'layout.html': `${BANNER}\n${html}` };
 const row = (inner, gap) => `<tr><td align="left" style="padding-top:{{ gap|default:"${gap}" }}px">${inner}</td></tr>\n`;
 const PARTIALS = {
   'text.html':          [{ type: 'text', text: S('TEXT') }, [[S('TEXT'), '{{ text }}']], 16],
+  'intro.html':         [{ type: 'intro', text: S('TEXT') }, [[S('TEXT'), '{{ text }}']], 16],
+  'footnote.html':      [{ type: 'footnote', text: S('TEXT') }, [[S('TEXT'), '{{ text }}']], 20],
+  'store_badges.html':  [{ type: 'store-badges', ios: URL_('IOS'), android: URL_('ANDROID') }, [[URL_('IOS'), '{{ ios_url }}'], [URL_('ANDROID'), '{{ android_url }}'], [`${URL_('ASSETS')}/`, '{{ email_asset_base }}']], 16],
   'note.html':          [{ type: 'note', text: S('TEXT') }, [[S('TEXT'), '{{ text }}']], 20],
   'quote.html':         [{ type: 'quote', text: S('TEXT') }, [[S('TEXT'), '{{ text }}']], 20],
   'button.html':        [{ type: 'button', label: S('LABEL'), href: URL_('HREF') }, [[S('LABEL'), '{{ label }}'], [URL_('HREF'), '{{ href }}']], 28],
@@ -112,7 +123,7 @@ const PARTIALS = {
   'divider.html':       [{ type: 'divider' }, [], 28],
 };
 for (const [name, [block, pairs, gap]] of Object.entries(PARTIALS)) {
-  files[name] = `${BANNER}\n${row(swap(renderBlock(block), pairs), gap)}`;
+  files[name] = `${BANNER}\n${row(swap(renderBlock(block, { assetBaseUrl: `${URL_('ASSETS')}/` }), pairs), gap)}`;
 }
 files['footer_link.html'] = `${BANNER}\n<a class="em-m" href="{{ href }}" style="${linkStyle}">{{ label }}</a>`;
 

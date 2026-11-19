@@ -61,6 +61,20 @@ export const EXAMPLES = {
       footer: { ...footer, reason: 'You got this because someone asked to reset the password for this address.' },
     },
   },
+  'account-notice': {
+    title: 'An account notice with the app',
+    options: {
+      preheader: 'The address on your account was changed.',
+      heading: 'Your email address was changed',
+      blocks: [
+        { type: 'intro', text: 'The address for this account is now ada@example.com.' },
+        { type: 'text', text: 'Sign in with the new address from now on. The apps pick it up the next time you open them.' },
+        { type: 'store-badges', ios: 'https://apps.apple.com/app/id0000000000', android: 'https://play.google.com/store/apps/details?id=com.example.app' },
+        { type: 'footnote', text: 'If you did not do this, reset your password right away.' },
+      ],
+      footer: { ...footer, reason: 'You got this because the address on your account changed.' },
+    },
+  },
   'product-logo': {
     title: "A product's own logo",
     options: {

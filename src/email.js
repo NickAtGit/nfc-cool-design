@@ -48,6 +48,8 @@ export const STORE_BUTTONS = Object.freeze(['store-app-store.png', 'store-google
 export const EMAIL_ASSETS = Object.freeze([WORDMARK.onLight, WORDMARK.onDark, ...STORE_BUTTONS]);
 
 const FONT = palette.font.replaceAll('"', "'");
+const BRAND_FONT = `'Titillium Web',${FONT.replaceAll(', ', ',')}`;
+const FONT_FILES = [[400, 'titillium-web-400-latin.woff2'], [600, 'titillium-web-600-latin.woff2'], [700, 'titillium-web-700-latin.woff2']];
 
 /* ------------------------------------------------------------------ escaping */
 
@@ -113,6 +115,22 @@ const SWAP = [
   '.em-wm-dark{display:block !important;max-height:none !important;overflow:visible !important}',
 ];
 
+/* The brand face, for a consumer that hosts the woff2 files. It sits behind
+   Outlook's conditional: with a bare @font-face Outlook for Windows falls back
+   to Times New Roman. The classes override the inline system stack, which stays
+   the answer wherever a client loads no webfont. Links lose kerning, or the
+   face joins the slashes of https://. */
+function fontStyles(fontBaseUrl) {
+  const faces = FONT_FILES.map(([weight, file]) => `  @font-face { font-family: 'Titillium Web'; font-style: normal; font-weight: ${weight}; font-display: swap; src: url('${escapeHtml(assetUrl(fontBaseUrl, file))}') format('woff2'); }`);
+  return `<!--[if !mso]><!-->
+<style type="text/css">
+${faces.join('\n')}
+  .em-h, .em-t, .em-m, .em-a, .em-btn-a { font-family: ${BRAND_FONT} !important; }
+  .em-a { font-kerning: none; }
+</style>
+<!--<![endif]-->`;
+}
+
 function headStyles() {
   const base = `body{margin:0 !important;padding:0 !important;width:100% !important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
 table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
@@ -141,7 +159,7 @@ ${SWAP.map(r => `[data-ogsc] ${r}`).join('\n')}`;
 
 /* Gap above a block, in px, from what it is and what came before it. The
    button and the divider get air; paragraphs sit at one line's rhythm. */
-const BEFORE = { text: 16, button: 28, 'link-fallback': 20, note: 20, divider: 28, quote: 20 };
+const BEFORE = { text: 16, intro: 16, button: 28, 'link-fallback': 20, note: 20, footnote: 20, divider: 28, quote: 20, 'store-badges': 16 };
 const AFTER = { button: 28, divider: 28, quote: 20 };
 const TYPES = new Set(Object.keys(BEFORE));
 
@@ -182,8 +200,17 @@ function blockHtml(b, ctx) {
   switch (b.type) {
     case 'text':
       return p('em-t', { 'font-size': '16px', 'line-height': '26px', color: L.text }, inlineHtml(b.text, L));
+    case 'intro':
+      return p('em-t', { 'font-size': '16px', 'line-height': '26px', color: L.text }, inlineHtml(b.text, L));
     case 'note':
+    case 'footnote':
       return p('em-m', { 'font-size': '14px', 'line-height': '21px', color: L.muted }, inlineHtml(b.text, L, 'note'));
+    case 'store-badges': {
+      const badge = (href, file, label, width, last) => `<a href="${escapeHtml(safeHref(href))}" style="${css({
+        'text-decoration': 'none', display: 'inline-block', ...(last ? {} : { [`margin-${end}`]: '8px' }),
+      })}"><img src="${escapeHtml(assetUrl(ctx.assetBaseUrl, file))}" alt="${label}" width="${width}" height="40" style="${css({ width: `${width}px`, height: '40px', border: 0 })}"></a>`;
+      return `<p style="margin:0">${badge(b.ios, STORE_BUTTONS[0], 'Download on the App Store', 120, false)}${badge(b.android, STORE_BUTTONS[1], 'Get it on Google Play', 133, true)}</p>`;
+    }
     case 'button': {
       const href = escapeHtml(safeHref(b.href));
       const label = escapeHtml(b.label);
@@ -229,8 +256,12 @@ function blockHtml(b, ctx) {
 function blockText(b, prev) {
   switch (b.type) {
     case 'text':
+    case 'intro':
     case 'note':
+    case 'footnote':
       return inlineText(b.text);
+    case 'store-badges':
+      return `App Store: ${safeHref(b.ios)}\nGoogle Play: ${safeHref(b.android)}`;
     case 'button':
       return `${b.label}: ${safeHref(b.href)}`;
     case 'link-fallback':
@@ -249,10 +280,10 @@ function blockText(b, prev) {
 /* One block's markup on its own, with the same styling renderEmail gives it.
    For a generator that assembles a mail outside JavaScript (the Django
    partials in dist/email/django/ are made this way); a template never needs it. */
-export function renderBlock(block, { dir = 'ltr' } = {}) {
+export function renderBlock(block, { dir = 'ltr', assetBaseUrl } = {}) {
   if (!block || !TYPES.has(block.type)) throw new TypeError(`renderEmail: unknown block type ${JSON.stringify(block?.type)}`);
   const rtl = dir === 'rtl';
-  return blockHtml(block, { L: palette.light, start: rtl ? 'right' : 'left', end: rtl ? 'left' : 'right' });
+  return blockHtml(block, { L: palette.light, start: rtl ? 'right' : 'left', end: rtl ? 'left' : 'right', assetBaseUrl });
 }
 
 /* The gap above a block, given the block before it (null for the first). */
@@ -262,12 +293,25 @@ export function blockGap(block, prev) {
 
 /* ------------------------------------------------------------------ the mail */
 
+/* `storeBadges` is the badges block appended after the others. */
+function blocksOf(o) {
+  return o.storeBadges ? [...o.blocks, { type: 'store-badges', ...o.storeBadges }] : o.blocks;
+}
+
 function checkOptions(o) {
   if (!o || typeof o !== 'object') throw new TypeError('renderEmail: expected an options object');
   if (typeof o.heading !== 'string' || !o.heading.trim()) throw new TypeError('renderEmail: heading is required');
   if (!Array.isArray(o.blocks)) throw new TypeError('renderEmail: blocks must be an array');
-  for (const b of o.blocks) {
+  for (const b of blocksOf(o)) {
     if (!b || !TYPES.has(b.type)) throw new TypeError(`renderEmail: unknown block type ${JSON.stringify(b?.type)}`);
+    if (b.type === 'store-badges') {
+      if (!o.assetBaseUrl) throw new TypeError('renderEmail: store badges are hosted PNGs; set assetBaseUrl');
+      safeHref(b.ios);
+      safeHref(b.android);
+    }
+  }
+  if (o.fontBaseUrl !== undefined && !/^https:\/\/[^\s/?#]+/i.test(String(o.fontBaseUrl).trim())) {
+    throw new TypeError(`renderEmail: fontBaseUrl must be an absolute https URL, got ${JSON.stringify(o.fontBaseUrl)}`);
   }
   if (o.dir !== undefined && o.dir !== 'ltr' && o.dir !== 'rtl') throw new TypeError('renderEmail: dir is "ltr" or "rtl"');
   if (o.lang !== undefined && !/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(o.lang)) throw new TypeError('renderEmail: lang must be a BCP 47 tag');
@@ -392,12 +436,13 @@ export function renderEmail(options) {
   const lang = o.lang ?? 'en';
   const start = dir === 'rtl' ? 'right' : 'left';
   const end = dir === 'rtl' ? 'left' : 'right';
-  const ctx = { L, start, end };
+  const ctx = { L, start, end, assetBaseUrl: o.assetBaseUrl };
+  const blocks = blocksOf(o);
 
   const rows = [];
   let prev = null;
   rows.push(`<tr><td><h1 class="em-h em-h1" style="${css({ margin: 0, 'font-family': FONT, 'font-size': '24px', 'line-height': '31px', 'font-weight': 700, 'letter-spacing': '-0.3px', color: L.heading })}">${escapeHtml(o.heading)}</h1></td></tr>`);
-  for (const b of o.blocks) {
+  for (const b of blocks) {
     const gap = blockGap(b, prev);
     rows.push(`<tr><td align="${start}" style="padding-top:${gap}px">${blockHtml(b, ctx)}</td></tr>`);
     prev = b;
@@ -418,7 +463,7 @@ export function renderEmail(options) {
 <title>${title}</title>
 <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
 ${headStyles()}
-</head>
+${o.fontBaseUrl ? `${fontStyles(o.fontBaseUrl)}\n` : ''}</head>
 <body id="em-body" class="em-page" dir="${dir}" style="${css({ margin: 0, padding: 0, width: '100%', 'background-color': L.page, 'word-spacing': 'normal' })}">
 ${o.preheader ? `<div style="${css({ display: 'none', 'font-size': '1px', 'line-height': '1px', 'max-height': 0, 'max-width': 0, opacity: 0, overflow: 'hidden', 'mso-hide': 'all', color: L.page })}">${escapeHtml(o.preheader)}${PREHEADER_FILL}</div>\n` : ''}<div role="article" aria-roledescription="email" aria-label="${title}" lang="${escapeHtml(lang)}" dir="${dir}" class="em-page" style="${css({ 'background-color': L.page, 'text-align': start })}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-page" bgcolor="${L.page}" style="background-color:${L.page}">
@@ -444,7 +489,7 @@ ${footerHtml(o.footer, L, start)}
   const text = [];
   text.push(o.heading, '');
   prev = null;
-  for (const b of o.blocks) {
+  for (const b of blocks) {
     const t = blockText(b, prev);
     if (t !== null) text.push(t, '');
     prev = b;

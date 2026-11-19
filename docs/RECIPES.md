@@ -287,8 +287,11 @@ export function albumDeletedMail(m: { albumTitle: string; deletedBy: string; pur
 
 The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`,
 `{ text, strong: true }`), `button`, `link-fallback` (`label` to translate
-"Or copy this link:"), `note`, `quote`, `divider`. Options: `lang`, `dir`
-(`"rtl"` flips every side), `title`, `brand: { name, wordmark: false, href, logo, showName }`,
+"Or copy this link:"), `note`, `quote`, `divider`, and for account mail
+`intro` (16/26 opener), `footnote` (14/21 muted closer) and
+`store-badges: { ios, android }` (needs `assetBaseUrl`; the option
+`storeBadges: { ios, android }` appends it last). Options: `lang`, `dir`
+(`"rtl"` flips every side), `fontBaseUrl`, `title`, `brand: { name, wordmark: false, href, logo, showName }`,
 `footer: { product, reason, address, links }`.
 
 - **One button.** Put `link-fallback` right after it for any link that signs
@@ -303,6 +306,11 @@ The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`
   hosts itself, absolute http(s)) with its name beside it in place of the
   wordmark; `showName: false` shows the icon alone. Keep the footer's
   `product: "Moments by NFC.cool"`.
+- **The brand face**: host `titillium-web-{400,600,700}-latin.woff2` in one
+  https folder and pass it as `fontBaseUrl` (Django: `email_font_base` in the
+  context, ending in `/`). The rules sit behind Outlook's `<!--[if !mso]>`
+  guard, so Outlook for Windows keeps its system font instead of Times New
+  Roman, and links get `font-kerning: none`. Unset, the system stack stays.
 - **Django** (no Node): vendor `dist/email/django/` as `templates/nfccool_email/`
   and `dist/email/*.png` into static files, then
 
@@ -319,7 +327,10 @@ The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`
   ```
 
   with `email_title` and `email_asset_base` (absolute, ending in `/`) in the
-  context. `gap=` on an include overrides the space above a block. Keep a
+  context, plus `email_font_base` for the brand face. Besides the block
+  partials above there are `intro.html`, `footnote.html` (both `with text=`)
+  and `store_badges.html` (`with ios_url=… android_url=…`, PNGs from
+  `email_asset_base`). `gap=` on an include overrides the space above a block. Keep a
   `.txt` template beside it for the plain part.
 - **Review it**: `npm run email:shots -- <dir>` renders the guideline examples
   in both schemes at 390 and 800px.
@@ -341,6 +352,19 @@ these renames: `.console` is `.app-shell`, `.sidebar` is `nav[data-nav="side"]`,
 `.nav-utility`, `.console-plain` is a refused render (recipe 3). The
 dashboard's own CSS then keeps only what no other product has (the org switch,
 the card preview).
+
+**Keel (Vapor, no npm).** The status page is recipe 1 from the vendored full
+bundle. Its mail uses `dist/email/swift/`, vendored as
+`Server/Resources/Email/`: `layout.html`, one `blocks/<type>.html` per block
+and `gaps.json`, plus the four PNGs in `Server/Public/email/`. Generated from
+`src/email.js` by `build/emit-email-swift.mjs`, so it cannot drift from the
+Django or JavaScript mail. Keel fills by plain string replacement: `{{name}}`
+is a value it has already HTML-escaped, `{{{blocks}}}` is raw. A block file is
+one table row with `{{gap}}` (read `gaps[previousType][type]`, `"start"` for
+the first block; types use hyphens, files underscores) and `{{text}}`,
+`{{label}}`/`{{href}}` or `{{ios_url}}`/`{{android_url}}`/`{{asset_base}}`.
+Join the rows with `"\n"`. Keel must check links are http(s) itself and write
+its own plain-text part.
 
 **nfc-cool-website (SiteKit).** Recipe 4, with the vendored `dist/design.css`.
 

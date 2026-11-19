@@ -705,7 +705,8 @@ where the four competing `:root` blocks live today.
 **A mail is rendered, not written.** `@nfccool/design/email.js` exports
 `renderEmail(options) → { html, text }`. A template hands it a heading, a
 preheader, an ordered list of blocks (`text`, `button`, `link-fallback`,
-`note`, `quote`, `divider`) and a footer; the renderer owns every table, every
+`note`, `quote`, `divider`, and for account mail `intro`, `footnote`,
+`store-badges`) and a footer; the renderer owns every table, every
 inline style and both colour schemes, and writes the plain-text part from the
 same blocks. It has no dependencies and needs no build step, because consumers
 install this package from git and run nothing; the types are

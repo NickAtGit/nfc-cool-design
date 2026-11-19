@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { renderEmail, renderBlock, WORDMARK, EMAIL_ASSETS } from '../src/email.js';
+import { renderEmail, renderBlock, blockGap, WORDMARK, EMAIL_ASSETS } from '../src/email.js';
 import { palette } from '../src/email/palette.js';
 import { EXAMPLES } from '../guideline/email-examples.mjs';
 import { ratio, AA } from './contrast-math.mjs';
@@ -308,6 +308,56 @@ test('the plain-text part is the same with or without a logo', () => {
   assert.equal(renderEmail({ ...o, brand: { name: 'Moments', logo: LOGO, showName: false } }).text, plain);
 });
 
+/* ---------------------------------------------------------------- transactional additions */
+
+const IOS = 'https://apps.apple.com/app/id1249686798';
+const ANDROID = 'https://play.google.com/store/apps/details?id=cool.nfc';
+const FONTS = 'https://cdn.example.com/static/fonts/Titillium/';
+
+test('fontBaseUrlAddsTitilliumBehindOutlookGuard', () => {
+  const { html } = render({ fontBaseUrl: FONTS });
+  assert.ok(html.includes('<!--[if !mso]><!-->\n<style type="text/css">'), 'the webfont rules sit behind the Outlook guard');
+  for (const w of [400, 600, 700]) {
+    assert.ok(html.includes(`font-weight: ${w}; font-display: swap; src: url('${FONTS}titillium-web-${w}-latin.woff2') format('woff2')`), `weight ${w}`);
+  }
+  assert.ok(html.includes(".em-h, .em-t, .em-m, .em-a, .em-btn-a { font-family: 'Titillium Web',-apple-system"));
+  assert.ok(html.includes('.em-a { font-kerning: none; }'));
+  assert.ok(html.indexOf('<!--[if !mso]><!-->') < html.indexOf('@font-face') && html.indexOf('@font-face') < html.indexOf('<!--<![endif]-->'));
+  assert.ok(!render({ fontBaseUrl: FONTS.slice(0, -1) }).html.includes('Troubleshoot') && render({ fontBaseUrl: FONTS.slice(0, -1) }).html.includes(`${FONTS}titillium-web-700-latin.woff2`), 'a missing trailing slash is added');
+});
+
+test('noFontBaseUrlLeavesTheSystemStack', () => {
+  const { html } = render();
+  assert.ok(!html.includes('Titillium') && !html.includes('@font-face') && !html.includes('font-kerning'));
+});
+
+test('fontBaseUrl must be absolute https', () => {
+  for (const bad of ['http://x.example/f/', '/static/fonts/', 'javascript:alert(1)']) {
+    assert.throws(() => render({ fontBaseUrl: bad }), TypeError, bad);
+  }
+});
+
+test('storeBadgesUsePngsNotSvg', () => {
+  const { html, text } = render({ assetBaseUrl: BASE, storeBadges: { ios: IOS, android: ANDROID } });
+  assert.ok(html.includes(`src="${BASE}store-app-store.png"`) && html.includes(`src="${BASE}store-google-play.png"`));
+  assert.ok(!/\.svg/i.test(html), 'Gmail blocks SVG');
+  assert.ok(html.includes('alt="Download on the App Store" width="120" height="40"') && html.includes('alt="Get it on Google Play" width="133" height="40"'));
+  assert.ok(html.includes(`href="${IOS}"`) && html.includes(`href="${ANDROID}"`));
+  assert.ok(text.includes(`App Store: ${IOS}`) && text.includes(`Google Play: ${ANDROID}`));
+  const asBlock = render({ assetBaseUrl: BASE, blocks: [{ type: 'store-badges', ios: IOS, android: ANDROID }] });
+  assert.equal(asBlock.html, html, 'the option and the block are the same mail');
+  assert.throws(() => render({ storeBadges: { ios: IOS, android: ANDROID } }), TypeError, 'badges need hosted PNGs');
+  assert.throws(() => render({ assetBaseUrl: BASE, storeBadges: { ios: 'javascript:x', android: ANDROID } }), TypeError);
+});
+
+test('introAndFootnoteMatchTheConsoleStyles', () => {
+  const { html, text } = render({ blocks: [{ type: 'intro', text: 'Hi' }, { type: 'footnote', text: 'Bye' }] });
+  assert.ok(html.includes('<p class="em-t" style="margin:0;font-family:' ) && html.includes('font-size:16px;line-height:26px;color:#495057">Hi</p>'));
+  assert.ok(html.includes('font-size:14px;line-height:21px;color:#666D74">Bye</p>'));
+  assert.ok(html.includes('padding-top:16px"><p class="em-t"') && html.includes('padding-top:20px"><p class="em-m"'));
+  assert.ok(text.includes('Hi\n\nBye'));
+});
+
 /* ---------------------------------------------------------------- Django */
 
 test('the Django templates are the renderer\'s own markup with no placeholder left', () => {
@@ -336,10 +386,84 @@ test('the Django templates are the renderer\'s own markup with no placeholder le
   assert.match(head, /\{% if email_logo_src_dark %\}<!--\[if !mso\]>/, 'the dark icon only when there is one');
   assert.match(head, /\{% if email_brand_name %\}<td class="em-brand-name"/, 'the name cell only when there is a name');
   assert.ok(head.includes('border-radius:{% widthratio email_logo_width 100 22 %}px'));
+  assert.ok(layout.includes('{% if email_font_base %}<!--[if !mso]><!-->') && layout.includes('{{ email_font_base }}titillium-web-700-latin.woff2'), 'the webfont is switched by email_font_base');
+  assert.ok(files.includes('store_badges.html'), 'store_badges.html missing');
+  const badges = readFileSync(new URL('store_badges.html', dir), 'utf8');
+  assert.ok(badges.includes('href="{{ ios_url }}"') && badges.includes('href="{{ android_url }}"') && badges.includes('{{ email_asset_base }}store-app-store.png') && badges.includes('{{ email_asset_base }}store-google-play.png'));
+  for (const f of ['intro.html', 'footnote.html']) assert.ok(files.includes(f), `${f} missing`);
   const button = readFileSync(new URL('button.html', dir), 'utf8');
   assert.ok(button.includes('href="{{ href }}"') && button.includes('{{ label }}'));
   assert.ok(button.includes(renderBlock({ type: 'button', label: 'L', href: 'https://x.example/' }).split('href=')[0]),
     'the partial is the renderer\'s own markup');
+});
+
+/* ---------------------------------------------------------------- Swift */
+
+const swiftDir = new URL('../dist/email/swift/', import.meta.url);
+const SWIFT_BLOCKS = ['text', 'intro', 'button', 'link_fallback', 'note', 'footnote', 'divider', 'store_badges'];
+const buildSwift = () => execFileSync('node', ['build/emit-email-swift.mjs'], { cwd: ROOT, stdio: 'pipe' });
+const fill = (tpl, values) => tpl.replace('{{{blocks}}}', () => values.blocks ?? '').replace(/\{\{(\w+)\}\}/g, (_, k) => {
+  if (!(k in values)) throw new Error(`no value for {{${k}}}`);
+  return values[k];
+});
+
+test('swiftLayoutHasEveryPlaceholderOnce', () => {
+  buildSwift();
+  const layout = readFileSync(new URL('layout.html', swiftDir), 'utf8');
+  assert.equal(layout.split('{{{blocks}}}').length - 1, 1, '{{{blocks}}} once');
+  // title sits in <title> and aria-label, lang on <html> and the article, the asset folder on both wordmarks, the font folder on the three faces.
+  const expected = { lang: 2, title: 2, preheader: 1, heading: 1, asset_base: 2, font_base: 3, footer_product: 1, footer_reason: 1 };
+  const found = {};
+  for (const [, k] of layout.matchAll(/(?<!\{)\{\{(\w+)\}\}(?!\})/g)) found[k] = (found[k] ?? 0) + 1;
+  assert.deepEqual(found, expected);
+  assert.ok(layout.includes('<title>{{title}}</title>') && layout.includes('{{asset_base}}wordmark-on-light.png') && layout.includes('{{font_base}}titillium-web-700-latin.woff2'));
+  assert.ok(!/ZZ[A-Z]+ZZ|zz\.invalid|qqz/.test(layout), 'no sentinel left');
+});
+
+test('swiftBlocksAreTheJsBlocksWithSentinelsSwapped', () => {
+  buildSwift();
+  const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const A = 'https://assets.example.com/email/', F = 'https://assets.example.com/fonts/';
+  const raw = 'Tom & <Co> "x"';
+  const blocks = [
+    { type: 'text', text: raw }, { type: 'intro', text: raw },
+    { type: 'button', label: raw, href: 'https://x.example/a?b=1&c=2' },
+    { type: 'link-fallback', label: raw, href: 'https://x.example/a?b=1&c=2' },
+    { type: 'note', text: raw }, { type: 'footnote', text: raw }, { type: 'divider' },
+    { type: 'store-badges', ios: 'https://apps.example/ios', android: 'https://play.example/a' },
+  ];
+  const js = renderEmail({
+    title: raw, heading: raw, preheader: raw, lang: 'de', assetBaseUrl: A, fontBaseUrl: F, blocks,
+    footer: { product: raw, reason: raw },
+  }).html;
+  const file = n => readFileSync(new URL(n, swiftDir), 'utf8');
+  const v = { text: esc(raw), label: esc(raw), href: esc('https://x.example/a?b=1&c=2'), ios_url: 'https://apps.example/ios', android_url: 'https://play.example/a', asset_base: A };
+  const gaps = JSON.parse(file('gaps.json'));
+  const rows = blocks.map((b, i) => fill(file(`blocks/${b.type.replace('-', '_')}.html`), { ...v, gap: String(gaps[blocks[i - 1]?.type ?? 'start'][b.type]) })).join('\n');
+  const out = fill(file('layout.html'), {
+    lang: 'de', title: esc(raw), preheader: esc(raw), heading: esc(raw), asset_base: A, font_base: F,
+    footer_product: esc(raw), footer_reason: esc(raw), blocks: rows,
+  });
+  assert.equal(out, js);
+  for (const prev of Object.keys(JSON.parse(file('gaps.json')))) {
+    for (const b of blocks) {
+      assert.equal(JSON.parse(file('gaps.json'))[prev][b.type], blockGap(b, prev === 'start' ? null : { type: prev }));
+    }
+  }
+});
+
+test('noDjangoSyntaxInSwiftOutput', () => {
+  buildSwift();
+  const files = ['layout.html', ...SWIFT_BLOCKS.map(b => `blocks/${b}.html`)];
+  assert.deepEqual(readdirSync(new URL('blocks/', swiftDir)).sort(), SWIFT_BLOCKS.map(b => `${b}.html`).sort());
+  for (const f of files) {
+    const body = readFileSync(new URL(f, swiftDir), 'utf8');
+    assert.ok(!/\{%|\s%\}|\{#|\|default|\{\{\s|\s\}\}/.test(body), `${f} carries Django syntax`);
+    assert.ok(!/ZZ[A-Z]+ZZ|zz\.invalid/.test(body), `${f} carries a sentinel`);
+    for (const [, k] of body.matchAll(/(?<!\{)\{\{(\w+)\}\}(?!\})/g)) {
+      assert.ok(['lang', 'title', 'preheader', 'heading', 'asset_base', 'font_base', 'footer_product', 'footer_reason', 'text', 'label', 'href', 'gap', 'ios_url', 'android_url'].includes(k), `${f}: unknown placeholder ${k}`);
+    }
+  }
 });
 
 /* ---------------------------------------------------------------- examples */

@@ -11,15 +11,43 @@
         "dist/email/django/button.html": "web/templates/nfccool_email/button.html",
         "dist/email/django/divider.html": "web/templates/nfccool_email/divider.html",
         "dist/email/django/footer_link.html": "web/templates/nfccool_email/footer_link.html",
+        "dist/email/django/footnote.html": "web/templates/nfccool_email/footnote.html",
+        "dist/email/django/intro.html": "web/templates/nfccool_email/intro.html",
         "dist/email/django/layout.html": "web/templates/nfccool_email/layout.html",
         "dist/email/django/link_fallback.html": "web/templates/nfccool_email/link_fallback.html",
         "dist/email/django/note.html": "web/templates/nfccool_email/note.html",
         "dist/email/django/quote.html": "web/templates/nfccool_email/quote.html",
         "dist/email/django/text.html": "web/templates/nfccool_email/text.html",
+        "dist/email/django/store_badges.html": "web/templates/nfccool_email/store_badges.html",
         "dist/email/wordmark-on-light.png": "web/static/images/email/wordmark-on-light.png",
         "dist/email/wordmark-on-dark.png": "web/static/images/email/wordmark-on-dark.png",
         "dist/email/store-app-store.png": "web/static/images/email/store-app-store.png",
         "dist/email/store-google-play.png": "web/static/images/email/store-google-play.png"
+      }
+    },
+    "keel": {
+      "root": "keel",
+      "why": "Keel's server (Vapor, no npm): the read-only status page at /status, reachable over Tailscale only, is recipe 1 assembled from the full bundle, served by Vapor's FileMiddleware from Server/Public/design. Adopted 2026-11-09 by copying the first three files byte for byte (no --adopt run, so no other consumer was touched). The App Store badge was added 2026-11-18 for the public licence link page (recipe 3), copied by hand the same way. The page's Titillium faces and the two nav logos are not built output, so they are copied from guideline/fonts and guideline/images by hand and are not listed here. ui.js was added 2026-11-18 for the licence page (confirm dialog, row menu, toast), copied by hand the same way. The transactional mail (dist/email/swift, plain {{name}} / {{{blocks}}} templates plus gaps.json, generated from the renderer by build/emit-email-swift.mjs) and its PNGs were added 2026-11-18 for the licence mails, copied by hand the same way; Keel fills them by string replacement.",
+      "files": {
+        "dist/design.css": "Server/Public/design/design.css",
+        "dist/nav.js": "Server/Public/design/nav.js",
+        "dist/theme.js": "Server/Public/design/theme.js",
+        "dist/ui.js": "Server/Public/design/ui.js",
+        "dist/images/AppStore.svg": "Server/Public/design/images/AppStore.svg",
+        "dist/email/swift/layout.html": "Server/Resources/Email/layout.html",
+        "dist/email/swift/gaps.json": "Server/Resources/Email/gaps.json",
+        "dist/email/swift/blocks/text.html": "Server/Resources/Email/blocks/text.html",
+        "dist/email/swift/blocks/intro.html": "Server/Resources/Email/blocks/intro.html",
+        "dist/email/swift/blocks/button.html": "Server/Resources/Email/blocks/button.html",
+        "dist/email/swift/blocks/link_fallback.html": "Server/Resources/Email/blocks/link_fallback.html",
+        "dist/email/swift/blocks/note.html": "Server/Resources/Email/blocks/note.html",
+        "dist/email/swift/blocks/footnote.html": "Server/Resources/Email/blocks/footnote.html",
+        "dist/email/swift/blocks/divider.html": "Server/Resources/Email/blocks/divider.html",
+        "dist/email/swift/blocks/store_badges.html": "Server/Resources/Email/blocks/store_badges.html",
+        "dist/email/wordmark-on-light.png": "Server/Public/email/wordmark-on-light.png",
+        "dist/email/wordmark-on-dark.png": "Server/Public/email/wordmark-on-dark.png",
+        "dist/email/store-app-store.png": "Server/Public/email/store-app-store.png",
+        "dist/email/store-google-play.png": "Server/Public/email/store-google-play.png"
       }
     }
   }

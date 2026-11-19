@@ -22,6 +22,24 @@
   <code>&lt;script&gt;</code> or quotes arrives as text: everything is escaped.
 </div>
 
+<h3 class="ks-h3">An account notice</h3>
+<!--email:account-notice-->
+<div class="ks-basis">
+  <b>A mail about an account is facts, then a way back into the app.</b> <code>intro</code> opens it (16/26 in the
+  text colour) and <code>footnote</code> closes it (14/21, muted). <code>store-badges</code> are the two official
+  store buttons as hosted PNGs, because Gmail blocks SVG; they need <code>assetBaseUrl</code>, and
+  <code>storeBadges: { ios, android }</code> on the options appends the same block last.
+</div>
+
+<h3 class="ks-h3">The brand face</h3>
+<div class="ks-basis">
+  <b>Titillium Web where a client loads it.</b> Host <code>titillium-web-400-latin.woff2</code>, <code>-600-</code>
+  and <code>-700-</code> in one https folder and pass it as <code>fontBaseUrl</code> (ending in a slash). The
+  rules go behind Outlook's conditional, because with a bare <code>@font-face</code> Outlook for Windows renders
+  Times New Roman; links get <code>font-kerning: none</code>, or the face joins the slashes of https://. Without
+  it the mail stays on the system stack.
+</div>
+
 <h3 class="ks-h3">A product's own logo</h3>
 <!--email:product-logo-->
 <div class="ks-basis">
@@ -80,6 +98,9 @@ const { html, text } = renderEmail({
     <tr><td>{ type: 'note', text }</td><td>Muted small print: a deadline, "if you did not ask for this".</td></tr>
     <tr><td>{ type: 'quote', text }</td><td>A title set apart on its own panel, such as an album's name.</td></tr>
     <tr><td>{ type: 'divider' }</td><td>A hairline between the action and the small print.</td></tr>
+    <tr><td>{ type: 'intro', text }</td><td>The opening paragraph of an account mail: 16/26, text colour.</td></tr>
+    <tr><td>{ type: 'footnote', text }</td><td>The closing small print of an account mail: 14/21, muted.</td></tr>
+    <tr><td>{ type: 'store-badges', ios, android }</td><td>The App Store and Google Play buttons, as hosted PNGs.</td></tr>
   </tbody>
 </table></div>
 <div class="ks-basis">

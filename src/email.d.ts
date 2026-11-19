@@ -18,7 +18,13 @@ export type EmailBlock =
   /** A title set apart on its own panel: an album's name. */
   | { type: 'quote'; text: EmailInline }
   /** A hairline between the action and the small print. */
-  | { type: 'divider' };
+  | { type: 'divider' }
+  /** The opening paragraph of a transactional mail: 16/26 in the text colour. */
+  | { type: 'intro'; text: EmailInline }
+  /** The closing small print of a transactional mail: 14/21, muted. */
+  | { type: 'footnote'; text: EmailInline }
+  /** The App Store and Google Play buttons (hosted PNGs; needs `assetBaseUrl`). */
+  | { type: 'store-badges'; ios: string; android: string };
 
 /** A product's icon for the mail header. Host both PNGs yourself, at 2x the display size. */
 export interface EmailLogo {
@@ -45,6 +51,11 @@ export interface EmailOptions {
   title?: string;
   /** Absolute http(s) URL of the folder that hosts EMAIL_ASSETS. Without it the header is the brand name in bold text. */
   assetBaseUrl?: string;
+  /** Absolute https folder (ending in `/`) that hosts titillium-web-{400,600,700}-latin.woff2. Set: the brand face loads
+   *  where a client allows it, behind Outlook's conditional. Unset: the system stack. */
+  fontBaseUrl?: string;
+  /** Shorthand for a final `store-badges` block. Needs `assetBaseUrl`. */
+  storeBadges?: { ios: string; android: string };
   brand?: {
     /** The wordmark's alt text, and the text header without an assetBaseUrl. Defaults to "NFC.cool".
      *  With `logo`, the product's name, set in bold beside the icon. */

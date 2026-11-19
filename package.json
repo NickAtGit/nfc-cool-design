@@ -33,7 +33,7 @@
     "./theme.js": "./src/theme.js"
   },
   "scripts": {
-    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-email-django.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-email-django.mjs && node build/emit-email-swift.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
     "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
     "test": "node --test test/*.test.mjs",
