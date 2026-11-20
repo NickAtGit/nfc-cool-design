@@ -508,6 +508,10 @@
    overflow: hidden;
    transition: border-color var(--transition), box-shadow var(--transition);
 }
+/* A field stretches its children to its width; a stepper is a fixed control
+   and stretched it left an empty track after the plus (Keel's buy page,
+   2026-11-20). */
+.field > .stepper { justify-self: start; }
 .stepper:focus-within { border-color: var(--color-link); box-shadow: 0 0 0 4px var(--color-link-light); }
 .stepper button {
    display: inline-flex; align-items: center; justify-content: center;
@@ -573,6 +577,11 @@ a.card, a.card-interactive { color: var(--color-text); }
    border-top: 1px solid var(--color-border-light);
    background: var(--color-bg-alt);
    display: flex; gap: var(--space-3); justify-content: flex-end;
+   /* Its own fill, square, painted over the panel's rounded border at the two
+      bottom corners (Keel's buy page, dark, 2026-11-19). One pixel inside the
+      panel's radius: the border is that wide. */
+   border-end-start-radius: calc(var(--radius-lg) - 1px);
+   border-end-end-radius: calc(var(--radius-lg) - 1px);
 }
 
 /* ============================================================
@@ -742,6 +751,14 @@ a.card, a.card-interactive { color: var(--color-text); }
    color: var(--color-text); margin: 0 0 var(--space-2);
 }
 .empty-state p { margin: 0 auto var(--space-5); max-width: 34em; font-size: var(--text-sm); }
+/* The state's picture: a stroke icon (24-unit viewBox, currentColor) on its
+   own line above the title, muted, or green for a success. Inline, it shared
+   a line with the next thing in the state (Keel's licence pages, 2026-11-20). */
+.empty-state-icon {
+   display: block; inline-size: 2.75rem; block-size: 2.75rem;
+   margin: 0 auto var(--space-4); color: var(--color-text-muted);
+}
+.empty-state-icon-success { color: var(--status-green-fg); }
 /* An empty LIST inside its own titled card: the card keeps its head (the
    list's name, so the page has the same cards whether or not they are empty)
    and the empty state is one line, "No domains yet.", plus the next step,
@@ -1685,6 +1702,54 @@ a.card, a.card-interactive { color: var(--color-text); }
 .app-shell > .app-main { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; }
 @media (max-width: 767px) {
    .app-shell { flex-direction: column; align-items: stretch; gap: var(--space-4); padding: var(--space-4); }
+}
+/* THE PLAIN SHELL: a page without a session (recipe 3: sign-in, a refusal, a
+   link someone opened, a storefront). It keeps the console's look without its
+   menu: the brand and the theme control ride in a bar made like the side nav's
+   card, across the top, and the page column centres under it. The port of the
+   business console's .console-plain; the flat .app-header alone, put inside a
+   padded column, indented the logo past the title and ran its rule to the
+   edge (Keel's licence pages, 2026-11-19). */
+.app-shell-plain { flex-direction: column; align-items: stretch; gap: var(--space-4); }
+.app-shell-plain > .app-header {
+   position: sticky;
+   inset-block-start: var(--space-6);
+   z-index: 50;
+   min-height: 0;
+   gap: var(--space-2);
+   padding: var(--space-2) var(--space-4);
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   box-shadow: var(--elev-0);
+}
+/* The strip above a sticky bar, as on the side nav's phone bar. */
+.app-shell-plain > .app-header::before {
+   content: "";
+   position: absolute;
+   inset-inline: calc(var(--container-padding) * -1);
+   inset-block-end: calc(100% + 1px);
+   block-size: var(--space-6);
+   background: var(--color-bg);
+}
+.app-shell-plain > .app-header .nav-brand img { block-size: 1.25rem; }
+.app-shell-plain > .app-main {
+   align-self: center;
+   inline-size: 100%;
+   max-inline-size: var(--measure-wide);
+   padding-block-start: var(--space-6);
+}
+/* A narrow form is narrower than the column; at its start it sat off centre
+   under the bar. */
+.app-shell-plain > .app-main > .form-narrow { margin-inline: auto; }
+/* A full-width button across a 680px card read as a bar, not a button. On
+   these pages the one action is capped and centred in its card; on a phone
+   the card is narrower than the cap, so it still fills it. */
+.app-shell-plain .btn-block { display: flex; max-inline-size: 20rem; align-self: center; margin-inline: auto; }
+@media (max-width: 767px) {
+   .app-shell-plain > .app-header { inset-block-start: var(--space-4); }
+   .app-shell-plain > .app-header::before { inset-inline: calc(var(--space-4) * -1); block-size: var(--space-4); }
+   .app-shell-plain > .app-main { padding-block-start: var(--space-2); }
 }
 
 /* ============================================================

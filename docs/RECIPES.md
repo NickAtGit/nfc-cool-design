@@ -208,10 +208,25 @@ plus the next step:
 A filtered list that comes back empty: "No leads match this filter." and a
 "Clear filters" link to the bare list.
 
-A refused render (no session, not a member) wears the same `.app-shell` and
-`.app-main` column, minus the nav: put an `.app-header` (brand, `.spacer`,
-`.nav-theme-toggle`) at the top of the column so the logo and the theme
-control are still there, then the page head, then the empty state.
+A page without a session (a refusal, sign-in, a link someone opened, a
+storefront) wears `.app-shell app-shell-plain` minus the nav: an
+`.app-header` (brand, `.spacer`, `.nav-theme-toggle`) as the shell's first
+child, drawn as the nav card's bar across the top, then the `.app-main`
+column, centred under it, with the page head and the content:
+
+```html
+<div class="app-shell app-shell-plain">
+  <header class="app-header">
+    <a class="nav-brand" href="/">…both logos…</a>
+    <span class="spacer"></span>
+    <button class="nav-theme-toggle" type="button" aria-label="Toggle light or dark theme">…</button>
+  </header>
+  <div class="app-main">
+    <div class="page-head form-narrow">…</div>
+    <main class="form-narrow">…</main>
+  </div>
+</div>
+```
 
 ## Recipe 4: a marketing page
 
@@ -349,7 +364,7 @@ length. `Base.astro` imports the four layers, inlines `theme.js`, loads
 **business_card_service (Django).** `base_dashboard.html` is recipe 1 with
 these renames: `.console` is `.app-shell`, `.sidebar` is `nav[data-nav="side"]`,
 `.sidebar-menu` is `.nav-panel`, `.main` is `.app-main`, `.me` sits in
-`.nav-utility`, `.console-plain` is a refused render (recipe 3). The
+`.nav-utility`, `.console-plain` is `.app-shell-plain` (recipe 3). The
 dashboard's own CSS then keeps only what no other product has (the org switch,
 the card preview).
 
