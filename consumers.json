@@ -27,7 +27,7 @@
     },
     "keel": {
       "root": "keel",
-      "why": "Keel's server (Vapor, no npm): the read-only status page at /status, reachable over Tailscale only, is recipe 1 assembled from the full bundle, served by Vapor's FileMiddleware from Server/Public/design. Adopted 2026-11-09 by copying the first three files byte for byte (no --adopt run, so no other consumer was touched). The App Store badge was added 2026-11-18 for the public licence link page (recipe 3), copied by hand the same way. The page's Titillium faces and the two nav logos are not built output, so they are copied from guideline/fonts and guideline/images by hand and are not listed here. ui.js was added 2026-11-18 for the licence page (confirm dialog, row menu, toast), copied by hand the same way. The transactional mail (dist/email/swift, plain {{name}} / {{{blocks}}} templates plus gaps.json, generated from the renderer by build/emit-email-swift.mjs) and its PNGs were added 2026-11-18 for the licence mails, copied by hand the same way; Keel fills them by string replacement.",
+      "why": "Keel's server (Vapor, no npm): the read-only status page at /status, reachable over Tailscale only, is recipe 1 assembled from the full bundle, served by Vapor's FileMiddleware from Server/Public/design. Adopted 2026-11-09 by copying the first three files byte for byte (no --adopt run, so no other consumer was touched). The App Store badge was added 2026-11-18 for the public licence link page (recipe 3), copied by hand the same way. The page's Titillium faces and the two nav logos are not built output, so they are copied from guideline/fonts and guideline/images by hand and are not listed here. ui.js was added 2026-11-18 for the licence page (confirm dialog, row menu, toast), copied by hand the same way. The transactional mail (dist/email/swift, plain {{name}} / {{{blocks}}} templates plus gaps.json, generated from the renderer by build/emit-email-swift.mjs) and its PNGs were added 2026-11-18 for the licence mails, copied by hand the same way; Keel fills them by string replacement. The licence pages' shell (recipe 1's side nav, recipe 3's plain bar: dist/shell/swift, generated from src/shell.js by build/emit-shell-swift.mjs) was added 2026-11-21, copied by hand the same way and bundled with the KeelServer target, which fills it with the mail's filler (KitShell); nav_account_link.html is not vendored, the licence page has no account page.",
       "files": {
         "dist/design.css": "Server/Public/design/design.css",
         "dist/nav.js": "Server/Public/design/nav.js",
@@ -47,7 +47,12 @@
         "dist/email/wordmark-on-light.png": "Server/Public/email/wordmark-on-light.png",
         "dist/email/wordmark-on-dark.png": "Server/Public/email/wordmark-on-dark.png",
         "dist/email/store-app-store.png": "Server/Public/email/store-app-store.png",
-        "dist/email/store-google-play.png": "Server/Public/email/store-google-play.png"
+        "dist/email/store-google-play.png": "Server/Public/email/store-google-play.png",
+        "dist/shell/swift/side_nav.html": "Server/Sources/KeelServer/Licences/Resources/Shell/side_nav.html",
+        "dist/shell/swift/nav_link.html": "Server/Sources/KeelServer/Licences/Resources/Shell/nav_link.html",
+        "dist/shell/swift/nav_link_current.html": "Server/Sources/KeelServer/Licences/Resources/Shell/nav_link_current.html",
+        "dist/shell/swift/nav_account.html": "Server/Sources/KeelServer/Licences/Resources/Shell/nav_account.html",
+        "dist/shell/swift/plain_header.html": "Server/Sources/KeelServer/Licences/Resources/Shell/plain_header.html"
       }
     }
   }

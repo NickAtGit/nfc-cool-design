@@ -480,6 +480,36 @@
 .input-group .input:focus { box-shadow: none; }
 .input-group .btn { flex-shrink: 0; }
 
+/* A VALUE TO COPY: a link, a token or a secret the page shows so it can be
+   copied, never typed into. The business console's .copy-value: the value in
+   the mono face on the field's fill, one line ending in an ellipsis, and Copy
+   inside the same capsule. A read-only .input in an .input-group drew it as a
+   search field with a button (Keel's licence link, 2026-11-21: "the copy link
+   box looks odd"). The whole value stays selectable for a browser without
+   clipboard access.
+   Markup:
+     <div class="copy-value">
+       <code>https://keel.nfc.cool/business/l/…</code>
+       <button class="btn btn-secondary btn-sm" type="button">Copy</button>
+     </div> */
+/* It hugs its value, capped at the reading measure: the console only ever shows
+   it in a narrow column, and stretched across a full-width card it became a
+   long empty capsule with Copy a screen away from the link (Keel, 2026-11-21). */
+.copy-value {
+   display: flex; align-items: center; gap: var(--space-3); min-inline-size: 0;
+   inline-size: fit-content; max-inline-size: min(100%, var(--measure-content));
+   padding: var(--space-1) var(--space-1) var(--space-1) var(--space-5);
+   border: 1px solid var(--color-border); border-radius: var(--radius-control);
+   background: var(--field-bg);
+}
+.copy-value > code {
+   flex: 1 1 auto; min-inline-size: 0;
+   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+   font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text);
+   user-select: all;
+}
+.copy-value > .btn { flex: 0 0 auto; }
+
 /* THE STEPPER: a number between a minus and a plus, one control inside one
    border, at the standard control height. The business console's seat
    stepper stood 56 pixels tall around a 32-pixel figure with typed minus and
@@ -994,6 +1024,28 @@ a.card, a.card-interactive { color: var(--color-text); }
 }
 .dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
 .dialog-actions form { margin: 0; }
+/* A dialog that asks for one value (a row's name): its field sits between the
+   text and the actions, full width. The form is the dialog's body, so Save
+   submits it and Cancel is a link back to the page. Rendered `open` by the
+   server and marked data-open-on-load, ui.js makes it modal. The page also
+   renders it closed, with an id, for the row links that open it in place
+   (data-open-dialog, data-dialog-action / -value / -placeholder / -text, and
+   data-dialog-field on the input): a reload moved the page under the person. Editing a name
+   inside its list row squeezed a capsule field and a Save button into the row
+   (Keel's devices list, 2026-11-21).
+   Markup:
+     <dialog class="dialog" open data-open-on-load aria-labelledby="rename-title">
+       <form method="post" action="…">
+         <h2 class="dialog-title" id="rename-title">Rename device</h2>
+         <p class="dialog-text">iPhone15,2 · iOS 26.1</p>
+         <div class="field"><label class="field-label" for="name">Name</label><input class="input" id="name" name="name"></div>
+         <div class="dialog-actions">
+           <a class="btn btn-secondary" href="…" data-dialog-cancel>Cancel</a>
+           <button class="btn btn-primary" type="submit">Save</button>
+         </div>
+       </form>
+     </dialog> */
+.dialog .field { margin-block-end: var(--space-5); }
 
 /* ============================================================
    Header tiers
@@ -1144,7 +1196,11 @@ a.card, a.card-interactive { color: var(--color-text); }
 .card-head {
    display: flex; align-items: center; justify-content: space-between;
    gap: var(--space-3);
+   margin-block-end: var(--space-4);
 }
+/* The console's rule: a card's title row always has the same room under it, so
+   a page never adds .stack to a card to keep its button off its sentence. */
+.card-head:last-child { margin-block-end: 0; }
 .card-head-text { display: flex; flex-direction: column; gap: var(--space-1); min-inline-size: 0; }
 .card-head .sub { font-size: var(--text-xs); color: var(--color-text-secondary); margin: 0; }
 .card-head .actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
@@ -1173,6 +1229,30 @@ a.card, a.card-interactive { color: var(--color-text); }
    phone, 431 pixels on a 390 screen. No control can widen the page through
    this grid. */
 .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); align-items: start; }
+/* Cards side by side end on one line. Aligned to the start, the shorter card
+   left a hole under it (Nico, Keel's licence page 2026-11-21: "the holes
+   between the boxes are bad"; the status page's tiles stretch for the same
+   reason). */
+.grid-2 > .card { align-self: stretch; }
+/* A CARD'S ACTIONS live in one place: a row at its foot, starting at the
+   card's inline start, pushed to the bottom so the buttons of two cards side by
+   side sit on one line. Buttons scattered between a head, a sentence and a
+   stepper read as a mess (Nico, Keel's licence page 2026-11-21: "button
+   placements is still messy"). The head carries status (a .pill), never a
+   button. A form whose submit sits here names it with the button's form=""
+   attribute, so the form can hold only its fields.
+   Markup:
+     <div class="card">
+       <div class="card-head">…</div>
+       …content…
+       <div class="card-foot"><button class="btn btn-secondary btn-sm">…</button></div>
+     </div> */
+.card:has(> .card-foot) { display: flex; flex-direction: column; }
+.card-foot {
+   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+   margin-block-start: auto; padding-block-start: var(--space-5);
+}
+.card-foot > form { display: contents; }
 @media (max-width: 767px) {
    .grid-2 { grid-template-columns: minmax(0, 1fr); }
 }
@@ -1320,6 +1400,10 @@ a.card, a.card-interactive { color: var(--color-text); }
    flex: 1; min-inline-size: 0;
    display: flex; flex-direction: column; line-height: var(--leading-snug);
 }
+/* The console's avatar here is a tint with the letter in the link ink, not the
+   solid primary disc: the account line is quiet, the active destination above
+   it is the one filled thing in the column. */
+.nav-account .avatar { --avatar-bg: var(--color-link-light); --avatar-fg: var(--color-link-text); font-weight: 700; }
 .nav-account-name { font-weight: 600; color: var(--color-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-account-email { font-size: var(--text-3xs); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* Sign out is the icon square every bar control is, the theme icon's twin:
@@ -1335,6 +1419,15 @@ a.card, a.card-interactive { color: var(--color-text); }
    transition: color var(--transition), background var(--transition), border-color var(--transition);
 }
 .nav-account-out svg { inline-size: 1rem; block-size: 1rem; }
+/* THE LEGAL LINE, last in the column under the theme switch: "Privacy · Terms"
+   centred in small muted ink, the console's .sidebar-legal. Links, but quiet
+   ones: they owe their place, not attention.
+   Markup: <p class="nav-legal"><a href="…">Privacy</a> · <a href="…">Terms</a></p> */
+.nav-legal { margin: 0; text-align: center; font-size: var(--text-xs); line-height: var(--leading-snug); color: var(--color-text-muted); }
+.nav-legal a { color: inherit; }
+@media (hover: hover) {
+   .nav-legal a:hover { color: var(--color-text); }
+}
 @media (hover: hover) {
    .nav-account-out:hover { background: var(--nav-fill-active); border-color: var(--color-link); color: var(--color-text); }
 }
@@ -1751,6 +1844,31 @@ a.card, a.card-interactive { color: var(--color-text); }
    .app-shell-plain > .app-header::before { inset-inline: calc(var(--space-4) * -1); block-size: var(--space-4); }
    .app-shell-plain > .app-main { padding-block-start: var(--space-2); }
 }
+
+/* THE SIGN-IN COLUMN: a page without a session whose whole job is one ask
+   (sign in, confirm a link, "check your mail", a refusal). Ported from the
+   business console's .auth-card so every NFC.cool sign-in reads the same: a
+   title at the console's sign-in size, a muted lead, the fields on the page
+   rather than in a panel, and a full-width primary with its glow. A recipe 2
+   panel on these pages made a front door look like a settings screen. */
+.auth-card {
+   display: flex; flex-direction: column; gap: var(--space-4);
+   inline-size: 100%; max-inline-size: 27.5rem;
+   margin-inline: auto; padding-block: var(--space-2);
+}
+.auth-card > * { margin: 0; }
+.auth-card > h1 {
+   font-family: var(--font-heading); font-weight: 700;
+   font-size: var(--text-title); line-height: var(--leading-display);
+   letter-spacing: var(--tracking-heading); color: var(--color-text);
+}
+.auth-card > .lead { font-size: var(--text-body); color: var(--color-text-secondary); line-height: var(--leading-normal); }
+.auth-card form { display: flex; flex-direction: column; gap: var(--space-3); }
+.auth-card .field-label { font-size: var(--text-xs); color: var(--color-text-secondary); }
+.auth-card .btn-block { inline-size: 100%; max-inline-size: none; padding-block: var(--space-4); font-size: var(--text-base); font-weight: 700; }
+.auth-card .btn-primary.btn-block { box-shadow: 0 var(--space-2) var(--space-5) color-mix(in srgb, var(--color-primary-bg) 22%, transparent); }
+.auth-card form .btn-block { margin-block-start: var(--space-2); }
+.auth-card > .auth-note { font-size: var(--text-sm); color: var(--color-text-muted); }
 
 /* ============================================================
    Touch: controls stop shrinking on any touch screen

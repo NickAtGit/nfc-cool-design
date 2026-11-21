@@ -30,16 +30,18 @@
     "./tokens.json": "./src/tokens.json",
     "./nav.js": "./src/nav.js",
     "./ui.js": "./src/ui.js",
-    "./theme.js": "./src/theme.js"
+    "./theme.js": "./src/theme.js",
+    "./shell.js": "./src/shell.js"
   },
   "scripts": {
-    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-email-django.mjs && node build/emit-email-swift.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
+    "build": "node build/emit-css.mjs && node build/emit-bundle.mjs && node build/emit-email-django.mjs && node build/emit-email-swift.mjs && node build/emit-shell-swift.mjs && node build/emit-shell-django.mjs && node build/emit-guideline.mjs && node build/sync-consumers.mjs",
     "guideline": "node build/emit-guideline.mjs",
     "sitekit": "node build/emit-sitekit-theme.mjs",
     "test": "node --test test/*.test.mjs",
     "sync": "node build/sync-consumers.mjs",
     "sync:check": "node build/sync-consumers.mjs --check",
     "email:assets": "node build/emit-email-assets.mjs",
-    "email:shots": "node build/email-shots.mjs"
+    "email:shots": "node build/email-shots.mjs",
+    "layout:check": "node build/layout-check.mjs"
   }
 }

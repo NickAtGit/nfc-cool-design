@@ -39,6 +39,12 @@ The signed-in shell. The nav is the business console's: a floating column at
 drops the panel under it. One markup for all three. The list takes the whole
 column.
 
+Do not type the nav. `src/shell.js` renders it (`renderSideNav`, with
+`renderNavLink` per destination and `renderNavAccount` for the foot), and a
+consumer without Node fills the templates generated from that same output:
+`dist/shell/swift/` (Keel) or `dist/shell/django/` (see "Wiring it in each
+consumer"). The markup below is what they produce.
+
 ```html
 <div class="app-shell">
   <nav class="nav" data-nav="side" id="app-nav" aria-label="Your account">
@@ -57,12 +63,18 @@ column.
         <li class="nav-item"><a class="nav-link" href="/members"><svg class="nav-icon" …/><span class="nav-label">Members</span></a></li>
       </ul>
       <div class="nav-utility">
+        <div class="nav-account">
+          <a class="nav-account-link" href="/account"><span class="avatar avatar-sm" aria-hidden="true">A</span>
+            <span class="nav-account-who"><span class="nav-account-name">Alex Rivera</span><span class="nav-account-email">alex@acme.com</span></span></a>
+          <form method="post" action="/sign-out" data-confirm-title="Sign out?" data-confirm-action="Sign out" data-confirm-tone="primary">
+            <button class="nav-account-out" type="submit" title="Sign out">…log-out svg…<span class="sr-only">Sign out</span></button>
+          </form>
+        </div>
         <div class="nav-theme-switch" role="group" aria-label="Colour theme">
           <button type="button" data-theme-set="light" aria-pressed="false">…sun svg…<span>Light</span></button>
           <button type="button" data-theme-set="dark"  aria-pressed="false">…moon svg…<span>Dark</span></button>
         </div>
-        <button class="btn btn-ghost btn-sm" type="button">Sign out</button>
-        <button class="btn btn-ghost btn-sm" type="button" data-nav-collapse aria-label="Collapse navigation">…svg…</button>
+        <p class="nav-legal"><a href="https://nfc.cool/privacy" target="_blank" rel="noopener">Privacy</a><span aria-hidden="true"> · </span><a href="https://nfc.cool/terms" target="_blank" rel="noopener">Terms</a></p>
       </div>
     </div>
   </nav>
@@ -120,6 +132,13 @@ What the page may add: the rule that arranges ITS tiles (a `grid-template-
 columns` on its own list, stepping 2, 3, 4 across at 768 and 900). Nothing
 about the card, the head, the nav or the gutter: the shell owns the gutter,
 and `main` states no width and no inset.
+
+The foot of the panel is, in this order and nothing else: `.nav-account`, the
+theme switch, `.nav-legal` (the business console, 2026-11-21). Who is signed
+in is always `.nav-account`: the
+person (avatar letter, name, address; the address alone when there is no
+name) and sign out as the icon square beside it. Never a "Sign out" text
+button: that is what a page built from an older copy of this recipe did.
 
 The order inside the nav is not negotiable: brand, theme icon, burger, panel.
 The panel holds the destinations AND the utilities, so on a phone they fold
@@ -212,7 +231,8 @@ A page without a session (a refusal, sign-in, a link someone opened, a
 storefront) wears `.app-shell app-shell-plain` minus the nav: an
 `.app-header` (brand, `.spacer`, `.nav-theme-toggle`) as the shell's first
 child, drawn as the nav card's bar across the top, then the `.app-main`
-column, centred under it, with the page head and the content:
+column, centred under it, with the page head and the content. The bar is
+`renderPlainHeader` in `src/shell.js` (`plain_header.html` in `dist/shell/`):
 
 ```html
 <div class="app-shell app-shell-plain">
@@ -381,6 +401,25 @@ the first block; types use hyphens, files underscores) and `{{text}}`,
 Join the rows with `"\n"`. Keel must check links are http(s) itself and write
 its own plain-text part.
 
+The licence pages' shell is generated the same way: `dist/shell/swift/`
+(from `src/shell.js` by `build/emit-shell-swift.mjs`) vendored as
+`Server/Sources/KeelServer/Licences/Resources/Shell/`, bundled with the target
+and filled by `KitShell` with the mail's filler. `side_nav.html` takes
+`{{{destinations}}}` (rows of `nav_link.html` / `nav_link_current.html`, joined
+with `"\n"`) and `{{{account}}}` (`nav_account.html`, the address alone, or
+`nav_account_link.html` with an account page); `plain_header.html` is recipe
+3's bar. The header comment of `build/emit-shell-swift.mjs` lists every
+placeholder. Keel writes no nav or bar markup of its own, so the foot's order
+and classes change here and reach Keel with the next vendoring.
+
+**The shell in Django.** `dist/shell/django/` is the same six files as
+includes (`{{ name }}` variables, `{% csrf_token %}` in the sign-out form, the
+destinations and the account as `{% include destinations_template %}` /
+`{% include account_template %}`). The console does not use them yet: its
+sidebar is `.sidebar`/`.me`/`.theme-switch`/`.sidebar-legal` from its own
+`dashboard.css`, so adopting them means vendoring `dist/design.css` and moving
+its nav onto the kit's classes first.
+
 **nfc-cool-website (SiteKit).** Recipe 4, with the vendored `dist/design.css`.
 
 ## Before you ship a page
@@ -393,3 +432,125 @@ its own plain-text part.
   active destination is `aria-current="page"`.
 - `npm test` here and the consumer's guards there. Green means it is the
   system's page.
+- `npm run layout:check -- <url>` (below) against the running page.
+
+## Checking a page against the system
+
+`build/layout-check.mjs` opens a page in headless Chrome beside the kit's own
+reference page and compares what the two share, by computed style and DOM
+order, in both themes: the nav's order and its foot's, the avatar's colours
+and size, the account line, `.card`, `.card-head` and `.card-foot` spacing, a
+card's buttons outside its `.card-foot` or a foot that is not the card's last
+child, every button by its classes in its place (card foot, list row, copy
+box, sign-in column…) and by its computed size and colour, a read-only input
+used as a copy box, and the sign-in column's width, h1, lead, label, input,
+hint and button. A page's own content is never compared.
+
+```sh
+node build/emit-guideline.mjs        # writes site/reference-console.html and site/reference-sign-in.html
+node build/layout-check.mjs http://localhost:8099/business/licence
+node build/layout-check.mjs https://keel.example/business/licence --cookie 'keel_licence_session=…'
+node build/layout-check.mjs page.html --reference console --width 1280 --json
+```
+
+A side nav picks the console reference (recipe 1 around recipe 5's cards), a
+plain shell the sign-in one (recipe 3); `--reference` overrides it. A
+signed-in page needs its session cookie. It prints one line per difference,
+`part.property: reference → page`, with `[light]` or `[dark]` when only one
+theme differs, and exits 1 on any difference (0 when there is none, 2 when it
+could not run). Margins, padding and gaps are compared by their computed
+value, so a `.card-foot`'s `margin-block-start: auto` is `auto` on both sides
+whatever room its card has. Set `CHROME` if Chrome is not in
+`/Applications`. `test/shell.test.mjs` runs it on the references and on
+drifted copies of them.
+
+## Recipe 5: an account or billing page
+
+What a signed-in owner manages about one thing they pay for (a team's billing,
+a licence): the business console's billing page, assembled. The page states no
+width: the shell owns it. Every button of a card is in its `.card-foot`.
+
+Order the cards by whether they can grow:
+
+1. Cards of a FIXED size (the plan, the seats, a link) come first, in PAIRS in
+   `.grid-2` (one column on a phone; the two cards of a row end on one line).
+   A fixed card without a partner takes a full row.
+2. Cards that GROW with data (devices, members, invoices) come last, each a
+   full-width row of its own, one under the other. Never pair a list with a
+   fixed card: the row stretches to the list and leaves the neighbour mostly
+   empty (Nico, Keel's licence page 2026-11-21: "let them grow independently
+   without creating empty space in the neighbor box").
+
+```html
+<main class="stack">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><div class="card-head-text"><h2 class="panel-title">Licence</h2></div><span class="pill pill-success">Active</span></div>
+      <dl class="facts">
+        <div><dt>Seats in use</dt><dd>3 / 5</dd></div>
+        <div><dt>Paid until</dt><dd>31 Dec 2026</dd></div>
+      </dl>
+      <div class="card-foot">
+        <form method="post" action="/cancel" data-confirm-title="Cancel this licence?" data-confirm-detail="It works until 31 Dec 2026." data-confirm-action="Cancel licence">
+          <button class="btn btn-danger btn-sm" type="submit">Cancel licence</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-text">
+        <h2 class="panel-title">Change seats<button type="button" class="info-tip" aria-label="About Change seats" aria-describedby="tip-seats">…circle and i…<span class="info-tip-bubble" id="tip-seats" role="tooltip">Added seats are charged now; removed seats are credited.</span></button></h2>
+      </div></div>
+      <form class="stack" id="seats" method="post" action="/seats" data-confirm-tone="primary" data-confirm-title="Change the seats?" data-confirm-action="Change seats">
+        <div class="stepper">
+          <button type="button" aria-label="One seat fewer"><svg …><path d="M5 12h14"/></svg></button>
+          <input type="number" name="seats" inputmode="numeric" min="3" value="5" aria-label="Seats">
+          <button type="button" aria-label="One seat more"><svg …><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+        <p class="field-hint">3 in use, so 3 is the lowest.</p>
+      </form>
+      <div class="card-foot"><button class="btn btn-primary btn-sm" type="submit" form="seats">Change seats</button></div>
+    </div>
+  </div>
+  <div class="card">…a fixed card without a partner: head, sentence, then .card-foot…</div>
+  <div class="card">…devices: the first list, full width…</div>
+  <div class="card">
+    <div class="card-head"><div class="card-head-text"><h2 class="panel-title">Payment and invoices<button type="button" class="info-tip" …>…</button></h2></div></div>
+    <ul class="list-rows">…one row per invoice, its own action at the row's end…</ul>
+    <div class="card-foot"><a class="btn btn-secondary btn-sm" href="…">Payment method</a></div>
+  </div>
+</main>
+```
+
+The rules this recipe exists for, each one a fix someone had to ask for:
+
+- A card's buttons are in its `.card-foot`, never in the head, never between
+  its sentence and its content. A row of a list keeps its own action at the
+  row's end (`.list-row-action`).
+- A number of seats is `.stepper`, never a bare number input in an
+  `.input-group`.
+- Every form whose post comes back to the same page carries
+  `data-keep-scroll`, so saving, renaming or freeing a seat lands where the
+  person was instead of at the top, and redirects carry no `#fragment`, which
+  would scroll on its own.
+- A list row is never edited in place. Renaming a row (or any one small
+  value) is the kit's form dialog: `.dialog` rendered `open` with
+  `data-open-on-load`, its field between the text and the actions, Cancel a
+  link back to the page. The row's menu links to the page with the dialog
+  (`?rename=<id>`), so it works without script, and carries
+  `data-open-dialog` plus the row's values, so with script it opens in place
+  and the page does not move.
+- A value shown to be copied (a link, a token) is `.copy-value` with a
+  `btn-secondary btn-sm` Copy inside, never a read-only `.input` in an
+  `.input-group`: that reads as a field to type into.
+- Status is a `.pill` in the head, never a row of the facts.
+- A card's explanation (what it does, a rule read once, what a press costs)
+  is an `.info-tip` beside its `.panel-title`, never a `.sub` sentence under
+  it. A `.sub` in a card head is only for status, data, or the reason
+  something is blocked ("This link was made before…", "The licence ends on
+  …"), and so is anything with a link in it, which a bubble cannot hold.
+- Card actions are `btn-sm`: the card's main one `btn-primary`, others
+  `btn-secondary`, a destructive one the outlined `btn-danger`.
+  `btn-danger btn-quiet` is only for a destructive action at the end of a list
+  row; in a card it reads as loose text.
+- Cancelling sits in the plan card's foot, asks first and names the date it
+  ends; once cancelled, the same place offers to keep it.

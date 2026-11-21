@@ -90,7 +90,7 @@ const HEADER = `<header class="app-header">
   <button class="btn btn-secondary btn-sm" type="button" id="ks-dir">RTL</button>
 </header>`;
 
-const LOCAL_FONTS = `@font-face { font-family:'Titillium Web'; font-weight:400; font-display:swap; src:url('fonts/TitilliumWeb-400.woff2') format('woff2'); }
+export const LOCAL_FONTS = `@font-face { font-family:'Titillium Web'; font-weight:400; font-display:swap; src:url('fonts/TitilliumWeb-400.woff2') format('woff2'); }
 @font-face { font-family:'Titillium Web'; font-weight:600; font-display:swap; src:url('fonts/TitilliumWeb-600.woff2') format('woff2'); }
 @font-face { font-family:'Titillium Web'; font-weight:700; font-display:swap; src:url('fonts/TitilliumWeb-700.woff2') format('woff2'); }
 @font-face { font-family:'Caveat'; font-weight:400 700; font-display:swap; src:url('fonts/Caveat-400.woff2') format('woff2'); }`;
@@ -98,7 +98,7 @@ const GOOGLE_FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&family=Caveat:wght@400;700&display=swap">`;
 
-function layersCSS() {
+export function layersCSS() {
   const brand = tokens.defaultBrand;
   const layers = ['src/tokens.css', `src/brands/${brand}.css`, 'src/components.css', 'src/archetypes.css']
     .map(f => `/* ===== ${f} ===== */\n` + r(f)).join('\n');
@@ -164,12 +164,12 @@ ${sectionBody(s, images)}</section>`;
 
 /* Inlined in both outputs: a module script fetched from file:// is blocked by
    the browser, and the artifact cannot fetch a sibling file at all. */
-const navScript = () => '<script type="module">\n'
+export const navScript = () => '<script type="module">\n'
   + r('src/nav.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
   + '\n</script>';
 /* ui.js the same way, and its showToast handed to the guideline's own script,
    which runs the live examples on the Feedback and Overlay pages. */
-const uiScript = () => '<script type="module">\n'
+export const uiScript = () => '<script type="module">\n'
   + r('src/ui.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
   + '\nwindow.ksShowToast = showToast;\n</script>';
 

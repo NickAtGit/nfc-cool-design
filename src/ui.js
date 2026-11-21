@@ -28,6 +28,18 @@
  *   .stepper          its minus and plus step the number field
  *   .info-tip         a tap opens it even inside a <label>, which would
  *                     otherwise take the focus the bubble lives on
+ *   data-open-on-load a .dialog the server rendered `open` for one small ask
+ *                     (rename a row, ?rename=…) becomes a real modal, with a
+ *                     backdrop and focus kept inside; Escape follows its
+ *                     Cancel link back to the page
+ *   data-keep-scroll  a form whose post comes back to the same page (save,
+ *                     free a seat, rename) returns to where the person was,
+ *                     not to the top: the position rides in sessionStorage
+ *                     across the redirect, for this page only
+ *   data-open-dialog  a link that would load that page instead opens the
+ *                     dialog in place, filled from its data-dialog-* (the
+ *                     form's action, the field's value and placeholder, the
+ *                     text), so the page does not reload or jump
  *
  * No copy lives here. Every word a person reads (the dialog's Cancel, the
  * toast's close label) is in the page's own markup, in the page's language.
@@ -199,6 +211,10 @@ function bindDocument() {
   document.addEventListener('click', (e) => {
     closeRowMenus(e.target.closest ? e.target.closest('details.row-menu') : null);
   });
+  document.addEventListener('click', onOpenDialog);
+  // After the confirm dialog's own submit handler, so a cancelled ask stores nothing.
+  document.addEventListener('submit', onKeepScroll);
+  document.addEventListener('click', onDialogCancel);
   // 'toggle' does not bubble, so this listens in the capture phase.
   document.addEventListener('toggle', (e) => {
     const d = e.target;
@@ -230,10 +246,77 @@ function bindDocument() {
   });
 }
 
+/* ---- keep the scroll position across a post that comes back ---- */
+const scrollKey = () => `nfccool-scroll:${location.pathname}`;
+
+function onKeepScroll(e) {
+  if (e.defaultPrevented || !e.target.closest || !e.target.closest('form[data-keep-scroll]')) return;
+  try { sessionStorage.setItem(scrollKey(), String(window.scrollY)); } catch (error) {}
+}
+
+export function restoreScroll() {
+  let saved = null;
+  try {
+    saved = sessionStorage.getItem(scrollKey());
+    sessionStorage.removeItem(scrollKey());
+  } catch (error) {}
+  if (saved !== null) window.scrollTo(0, Number(saved));
+}
+
+/* ---- a dialog a link opens in place ---- */
+function onOpenDialog(e) {
+  const link = e.target.closest ? e.target.closest('a[data-open-dialog]') : null;
+  if (!link) return;
+  const dialog = document.getElementById(link.dataset.openDialog);
+  if (!dialog || typeof dialog.showModal !== 'function') return;
+  e.preventDefault();
+  const form = dialog.querySelector('form');
+  const field = dialog.querySelector('[data-dialog-field]');
+  const text = dialog.querySelector('.dialog-text');
+  if (form && link.dataset.dialogAction) form.action = link.dataset.dialogAction;
+  if (field) {
+    field.value = link.dataset.dialogValue || '';
+    field.placeholder = link.dataset.dialogPlaceholder || '';
+  }
+  if (text) text.textContent = link.dataset.dialogText || '';
+  closeRowMenus();
+  dialog.dataset.inPlace = '1';
+  dialog.showModal();
+  field?.focus();
+}
+
+/* Opened in place, Cancel only closes: following its link would reload the page. */
+function onDialogCancel(e) {
+  const cancel = e.target.closest ? e.target.closest('[data-dialog-cancel]') : null;
+  const dialog = cancel?.closest('dialog');
+  if (!dialog || dialog.dataset.inPlace !== '1') return;
+  e.preventDefault();
+  dialog.close();
+}
+
+/* ---- a dialog the page opens itself ---- */
+export function initOpenDialogs(root = document) {
+  root.querySelectorAll('dialog.dialog[data-open-on-load]').forEach((dialog) => {
+    if (bound.has(dialog) || typeof dialog.showModal !== 'function') return;
+    bound.add(dialog);
+    // Rendered `open` so it shows without script; reopened as a modal for the backdrop and the focus trap.
+    dialog.close();
+    dialog.showModal();
+    const cancel = dialog.querySelector('[data-dialog-cancel]');
+    dialog.addEventListener('cancel', (e) => {
+      if (!cancel || dialog.dataset.inPlace === '1') return;
+      e.preventDefault();
+      location.href = cancel.getAttribute('href');
+    });
+  });
+}
+
 export function initUI(root = document) {
+  if (root === document) restoreScroll();
   bindDocument();
   initSectionNav(root);
   initToast(root);
+  initOpenDialogs(root);
 }
 
 if (typeof document !== 'undefined' && !import.meta?.url?.includes('no-auto')) {
