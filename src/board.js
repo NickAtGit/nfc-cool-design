@@ -89,18 +89,53 @@ function syncPanel(id, stage) {
   });
 }
 
-export function moveCard(card, stage) {
+/* ---- landing: where a moved card goes, and how it gets there ----
+   A board may keep its columns in an order of its own: data-board-order names
+   an attribute of the cards, and a column holds them by that value, highest
+   first (an ISO time is newest first). Without it a moved card goes to the top. */
+const EASE = 'cubic-bezier(.2, .8, .2, 1)';
+function place(card, body) {
+  const attr = card.closest('.board')?.dataset.boardOrder;
+  const value = attr && card.getAttribute(attr);
+  const cards = [...body.querySelectorAll('.board-card')].filter((c) => c !== card);
+  const before = value != null && value !== ''
+    ? cards.find((c) => (c.getAttribute(attr) || '') < value) || body.querySelector('.board-col-empty')
+    : cards[0] || body.querySelector('.board-col-empty');
+  body.insertBefore(card, before && before.parentElement === body ? before : null);
+}
+const places = (board) => new Map([...board.querySelectorAll('.board-card')].map((c) => [c, c.getBoundingClientRect()]));
+/* Every card that changed place glides from where it was: the ones closing the
+   gap the card left, the ones making room for it, and the card itself unless it
+   was dropped, which is already under the pointer and settles there instead. */
+function glide(board, before, card, settle) {
+  board.querySelectorAll('.board-card').forEach((c) => {
+    const was = before.get(c);
+    if (!was || c.hidden || (c === card && settle)) return;
+    const now = c.getBoundingClientRect();
+    const dx = was.left - now.left;
+    const dy = was.top - now.top;
+    if (Math.abs(dx) + Math.abs(dy) < 1) return;
+    c.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: c === card ? 420 : 300, easing: EASE });
+  });
+  if (settle) card.animate([{ transform: 'scale(.94)', opacity: 0.4 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: EASE });
+}
+
+/* quiet: the product already saved the change (its own panel did it), so the
+   card only moves; no board:move. settle: the card was dropped where it lands. */
+export function moveCard(card, stage, { quiet = false, settle = false } = {}) {
   const board = card.closest('.board');
   const from = stageOf(card);
   const to = bodyOf(board, stage);
   if (!to || from === stage) return false;
   const home = card.parentElement;
   const next = card.nextElementSibling;
-  to.insertBefore(card, firstCard(to));
+  const before = places(board);
+  place(card, to);
+  if (!calm()) glide(board, before, card, settle);
   card.classList.remove('is-landed');
   void card.offsetWidth;   // restart the landing ring when a card lands twice
   card.classList.add('is-landed');
-  setTimeout(() => card.classList.remove('is-landed'), calm() ? 0 : 600);
+  setTimeout(() => card.classList.remove('is-landed'), calm() ? 0 : 1400);
   recount(board);
   syncPanel(card.dataset.id, stage);
   const revert = () => {
@@ -108,7 +143,7 @@ export function moveCard(card, stage) {
     recount(board);
     syncPanel(card.dataset.id, from);
   };
-  board.dispatchEvent(new CustomEvent('board:move', { bubbles: true, detail: { card, id: card.dataset.id, from, to: stage, revert } }));
+  if (!quiet) board.dispatchEvent(new CustomEvent('board:move', { bubbles: true, detail: { card, id: card.dataset.id, from, to: stage, revert } }));
   return true;
 }
 
@@ -166,7 +201,9 @@ function bindBoard(board) {
   let justDropped = false;
 
   // Mouse. On a touch screen native drag fights with scrolling, so it is off.
-  if (coarse()) board.querySelectorAll('.board-card').forEach((c) => (c.draggable = false));
+  // Only where it was on: a card without draggable="true" (a read-only board)
+  // is not carried by touch either, and data-board-carry remembers which were.
+  if (coarse()) board.querySelectorAll('.board-card[draggable="true"]').forEach((c) => { c.draggable = false; c.dataset.boardCarry = ''; });
   board.addEventListener('dragstart', (event) => {
     const card = event.target.closest?.('.board-card');
     if (!card) return;
@@ -198,7 +235,7 @@ function bindBoard(board) {
     if (!col || !dragged) return;
     event.preventDefault();
     col.classList.remove('is-over');
-    moveCard(dragged, col.dataset.stage);
+    moveCard(dragged, col.dataset.stage, { settle: true });
   });
 
   // Open: a click or Enter on a card, but not on a link or a button inside it.
@@ -255,7 +292,7 @@ function bindBoard(board) {
   // Touch: hold to lift, carry, drop.
   board.addEventListener('touchstart', (event) => {
     const card = event.target.closest('.board-card');
-    if (!card || carry || event.touches.length > 1) return;
+    if (!card || !card.matches('[draggable="true"], [data-board-carry]') || carry || event.touches.length > 1) return;
     const { clientX: x0, clientY: y0 } = event.touches[0];
     const wait = setTimeout(() => lift(card, x0, y0), LIFT_AFTER);
     const off = () => {
@@ -342,7 +379,7 @@ function bindBoard(board) {
     justDropped = true;
     setTimeout(() => (justDropped = false), 400);
     const stage = target?.dataset.go || target?.dataset.stage;
-    if (stage) moveCard(card, stage);
+    if (stage) moveCard(card, stage, { settle: true });
   }
   document.addEventListener('touchend', drop);
   document.addEventListener('touchcancel', drop);

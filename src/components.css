@@ -2241,10 +2241,12 @@ body.has-side-panel { overflow: hidden; }
 .board-card.is-selected { border-color: var(--color-link); box-shadow: 0 0 0 1px var(--color-link); }
 .board-card.is-dragging { opacity: 0.35; transform: rotate(-1.5deg); }
 .board-card.is-lifted { opacity: 0.3; }
-.board-card.is-landed { animation: board-card-landed 0.6s ease; }
+/* A card that just landed: a ring in its new stage's colour, held a moment so
+   the eye finds it after the glide, then gone. */
+.board-card.is-landed { animation: board-card-landed 1.4s ease-out; }
 @keyframes board-card-landed {
-   from { box-shadow: 0 0 0 3px var(--color-link); }
-   to   { box-shadow: 0 0 0 0 transparent; }
+   0%, 40% { box-shadow: 0 0 0 2px var(--tone, var(--color-link)); }
+   100%    { box-shadow: 0 0 0 0 transparent; }
 }
 .board-card-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
 .board-card-id { min-inline-size: 0; }

@@ -401,7 +401,7 @@ read, and a card that is an `<a>` still goes to its record.
 </nav>
 <p class="board-hint">Hold a card to move it to another stage.</p>
 
-<div class="board" data-board data-side-panel="company-panel">
+<div class="board" data-board data-side-panel="company-panel" data-board-order="data-at">
   <section class="board-col" data-stage="contact" data-tone="blue" aria-labelledby="col-contact">
     <header class="board-col-head">
       <span class="stage-dot" aria-hidden="true"></span>
@@ -648,6 +648,15 @@ The rules this recipe exists for, each one a fix someone had to ask for:
   row; in a card it reads as loose text.
 - Cancelling sits in the plan card's foot, asks first and names the date it
   ends; once cancelled, the same place offers to keep it.
+
+`data-board-order` names an attribute of the cards that orders a column,
+highest value first (an ISO time on `data-at` keeps the newest on top); a moved
+card takes its place by it, and without it goes to the top. Every card that
+changed place glides there, a dropped card settles under the pointer, and a ring
+in the new stage's `--tone` fades; none of it under reduced motion.
+`moveCard(card, stage, { quiet: true })` moves a card without `board:move`, for a
+change the product already saved elsewhere (its own panel). On a touch screen
+only a card with `draggable="true"` is carried, so a read-only board leaves it out.
 
 A host that vendors only the tokens and draws its own components (the business
 console) takes the board as its own layer: `dist/board.css`, the regions of

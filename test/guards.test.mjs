@@ -669,3 +669,29 @@ test('dist/board-kit.js is one classic script exposing window.NFCBoard', async (
     assert.equal(typeof sandbox.window.NFCBoard?.[name], 'function', `window.NFCBoard.${name}`);
   }
 });
+
+/* A moved card lands well (Nico, 2026-11-24: "animate the appearing in the new
+   row better"): it takes its place by the board's own order, every card that
+   changed place glides there, a dropped card settles under the pointer, and a
+   ring in the new stage's colour fades. None of it under reduced motion. */
+test("a moved card takes its place by the board's order and glides there", () => {
+  const js = read('src/board.js');
+  assert.match(js, /export function moveCard\(card, stage, \{ quiet = false, settle = false \} = \{\}\)/, 'moveCard(card, stage, { quiet, settle })');
+  assert.ok(js.includes('boardOrder'), 'the order comes from data-board-order');
+  assert.ok(js.includes('getBoundingClientRect'), 'places are measured before the move');
+  const animates = [...js.matchAll(/\.animate\(/g)].length;
+  assert.ok(animates >= 2, 'the move and the settle are animated');
+  assert.match(js, /if \(!calm\(\)\)[\s\S]{0,80}glide\(/, 'nothing glides under reduced motion');
+  assert.match(js, /if \(!quiet\)\s*board\.dispatchEvent/, 'a quiet move tells nobody');
+  assert.match(js, /moveCard\(dragged, col\.dataset\.stage, \{ settle: true \}\)/, 'a mouse drop settles');
+  assert.match(js, /if \(stage\) moveCard\(card, stage, \{ settle: true \}\)/, 'a touch drop settles');
+  const css = read('src/components.css');
+  assert.match(css, /\.board-card\.is-landed \{ animation: board-card-landed 1\.4s/, 'the ring lasts long enough to be seen');
+  assert.match(css, /@keyframes board-card-landed \{[^}]*var\(--tone/, 'the ring is the stage colour');
+});
+
+test('only a card that can be dragged is carried by touch', () => {
+  const js = read('src/board.js');
+  assert.match(js, /\.board-card\[draggable="true"\]/, 'touch screens turn off native drag only where it was on');
+  assert.match(js, /if \(!card \|\| !card\.matches\('\[draggable="true"\], \[data-board-carry\]'\)/, 'the hold lifts only a movable card');
+});
