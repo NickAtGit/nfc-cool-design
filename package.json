@@ -30,6 +30,7 @@
     "./tokens.json": "./src/tokens.json",
     "./nav.js": "./src/nav.js",
     "./ui.js": "./src/ui.js",
+    "./board.js": "./src/board.js",
     "./theme.js": "./src/theme.js",
     "./shell.js": "./src/shell.js"
   },

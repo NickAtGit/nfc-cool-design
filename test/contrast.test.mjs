@@ -40,6 +40,12 @@ const cases = [
   ['dark filled danger label',       D['color-danger-on'],      D['color-danger-fg'], AA],
   ['light ios pill label',           L['platform-ios-fg'],      L['color-bg-card'],  AA],
   ['light android pill label',       L['platform-android-fg'],  L['color-bg-card'],  AA],
+  // A board card's outlined pills sit on the card, not the page.
+  ['light accent pill label on card', L['color-warning-fg'],     L['color-bg-card'],  AA],
+  // The logo tile is white in both themes, and so is its initial's pair.
+  ['light logo tile initial',        L['logo-tile-fg'],         L['logo-tile-bg'],   AA],
+  ['dark logo tile initial',         D['logo-tile-fg'],         D['logo-tile-bg'],   AA],
+  ['dark accent pill label on card', D['color-warning-fg'],     D['color-bg-card'],  AA],
 
   // Dark theme.
   ['dark body text on page',         D['color-text'],           D['color-bg'],       AA],

@@ -17,10 +17,10 @@ const BUNDLES = {
   'design.css': ['src/tokens.css', brand, 'src/components.css', 'src/archetypes.css'],
 };
 mkdirSync(join(root, 'dist'), { recursive: true });
-/* The two scripts travel with the bundle. They are authored, not generated,
+/* The scripts travel with the bundle. They are authored, not generated,
    but a consumer vendors BUILT output only (test/guards.test.mjs), so the
    build places a stamped copy beside the CSS. */
-for (const script of ['nav.js', 'theme.js', 'ui.js']) {
+for (const script of ['nav.js', 'theme.js', 'ui.js', 'board.js']) {
   const body = `/* @nfccool/design v${version} - copied from src/${script} by build/emit-bundle.mjs, do not edit. */\n`
     + readFileSync(join(root, 'src', script), 'utf8');
   writeFileSync(join(root, 'dist', script), body);

@@ -563,6 +563,53 @@ and stays too.
 
 ---
 
+## A pipeline board
+
+Settled 2026-11-23, taking Lurva's pipeline into the kit. Lurva sells for
+NFC.cool and drew its board on the kit's tokens; it is the first product that
+moves things through stages on a screen, so its parts are named here for the
+next one (the console's leads, an order list).
+
+**Columns side by side, the board scrolls, a column scrolls.** A column is at
+least 17rem and the board scrolls sideways when the stages do not fit; a long
+column scrolls inside itself, so one busy stage never pushes the others below
+the fold. Below `lg` the columns take a fixed width with the next one peeking
+in, and the board is as tall as the window under its tools.
+
+**Dragging is a shortcut, not the way.** A card moves with the mouse, with a
+held finger, or from its side panel's stage chips, which is the keyboard's way
+and the way for anyone who does not drag. The move shows at once; the product
+saves it after and puts the card back if the save fails.
+
+**On a touch screen the stages come to the thumb.** A strip names every stage
+with its count, takes a tap to scroll there and a carried card to drop there.
+While a card is held, a dock rises from the foot of the window with every
+stage as a target, so the last column is as near as the next. It is asked of
+the kind of screen (`pointer: coarse`) as well as its width, because an iPad
+in landscape has a finger and every column in sight. The dock must take
+pointer events once risen: board.js finds the target by hit testing, and an
+element with `pointer-events: none` is invisible to it. Lurva's first dock
+kept the resting value and dropped nothing.
+
+**A record opens beside the board, not instead of it.** `.side-panel` slides
+in from the end edge, and below `sm` it is the modal's bottom sheet. This is
+not the drawer Navigation turns down: that was about the way around the site,
+which stays a dropdown. A side panel holds one record so the person reads it
+and is back on the board where they were.
+
+**A stage is a tone, and the tones are the status hues.** `data-tone` on a
+column, its chip, its drop target and its picker; the product picks which hue
+is which stage. The brand yellow is not a tone, because a yellow dot on white
+is 1.45:1 and a stage marker is a non-text indicator that owes 3:1.
+
+**A score is a ring, a step is a segment, a logo is a white tile.** The ring
+is an SVG stroke whose length is the score (Samsung Internet's dark mode
+repaints a conic gradient). The step track is not `.stepper`, which is the
+number field. The logo tile stays white in both themes (`--logo-tile-*`)
+because the company drew its logo for white.
+
+---
+
 ## Words
 
 The mechanics of copy, settled across the business console (most of it on

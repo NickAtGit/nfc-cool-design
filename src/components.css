@@ -716,6 +716,14 @@ a.card, a.card-interactive { color: var(--color-text); }
 .pill-warning { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
 .pill-danger  { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
 .pill-info    { background: var(--color-info-bg);    color: var(--color-info-fg);    border-color: var(--color-info-border); }
+/* The one signal on a card that outranks the rest ("opened the page"): the
+   brand's yellow as the outline, never as the text, since yellow is 1.45:1 on
+   white; the label is the warning shade, which passes on the card and the page
+   in both themes. One per card at most, or it stops being the signal. */
+.pill-accent  { background: transparent; color: var(--color-warning-fg); border-color: var(--color-accent); }
+/* A remark that is not a status ("wait for now"): an outline with no tint,
+   quieter than the neutral pill, so a card's one real status still leads. */
+.pill-outline { background: transparent; color: var(--color-text-secondary); border-color: var(--color-border); }
 /* A WORKFLOW STATUS: the apps' colours as a tint, with a label shade of its
    own per theme that clears 4.5:1 on that tint over a card and over the page
    (--status-*, in the brand layer). Which hue means what is the product's:
@@ -739,6 +747,81 @@ a.card, a.card-interactive { color: var(--color-text); }
 .status-dot.is-yes     { background: var(--color-success-bg); color: var(--color-success-fg); border-color: var(--color-success-border); }
 .status-dot.is-no      { background: var(--color-danger-bg);  color: var(--color-danger-fg);  border-color: var(--color-danger-border); }
 .status-dot.is-limited { background: var(--color-warning-bg); color: var(--color-warning-fg); border-color: var(--color-warning-border); }
+
+/* A COUNT beside a heading, a tab or a chip ("Contacted 4"): the nav's count,
+   free of the nav. Tabular, so a column's count does not jitter as cards move. */
+.count {
+   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+   min-inline-size: var(--space-6); padding: 0 var(--space-2);
+   border-radius: var(--radius-pill);
+   background: var(--color-neutral-bg); color: var(--color-text-secondary);
+   font-size: var(--text-2xs); font-weight: 700; line-height: 1.5;
+   font-variant-numeric: tabular-nums;
+}
+
+/* A STAGE'S TONE: the workflow status hues (--status-*-fg, the apps' colours
+   in a shade that passes as text on both surfaces), named once on whatever
+   carries the stage, and read by its dot, its chip and its drop target. Which
+   hue means which stage is the product's; the business console's leads are
+   New blue, Contacted orange, Qualified green, Converted purple, Archived
+   grey. The brand yellow is not a tone: as a dot on white it is 1.45:1. */
+[data-tone="blue"]   { --tone: var(--status-blue-fg); }
+[data-tone="orange"] { --tone: var(--status-orange-fg); }
+[data-tone="green"]  { --tone: var(--status-green-fg); }
+[data-tone="purple"] { --tone: var(--status-purple-fg); }
+[data-tone="grey"]   { --tone: var(--status-grey-fg); }
+.stage-dot {
+   display: inline-block; flex-shrink: 0;
+   inline-size: var(--space-2); block-size: var(--space-2); border-radius: 50%;
+   background: var(--tone, var(--color-text-muted));
+}
+
+/* A SCORE out of 100 as a ring that fills to it, so 70 and 52 read as
+   different amounts before anyone reads the digits: green from 60, the
+   warning shade from 35, muted under that (the thresholds are the product's;
+   it sets is-high or is-mid). An SVG stroke, not a conic gradient, because
+   Samsung Internet's dark mode repaints backgrounds and leaves strokes alone.
+   The arc's length is the score, through pathLength:
+     <span class="score-ring is-high" role="img" aria-label="Score 81">
+       <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="score-ring-track" cx="18" cy="18" r="15.5"/><circle class="score-ring-arc" cx="18" cy="18" r="15.5" pathLength="100" stroke-dasharray="81 100"/></svg>
+       <span class="score-ring-value">81</span>
+     </span> */
+.score-ring {
+   --ring-size: 2.875rem;
+   --ring-stroke: 3;
+   position: relative;
+   display: inline-grid; place-items: center; flex-shrink: 0;
+   inline-size: var(--ring-size); block-size: var(--ring-size);
+   color: var(--color-text-muted);
+}
+.score-ring svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; transform: rotate(-90deg); }
+.score-ring circle { fill: none; stroke-width: var(--ring-stroke); }
+.score-ring-track { stroke: var(--color-border); }
+.score-ring-arc { stroke: currentColor; stroke-linecap: round; transition: stroke-dasharray var(--transition); }
+.score-ring-value {
+   position: relative; display: grid; justify-items: center;
+   font-size: var(--text-sm); font-weight: 700; line-height: 1;
+   color: var(--color-text); font-variant-numeric: tabular-nums;
+}
+.score-ring-value small { margin-block-start: 2px; font-size: var(--text-3xs); font-weight: 600; color: var(--color-text-muted); }
+.score-ring.is-high { color: var(--color-success-fg); }
+.score-ring.is-mid  { color: var(--color-warning-fg); }
+.score-ring-sm { --ring-size: 2rem; }
+.score-ring-sm .score-ring-value { font-size: var(--text-2xs); }
+.score-ring-lg { --ring-size: 4.25rem; --ring-stroke: 2.6; }
+.score-ring-lg .score-ring-value { font-size: var(--text-lg); }
+@media (prefers-reduced-motion: reduce) { .score-ring-arc { transition: none; } }
+
+/* WORK UNDER WAY in a fixed number of steps ("researching, step 3 of 5"):
+   one segment per step, the done ones filled, the current one breathing.
+   Not .stepper, which is the number field. The container names the step:
+     <span class="step-track" role="img" aria-label="Step 3 of 5"><span class="is-done"></span><span class="is-done"></span><span class="is-now"></span><span></span><span></span></span> */
+.step-track { display: inline-flex; gap: 3px; flex-shrink: 0; }
+.step-track > span { inline-size: var(--space-5); block-size: var(--space-1); border-radius: var(--radius-pill); background: var(--color-border); }
+.step-track > .is-done { background: var(--color-link); }
+.step-track > .is-now { background: var(--color-link); animation: step-track-now 1.6s ease-in-out infinite; }
+@keyframes step-track-now { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .step-track > .is-now { animation: none; } }
 
 /* A person: a picture, or their initials. Sized by one custom property so a
    size modifier changes the glyph with the box. The default is the primary
@@ -771,6 +854,40 @@ a.card, a.card-interactive { color: var(--color-text); }
 .avatar-sm { --avatar-size: 2rem; }
 .avatar-lg { --avatar-size: 4rem; }
 .avatar-xl { --avatar-size: 6rem; }
+/* The owner on a board card: small enough to sit in a line of text, so its
+   initial takes the smallest step of the ramp, not 40% of its own box. */
+.avatar-xs { --avatar-size: 1.375rem; font-size: var(--text-3xs); letter-spacing: var(--tracking-normal); }
+/* Nobody yet: the place a person will be, drawn, not a grey disc that reads
+   as someone. */
+.avatar-empty { background: transparent; border: 1.5px dashed var(--color-border); }
+
+/* A COMPANY'S LOGO: a rounded square that stays light in both themes (the
+   brand's --logo-tile-*), because the logo's owner drew it for white and a
+   dark logo on a dark card disappears. The initial is the text underneath and
+   shows until the image loads, or when there is none; the image covers it
+   with the tile's own colour, so a transparent PNG does not show the letter
+   through. Markup, aria-hidden beside the name it belongs to:
+     <span class="logo-tile logo-tile-sm" aria-hidden="true">A<img src="…" alt=""></span>
+   An image that fails is the product's to remove (a CSP forbids onerror=). */
+.logo-tile {
+   --tile-size: 2.5rem;
+   position: relative;
+   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+   inline-size: var(--tile-size); block-size: var(--tile-size);
+   border-radius: var(--radius-md); overflow: hidden;
+   background: var(--logo-tile-bg); color: var(--logo-tile-fg);
+   border: 1px solid var(--color-border);
+   font-family: var(--font-heading); font-weight: 700; line-height: 1;
+   font-size: calc(var(--tile-size) * 0.42);
+   text-transform: uppercase; user-select: none;
+}
+.logo-tile img {
+   position: absolute; inset: 10%; inline-size: 80%; block-size: 80%;
+   object-fit: contain; background: var(--logo-tile-bg);
+}
+.logo-tile-xs { --tile-size: 1.25rem; border-radius: var(--radius-sm); }
+.logo-tile-sm { --tile-size: 2.25rem; border-radius: var(--radius-base); }
+.logo-tile-lg { --tile-size: 4rem; border-radius: var(--radius-lg); }
 
 .empty-state {
    text-align: center; padding: var(--space-10) var(--space-6);
@@ -917,6 +1034,78 @@ a.card, a.card-interactive { color: var(--color-text); }
 @media (max-width: 599px) {
    .overlay { place-items: end center; padding: 0; }
    .modal { max-width: none; border-radius: var(--radius-xl) var(--radius-xl) 0 0; max-height: 90vh; }
+}
+
+/* SIDE PANEL: one record opened beside the list it came from, so a person
+   reads a company and goes back to the board without losing their place (a
+   board, a queue). Not a way around the site: the nav stays a dropdown, not a
+   drawer (Navigation, GUIDELINE.md). It slides in from the end edge and below
+   sm becomes the modal's own bottom sheet, so a phone has one sheet shape.
+   board.js opens and closes it (openSidePanel, closeSidePanel): the scrim and
+   a [data-close] inside close it, Escape too, and focus goes back to what
+   opened it. Markup:
+     <div class="side-panel-scrim" hidden></div>
+     <aside class="side-panel" role="dialog" aria-modal="true" aria-labelledby="sp-title" hidden>
+       <header class="side-panel-head">
+         <span class="logo-tile logo-tile-sm" aria-hidden="true">A</span>
+         <div><h2 class="side-panel-title" id="sp-title">Acme</h2><p class="side-panel-sub">acme.com</p></div>
+         <button class="btn btn-icon" type="button" data-close aria-label="Close">…</button>
+       </header>
+       <div class="side-panel-body">…</div>
+       <footer class="side-panel-foot">…</footer>
+     </aside> */
+.side-panel-scrim {
+   position: fixed; inset: 0; z-index: 80;
+   background: var(--nav-scrim);
+   opacity: 0; transition: opacity var(--transition);
+}
+.side-panel {
+   position: fixed; inset-block: 0; inset-inline-end: 0; z-index: 81;
+   display: flex; flex-direction: column;
+   inline-size: min(32.5rem, 100vw);
+   padding-block-end: env(safe-area-inset-bottom);
+   background: var(--color-bg-card);
+   border-inline-start: 1px solid var(--color-border);
+   box-shadow: var(--elev-3);
+   transform: translateX(100%); transition: transform var(--transition);
+}
+[dir="rtl"] .side-panel { transform: translateX(-100%); }
+.side-panel-scrim.is-open { opacity: 1; }
+.side-panel.is-open { transform: none; }
+.side-panel[hidden], .side-panel-scrim[hidden] { display: none; }
+body.has-side-panel { overflow: hidden; }
+.side-panel-head {
+   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
+   gap: var(--space-4);
+   padding: calc(var(--space-5) + env(safe-area-inset-top)) var(--space-5) var(--space-4);
+   border-block-end: 1px solid var(--color-border-light);
+}
+.side-panel-head > .btn-icon { align-self: start; }
+.side-panel-title { margin: 0; font-size: var(--text-lg); font-weight: 700; line-height: var(--leading-snug); overflow-wrap: anywhere; }
+.side-panel-sub { margin: 0; font-size: var(--text-xs); color: var(--color-text-muted); }
+.side-panel-body {
+   flex: 1; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain;
+   display: flex; flex-direction: column; gap: var(--space-5);
+   padding: var(--space-4) var(--space-5) var(--space-5);
+}
+.side-panel-foot {
+   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);
+   padding: var(--space-4) var(--space-5);
+   border-block-start: 1px solid var(--color-border-light);
+}
+@media (max-width: 599px) {
+   .side-panel {
+      inset-block-start: auto; inset-inline: 0; inline-size: auto; max-block-size: 90vh;
+      border-inline-start: 0; border-block-start: 1px solid var(--color-border);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      transform: translateY(100%);
+   }
+   [dir="rtl"] .side-panel { transform: translateY(100%); }
+   .side-panel.is-open { transform: none; }
+   .side-panel-head { padding-block-start: var(--space-5); }
+}
+@media (prefers-reduced-motion: reduce) {
+   .side-panel, .side-panel-scrim { transition: none; }
 }
 .menu {
    min-width: 11rem; padding: var(--space-2);
@@ -1871,6 +2060,292 @@ a.card, a.card-interactive { color: var(--color-text); }
 .auth-card > .auth-note { font-size: var(--text-sm); color: var(--color-text-muted); }
 
 /* ============================================================
+   Board - things moving through stages
+   ============================================================
+   Taken from Lurva's pipeline (/quadro) on 2026-11-23, where companies move
+   To contact, Contacted, In conversation, Won, Lost. Nothing here knows what
+   moves: a lead, an order, a company. Columns sit side by side and the board
+   scrolls sideways; a card is lifted by the mouse, or held with a finger, and
+   dropped on a column. Its behaviour is board.js; without it the board is a
+   readable set of columns and each card a link to its record. Markup is
+   recipe 7 in RECIPES.md. */
+
+/* FILTER BAR: the search grows, the filters keep their own width, and on a
+   phone the search takes its own line with the filters under it, two to a
+   row, rather than three controls squeezed into one. Controls keep their one
+   height. A filter that is set brings back "Clear filters" (.btn-ghost). */
+.filter-bar {
+   display: flex; flex-wrap: wrap; align-items: center;
+   gap: var(--space-2);
+   margin-block-end: var(--space-4);
+}
+.filter-bar > .input, .filter-bar > .input-group { flex: 1 1 16rem; max-inline-size: 26rem; min-inline-size: 0; }
+.filter-bar > .select { flex: 0 0 auto; inline-size: auto; min-inline-size: 0; }
+.filter-bar > .btn { flex: 0 0 auto; }
+@media (max-width: 767px) {
+   .filter-bar > .input, .filter-bar > .input-group { flex: 1 1 100%; max-inline-size: none; }
+   .filter-bar > .select { flex: 1 1 calc(50% - var(--space-1)); }
+}
+
+/* WORK UNDER WAY: the things still being prepared, above the board they will
+   join, each a chip with its step track ("Researching now 2"). Dashed, because
+   none of it is on the board yet. Each chip may be a link to the record. */
+.progress-strip {
+   margin-block-end: var(--space-4);
+   padding: var(--space-3) var(--space-4);
+   border: 1px dashed var(--color-border); border-radius: var(--radius-lg);
+}
+.progress-strip-title {
+   display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+   margin: 0 0 var(--space-3);
+   font-size: var(--text-xs); font-weight: 600; color: var(--color-text-secondary);
+}
+.progress-strip-list { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; margin: 0; padding: 0; }
+.progress-chip {
+   display: inline-flex; align-items: center; gap: var(--space-2); max-inline-size: 100%;
+   padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+   border-radius: var(--radius-pill);
+   background: var(--color-bg-card); border: 1px solid var(--color-border);
+   color: var(--color-text); text-decoration: none;
+   font-size: var(--text-xs); font-weight: 600;
+}
+.progress-chip-name { min-inline-size: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) {
+   a.progress-chip:hover { border-color: var(--color-link); color: var(--color-text); }
+}
+
+/* CHOICE CHIPS: pick one of a few, each a capsule that says if it is pressed
+   (aria-pressed). Where each choice is a stage, data-tone gives it the
+   stage's dot. Pressed is the brand fill, like a chosen filter (Decisions,
+   "Selected is a brand fill, not ink"); its dot takes a ring in the label's
+   colour so it still reads on the fill. On a board's side panel this is how
+   a keyboard or a finger moves a card without dragging it. */
+.choice-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.choice-chip {
+   display: inline-flex; align-items: center; gap: var(--space-2);
+   padding: var(--space-2) var(--space-4);
+   border-radius: var(--radius-control);
+   border: 1px solid var(--color-border); background: transparent;
+   color: var(--color-text-secondary);
+   font: inherit; font-size: var(--text-xs); font-weight: 600; line-height: 1.4;
+   cursor: pointer;
+   transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+}
+.choice-chip[data-tone]::before {
+   content: ""; flex-shrink: 0;
+   inline-size: var(--space-2); block-size: var(--space-2); border-radius: 50%;
+   background: var(--tone);
+}
+@media (hover: hover) {
+   .choice-chip:hover { border-color: var(--color-link); color: var(--color-text); }
+}
+.choice-chip[aria-pressed="true"] { background: var(--color-primary-bg); border-color: transparent; color: var(--color-primary-fg); }
+.choice-chip[aria-pressed="true"][data-tone]::before { box-shadow: 0 0 0 2px var(--color-primary-fg); }
+
+/* THE BOARD: one column per stage, each at least 17rem, filling the width
+   when there is room and scrolling sideways when there is not. A column's
+   cards scroll inside it, so a long column never pushes the others down;
+   --board-col-max is how tall it may grow before it does. */
+.board {
+   --board-col-max: calc(100dvh - 18rem);
+   --board-h: auto;
+   display: grid; grid-auto-flow: column; grid-auto-columns: minmax(17rem, 1fr);
+   align-items: start; gap: var(--space-4);
+   overflow-x: auto; overscroll-behavior-x: contain;
+   padding-block-end: var(--space-2);
+   scroll-snap-type: x proximity;
+}
+.board-col {
+   display: flex; flex-direction: column; min-inline-size: 0;
+   padding: var(--space-3);
+   background: var(--color-bg-alt);
+   border: 1px solid var(--color-border-light); border-radius: var(--radius-lg);
+   scroll-snap-align: start;
+   transition: background-color var(--transition), border-color var(--transition);
+}
+.board-col-head { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2) var(--space-3); }
+.board-col-title { margin: 0; font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+.board-col-head > .count { margin-inline-start: auto; }
+.board-col-body {
+   display: flex; flex-direction: column; gap: var(--space-2);
+   min-block-size: 5.5rem; max-block-size: var(--board-col-max);
+   overflow-y: auto; overscroll-behavior-y: contain;
+   padding: 2px;
+}
+/* An empty column says what goes there, inside the drop area, and takes the
+   drop like any other. board.js sets is-empty as cards come and go. */
+.board-col-empty {
+   display: none; margin: 0;
+   padding: var(--space-5) var(--space-3);
+   border: 1.5px dashed var(--color-border); border-radius: var(--radius-md);
+   text-align: center; font-size: var(--text-xs); color: var(--color-text-muted);
+}
+.board-col.is-empty .board-col-empty { display: block; }
+.board.is-dragging .board-col { border-style: dashed; border-color: var(--color-border); }
+.board .board-col.is-over { background: var(--color-link-light); border-color: var(--color-link); }
+.board-col.is-over .board-col-empty { border-color: var(--color-link); color: var(--color-text); }
+
+/* THE CARD: what it is and its score on the first line, why it matters in at
+   most two lines, then who owns it and the one thing that wants attention at
+   the end. Every card has the same four places, so a column is read down its
+   edges. Markup:
+     <article class="board-card" data-id="42" tabindex="0" draggable="true" aria-label="Open Acme">
+       <div class="board-card-top">
+         <span class="logo-tile logo-tile-sm" aria-hidden="true">A</span>
+         <div class="board-card-id"><h3 class="board-card-title">Acme</h3><span class="board-card-sub">acme.com</span></div>
+         …a .score-ring-sm…
+       </div>
+       <p class="board-card-text">Runs 40 trade fairs a year and still prints a card per exhibitor.</p>
+       <div class="board-card-foot">
+         <span class="avatar avatar-xs">A</span><span class="board-card-owner">Alex</span>
+         <span class="board-card-end"><span class="pill pill-accent">Opened the page</span></span>
+       </div>
+     </article> */
+.board-card {
+   position: relative; display: block;
+   padding: var(--space-3) var(--space-3) var(--space-2);
+   background: var(--color-bg-card); color: var(--color-text);
+   border: 1px solid var(--color-border); border-radius: var(--radius-md);
+   box-shadow: var(--elev-0);
+   text-decoration: none; cursor: grab;
+   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+@media (hover: hover) {
+   .board-card:hover { border-color: var(--color-text-muted); box-shadow: var(--elev-1); transform: translateY(var(--lift-1)); }
+}
+.board-card:active { cursor: grabbing; }
+.board-card[hidden] { display: none; }
+.board-card.is-selected { border-color: var(--color-link); box-shadow: 0 0 0 1px var(--color-link); }
+.board-card.is-dragging { opacity: 0.35; transform: rotate(-1.5deg); }
+.board-card.is-lifted { opacity: 0.3; }
+.board-card.is-landed { animation: board-card-landed 0.6s ease; }
+@keyframes board-card-landed {
+   from { box-shadow: 0 0 0 3px var(--color-link); }
+   to   { box-shadow: 0 0 0 0 transparent; }
+}
+.board-card-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); }
+.board-card-id { min-inline-size: 0; }
+.board-card-title {
+   margin: 0; font-size: var(--text-sm); font-weight: 700; line-height: var(--leading-snug);
+   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.board-card-sub {
+   display: block; font-size: var(--text-2xs); color: var(--color-text-muted);
+   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.board-card-text {
+   margin: var(--space-2) 0 0;
+   font-size: var(--text-xs); line-height: var(--leading-normal); color: var(--color-text-secondary);
+   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.board-card-foot { display: flex; align-items: center; gap: var(--space-2); min-block-size: 1.375rem; margin-block-start: var(--space-3); }
+.board-card-owner {
+   min-inline-size: 0; font-size: var(--text-2xs); color: var(--color-text-secondary);
+   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.board-card-owner.is-none { color: var(--color-text-muted); }
+.board-card-end { display: flex; align-items: center; gap: var(--space-1); flex-shrink: 0; margin-inline-start: auto; }
+.board-card-age { font-size: var(--text-2xs); color: var(--color-text-muted); white-space: nowrap; }
+/* The copy that follows a finger while a card is carried: just above it, so
+   the target under the finger stays in sight. board.js sets its place. */
+.board-card-ghost {
+   position: fixed; z-index: 70; margin: 0; pointer-events: none;
+   transform: rotate(2deg) scale(0.82); transform-origin: 50% 100%;
+   box-shadow: var(--elev-2), 0 0 0 2px var(--color-link);
+   transition: none;
+}
+
+/* THE STAGE STRIP and THE DOCK, for a narrow or a touch screen, where only
+   one or two columns are in sight. The strip names every stage with its
+   count: a tap scrolls the board to it, the one in view is marked, and a
+   carried card may be dropped on it. The dock rises from the foot of the
+   window only while a card is carried, so the last stage is as near the
+   thumb as the next one. Both are hidden on a wide screen with a mouse. */
+.board-strip, .board-hint { display: none; }
+.board-dock { --board-stages: 5; display: none; }
+.board-strip-chip {
+   display: inline-flex; align-items: center; gap: var(--space-2); flex-shrink: 0;
+   padding: var(--space-2) var(--space-3);
+   border-radius: var(--radius-control);
+   border: 1px solid var(--color-border); background: var(--color-bg-card);
+   color: var(--color-text-secondary);
+   font: inherit; font-size: var(--text-xs); font-weight: 600; line-height: 1.4;
+   cursor: pointer;
+   transition: background-color var(--transition), border-color var(--transition), transform var(--transition);
+}
+.board-strip-chip[aria-current="true"] { border-color: var(--color-text-muted); color: var(--color-text); }
+.is-board-carrying .board-strip-chip { border-style: dashed; }
+.board-strip-chip.is-over { border-style: solid; border-color: var(--color-link); background: var(--color-link-light); color: var(--color-text); transform: scale(1.06); }
+.board-dock-stage {
+   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2);
+   min-block-size: 4rem; padding: var(--space-2) var(--space-1);
+   border: 1.5px dashed var(--color-border); border-radius: var(--radius-md);
+   color: var(--color-text-secondary);
+   font-size: var(--text-2xs); font-weight: 700; line-height: var(--leading-snug); text-align: center;
+   transition: background-color var(--transition), border-color var(--transition), transform var(--transition);
+}
+.board-dock-stage > .stage-dot { inline-size: 0.625rem; block-size: 0.625rem; }
+.board-dock-stage.is-over {
+   border-style: solid; border-color: var(--color-link); background: var(--color-link-light); color: var(--color-text);
+   transform: translateY(var(--lift-3)) scale(1.04);
+}
+.board-dock-stage.is-here { opacity: 0.45; }
+@media (max-width: 899px), (pointer: coarse) {
+   .board-strip {
+      display: flex; gap: var(--space-2);
+      overflow-x: auto; scrollbar-width: none;
+      margin-block-end: var(--space-2); padding-block: var(--space-1);
+   }
+   .board-strip::-webkit-scrollbar { display: none; }
+   .board-hint { display: block; margin: 0 0 var(--space-3); font-size: var(--text-2xs); color: var(--color-text-muted); }
+   .board-dock {
+      display: grid; grid-template-columns: repeat(var(--board-stages), minmax(0, 1fr)); gap: var(--space-2);
+      position: fixed; z-index: 60;
+      inset-inline: var(--space-3); inset-block-end: calc(var(--space-3) + env(safe-area-inset-bottom));
+      padding: var(--space-2);
+      background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      box-shadow: var(--elev-2);
+      transform: translateY(calc(100% + var(--space-6))); opacity: 0; pointer-events: none;
+      transition: transform var(--transition), opacity var(--transition);
+   }
+   /* Risen, it takes the drop: board.js finds the target under the finger by
+      hit testing, which skips anything with pointer-events: none. */
+   .is-board-carrying .board-dock { transform: none; opacity: 1; pointer-events: auto; }
+}
+@media (pointer: fine) {
+   .board-hint { display: none; }
+}
+/* A narrow screen: columns at a fixed width with the next one peeking in, the
+   board as tall as the window below its tools (board.js sets --board-h), and
+   each column scrolling on its own, so the page never becomes one long list. */
+@media (max-width: 899px) {
+   .board {
+      grid-auto-columns: min(78vw, 15.5rem); gap: var(--space-2);
+      align-items: stretch; block-size: var(--board-h);
+      scroll-snap-type: x mandatory; padding-block-end: var(--space-1);
+   }
+   .board-col { min-block-size: 0; padding: var(--space-2); }
+   .board-col-head { padding: 2px var(--space-1) var(--space-2); }
+   .board-col-body { flex: 1; min-block-size: 0; max-block-size: none; }
+   .board-card { padding: var(--space-2) var(--space-2) var(--space-1); }
+   .board-card-top { gap: var(--space-2); }
+   .board-card-text { margin-block-start: var(--space-1); }
+   .board-card-foot { margin-block-start: var(--space-2); }
+   /* No owner on a fresh board is the ordinary case: saying so on every card
+      is noise (Mark exceptions, not defaults). */
+   .board-card-foot:has(.avatar-empty):not(:has(.board-card-end > *)) { display: none; }
+}
+/* A held card must not select its text or open the long-press menu. */
+@media (pointer: coarse) {
+   .board-card { -webkit-touch-callout: none; user-select: none; }
+   .board-card img { pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+   .board-card.is-landed { animation: none; }
+   .board-card, .board-col, .board-strip-chip, .board-dock-stage, .board-dock, .choice-chip { transition: none; }
+}
+
+/* ============================================================
    Touch: controls stop shrinking on any touch screen
    ============================================================
    Asked of what the screen IS, not how wide it is: an iPad has a phone's
@@ -1888,4 +2363,6 @@ a.card, a.card-interactive { color: var(--color-text); }
    /* The mark keeps its 1rem glyph, exactly where it was, inside a 2rem tap
       area: the padding grows it and the negative margins give the room back. */
    .info-tip { inline-size: 2rem; block-size: 2rem; padding: var(--space-2); margin-block: -7px; margin-inline: -3px -7px; }
+   /* The board's capsules are controls beside controls: the standard height. */
+   .choice-chip, .board-strip-chip { padding-block: var(--space-3); }
 }

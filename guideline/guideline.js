@@ -162,6 +162,25 @@
     toast(f.dataset.ksDemo, 'success');
   });
 
+  /* The Pipeline board page: board.js tells the page a card opened or moved,
+     and a real product would fetch the record and save the stage. Here the
+     panel takes the card's own name, line and score, and a move is reported
+     in the toast. */
+  document.addEventListener('board:open', e => {
+    const { card, panel } = e.detail;
+    if (!panel || panel.id !== 'ks-board-panel') return;
+    const q = s => card.querySelector(s);
+    panel.querySelector('[data-ks-name]').textContent = q('.board-card-title').textContent;
+    panel.querySelector('[data-ks-site]').textContent = q('.board-card-sub').textContent;
+    panel.querySelector('[data-ks-initial]').textContent = q('.logo-tile').firstChild.textContent;
+    panel.querySelector('[data-ks-why]').textContent = q('.board-card-text')?.textContent || '';
+  });
+  document.addEventListener('board:move', e => {
+    const { card, to } = e.detail;
+    const stage = document.querySelector(`.board-col[data-stage="${to}"] .board-col-title`);
+    toast(`Moved ${card.querySelector('.board-card-title').textContent} to ${stage ? stage.textContent : to}.`, 'success');
+  });
+
   /* Specimen links are href="#", which would jump the page to the top on each
      click. A real consumer's links go somewhere. */
   document.querySelectorAll('a[href="#"]').forEach(a =>

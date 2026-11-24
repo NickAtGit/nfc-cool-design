@@ -370,6 +370,100 @@ The blocks: `text` (a string, or runs: `["Restore it ", { text: "here", href }]`
 - **Review it**: `npm run email:shots -- <dir>` renders the guideline examples
   in both schemes at 390 and 800px.
 
+## Recipe 7: a pipeline board
+
+Things moving through stages: companies from To contact to Won, leads, orders.
+Taken from Lurva's pipeline on 2026-11-23. The page head and its tabs are
+recipe 1's; under them come the filters, what is still being prepared, and the
+board. `board.js` makes the cards move and open; without it the columns still
+read, and a card that is an `<a>` still goes to its record.
+
+```html
+<div class="filter-bar" role="search">
+  <input class="input" type="search" id="b-search" placeholder="Search by name, site or reason" aria-label="Search companies">
+  <select class="select" id="b-owner" aria-label="Owner">…</select>
+  <button class="btn btn-ghost btn-sm" type="button" id="b-clear" hidden>Clear filters</button>
+</div>
+
+<section class="progress-strip" aria-labelledby="researching">
+  <h2 class="progress-strip-title" id="researching">Researching now <span class="count">2</span></h2>
+  <ul class="progress-strip-list">
+    <li><a class="progress-chip" href="/companies/9">
+      <span class="logo-tile logo-tile-xs" aria-hidden="true">D</span><span class="progress-chip-name">Dão Wines</span>
+      <span class="step-track" role="img" aria-label="Step 3 of 5"><span class="is-done"></span><span class="is-done"></span><span class="is-now"></span><span></span><span></span></span>
+    </a></li>
+  </ul>
+</section>
+
+<nav class="board-strip" aria-label="Stages">
+  <button type="button" class="board-strip-chip" data-go="contact" data-tone="blue"><span class="stage-dot" aria-hidden="true"></span>To contact<span class="count" data-count>3</span></button>
+  …one per stage…
+</nav>
+<p class="board-hint">Hold a card to move it to another stage.</p>
+
+<div class="board" data-board data-side-panel="company-panel">
+  <section class="board-col" data-stage="contact" data-tone="blue" aria-labelledby="col-contact">
+    <header class="board-col-head">
+      <span class="stage-dot" aria-hidden="true"></span>
+      <h2 class="board-col-title" id="col-contact">To contact</h2>
+      …an .info-tip, if the stage needs explaining…
+      <span class="count" data-count>3</span>
+    </header>
+    <div class="board-col-body">
+      <article class="board-card" data-id="42" tabindex="0" draggable="true" aria-label="Open Acme">…the card, see components.css…</article>
+      <p class="board-col-empty">No company ready yet.</p>
+    </div>
+  </section>
+  …one per stage…
+</div>
+<p class="empty-state-title" data-board-none hidden>No company matches these filters.</p>
+<div class="board-dock" aria-hidden="true" style="--board-stages: 5">
+  <span class="board-dock-stage" data-go="contact" data-tone="blue"><span class="stage-dot"></span>To contact</span>
+  …one per stage…
+</div>
+
+<div class="side-panel-scrim" hidden></div>
+<aside class="side-panel" id="company-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
+  …recipe in the Overlay part of components.css; its stage picker is
+  <div class="choice-chips" role="group" aria-label="Stage">
+    <button type="button" class="choice-chip" data-move-to="contact" data-tone="blue" aria-pressed="true">To contact</button> …
+  </div>
+</aside>
+```
+
+```js
+import { initBoard, filterBoard } from '/assets/design/board.js?no-auto';
+import { showToast } from '/assets/design/ui.js';
+initBoard();
+const board = document.querySelector('.board');
+board.addEventListener('board:move', async ({ detail }) => {
+  const ok = await fetch(`/companies/${detail.id}/stage`, { method: 'POST', body: new URLSearchParams({ stage: detail.to }) })
+    .then((r) => r.ok, () => false);
+  if (!ok) { detail.revert(); showToast(board.dataset.failed, { tone: 'danger' }); }
+});
+board.addEventListener('board:open', async ({ detail }) => {
+  detail.panel.querySelector('.side-panel-body').innerHTML = await (await fetch(`/companies/${detail.id}/panel`)).text();
+});
+document.getElementById('b-search').addEventListener('input', (e) => {
+  const term = e.target.value.trim().toLowerCase();
+  filterBoard(board, (card) => !term || card.textContent.toLowerCase().includes(term));
+});
+```
+
+- A stage's tone is one of the five status hues, chosen by the product and
+  the same on its column, its chip, its drop target and its picker. Never the
+  brand yellow: as a dot on white it is 1.45:1.
+- A card says the same four things in the same four places: what it is and
+  its score, why it matters in two lines at most, who owns it, and at the end
+  the one thing that wants attention. A pill that is true of most cards is
+  not on them (Mark exceptions, not defaults).
+- A move is shown at once and saved after; a failed save puts the card back
+  (`detail.revert()`) and says so in the toast.
+- The keyboard and a finger that does not drag move a card through the side
+  panel's `[data-move-to]` chips. Dragging is a shortcut, never the only way.
+- What is still being prepared sits above the board in a `.progress-strip`,
+  and joins its column by itself when it is done.
+
 ## Wiring it in each consumer
 
 **MomentoMarks (Astro).** `layouts/AppShell.astro` IS recipe 1 and 2: a page

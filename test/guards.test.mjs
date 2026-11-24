@@ -474,6 +474,29 @@ test('ui.js ships, and the classes it sets are styled', () => {
   assert.match(js, /tone !== 'danger'\) toastTimer = setTimeout\([^,]+, 5000\)/, 'a success hides after five seconds and an error stays');
 });
 
+/* board.js ships beside ui.js, the guideline runs it, and every class it sets
+   is styled. The dock is the one that bit: it rose while carrying a card but
+   kept pointer-events: none, and hit testing skips such an element, so a card
+   dropped on it went nowhere (Lurva's pipeline, found 2026-11-23). */
+test('board.js ships, and the classes it sets are styled', () => {
+  const pkg = JSON.parse(read('package.json'));
+  assert.equal(pkg.exports['./board.js'], './src/board.js', 'export ./board.js');
+  assert.match(read('build/emit-bundle.mjs'), /'board\.js'/, 'the bundle copies board.js');
+  assert.match(read('build/guideline.mjs'), /src\/board\.js/, 'the guideline must inline board.js');
+  const rules = scopedRules(read('src/components.css'));
+  const has = (sel, re = /./) => rules.some(r => r.selector === sel && re.test(r.decl));
+  for (const sel of ['.board-col.is-empty .board-col-empty', '.board.is-dragging .board-col', '.board .board-col.is-over',
+    '.board-card.is-selected', '.board-card.is-dragging', '.board-card.is-lifted', '.board-card.is-landed', '.board-card-ghost',
+    '.board-strip-chip.is-over', '.board-strip-chip[aria-current="true"]', '.board-dock-stage.is-over', '.board-dock-stage.is-here',
+    '.side-panel.is-open', '.side-panel-scrim.is-open', 'body.has-side-panel', '.choice-chip[aria-pressed="true"]']) {
+    assert.ok(has(sel), `${sel} is set by board.js and must be styled`);
+  }
+  assert.ok(has('.is-board-carrying .board-dock', /pointer-events:\s*auto/), 'the risen dock must take the drop');
+  const js = read('src/board.js');
+  for (const name of ['board:move', 'board:open', 'revert', 'is-board-carrying', '--board-h']) assert.ok(js.includes(name), `board.js: ${name}`);
+  assert.doesNotMatch(js, /textContent\s*=\s*['"`][A-Za-z]/, 'board.js writes no copy of its own');
+});
+
 /* A bare 1fr is minmax(auto, 1fr): its floor is the widest thing in the
    track, and one long option in a select widened the console's lead page to
    431 pixels on a 390 screen. The grids that hold content and controls use

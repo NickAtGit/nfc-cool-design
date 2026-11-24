@@ -29,6 +29,7 @@ export const SECTIONS = [
   { slug: 'navigation', title: 'Navigation',           group: 'Components' },
   { slug: 'headers',    title: 'Header tiers',         group: 'Components' },
   { slug: 'overlay',    title: 'Overlay',              group: 'Components' },
+  { slug: 'board',      title: 'Pipeline board',       group: 'Components' },
   { slug: 'email',      title: 'Email',                group: 'Components' },
   { slug: 'archetypes', title: 'Marketing archetypes', group: 'Archetypes' },
   { slug: 'prose',      title: 'Prose',                group: 'Archetypes' },
@@ -50,6 +51,7 @@ const GLYPHS = {
   navigation: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5Z"/>',
   headers:    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M7 7h6"/>',
   overlay:    '<rect x="3" y="3" width="13" height="13" rx="2"/><rect x="8" y="8" width="13" height="13" rx="2"/>',
+  board:      '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>',
   email:      '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
   archetypes: '<rect x="3" y="3" width="18" height="6" rx="1.5"/><rect x="3" y="12" width="8" height="9" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/>',
   prose:      '<path d="M4 6h16M4 10h16M4 14h11M4 18h7"/>',
@@ -172,6 +174,11 @@ export const navScript = () => '<script type="module">\n'
 export const uiScript = () => '<script type="module">\n'
   + r('src/ui.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
   + '\nwindow.ksShowToast = showToast;\n</script>';
+/* board.js the same way, so the Pipeline board page drags, carries and opens
+   its side panel with the real module. */
+export const boardScript = () => '<script type="module">\n'
+  + r('src/board.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
+  + '\n</script>';
 
 const MIME = { svg: 'image/svg+xml', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg' };
 function inlineImages(html) {
@@ -206,7 +213,8 @@ ${r('guideline/sections/_footer.html')}</main>
 ${r('guideline/guideline.js')}
 </script>
 ${navScript()}
-${uiScript()}`;
+${uiScript()}
+${boardScript()}`;
   if (images === 'inline') body = inlineImages(body);
   return wrap
     ? `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${head}\n</head>\n<body>\n${body}\n</body>\n</html>\n`
