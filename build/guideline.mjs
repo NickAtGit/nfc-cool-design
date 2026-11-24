@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { renderEmail, escapeHtml, EMAIL_ASSETS } from '../src/email.js';
 import { EXAMPLES, PLACEHOLDER_ICON_BASE, PLACEHOLDER_ICONS } from '../guideline/email-examples.mjs';
+import { bundleEditorKit } from './editor-bundle.mjs';
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const r = f => readFileSync(join(root, f), 'utf8');
@@ -31,6 +32,7 @@ export const SECTIONS = [
   { slug: 'overlay',    title: 'Overlay',              group: 'Components' },
   { slug: 'board',      title: 'Pipeline board',       group: 'Components' },
   { slug: 'email',      title: 'Email',                group: 'Components' },
+  { slug: 'editor',     title: 'Editor parts',         group: 'Components' },
   { slug: 'archetypes', title: 'Marketing archetypes', group: 'Archetypes' },
   { slug: 'prose',      title: 'Prose',                group: 'Archetypes' },
 ];
@@ -53,6 +55,7 @@ const GLYPHS = {
   overlay:    '<rect x="3" y="3" width="13" height="13" rx="2"/><rect x="8" y="8" width="13" height="13" rx="2"/>',
   board:      '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>',
   email:      '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
+  editor:     '<rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M5.5 8.5h3M5.5 12h3M5.5 15.5h3"/>',
   archetypes: '<rect x="3" y="3" width="18" height="6" rx="1.5"/><rect x="3" y="12" width="8" height="9" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/>',
   prose:      '<path d="M4 6h16M4 10h16M4 14h11M4 18h7"/>',
 };
@@ -102,7 +105,7 @@ const GOOGLE_FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"
 
 export function layersCSS() {
   const brand = tokens.defaultBrand;
-  const layers = ['src/tokens.css', `src/brands/${brand}.css`, 'src/components.css', 'src/archetypes.css']
+  const layers = ['src/tokens.css', `src/brands/${brand}.css`, 'src/components.css', 'src/archetypes.css', 'src/editor.css']
     .map(f => `/* ===== ${f} ===== */\n` + r(f)).join('\n');
   const dark = Object.entries(tokens.brands[brand].dark)
     .filter(([k]) => !k.startsWith('$')).map(([k, v]) => `      --${k}: ${v};`).join('\n');
@@ -180,6 +183,12 @@ export const boardScript = () => '<script type="module">\n'
   + r('src/board.js').replace(/import\.meta\?\.url\?\.includes\('no-auto'\)/, 'false').replace(/<\/script/gi, '<\\/script')
   + '\n</script>';
 
+/* The editor's parts, as the classic script a console loads, and the demos on
+   their page. Only where that page is, since it is the one that drives them. */
+const editorScript = sections => (sections.some(s => s.slug === 'editor')
+  ? `<script>\n${bundleEditorKit(root, '').replace(/<\/script/gi, '<\\/script')}\n</script>\n<script>\n${r('guideline/editor-demo.js')}\n</script>\n<script>\n${r('src/editor/classic/image-crop.js')}\n${r('src/editor/classic/slot-drop.js')}\n</script>`
+  : '');
+
 const MIME = { svg: 'image/svg+xml', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg' };
 function inlineImages(html) {
   for (const file of readdirSync(join(root, 'guideline/images'))) {
@@ -214,7 +223,8 @@ ${r('guideline/guideline.js')}
 </script>
 ${navScript()}
 ${uiScript()}
-${boardScript()}`;
+${boardScript()}
+${editorScript(sections)}`;
   if (images === 'inline') body = inlineImages(body);
   return wrap
     ? `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${head}\n</head>\n<body>\n${body}\n</body>\n</html>\n`
