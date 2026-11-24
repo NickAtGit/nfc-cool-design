@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } fro
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { bundleEditorKit } from './editor-bundle.mjs';
+import { boardLayer, boardClassic } from './board-bundle.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const { defaultBrand } = JSON.parse(readFileSync(join(root, 'src/tokens.json'), 'utf8'));
@@ -54,3 +55,13 @@ for (const f of readdirSync(join(root, 'src/editor/classic'))) {
 const editorKit = bundleEditorKit(root, `/* @nfccool/design v${version} - generated from src/editor/*.js by build/emit-bundle.mjs, do not edit. */\n`);
 writeFileSync(join(root, 'dist', 'editor-kit.js'), editorKit);
 console.log(`wrote dist/editor-kit.js (${editorKit.length} bytes)`);
+/* The board as a layer of its own, for a host that vendors only the tokens
+   (see build/board-bundle.mjs). */
+const boardCss = boardLayer(readFileSync(join(root, 'src/components.css'), 'utf8'),
+  `/* @nfccool/design v${version} - the board, cut from src/components.css by build/emit-bundle.mjs, do not edit. */\n`);
+writeFileSync(join(root, 'dist', 'board.css'), boardCss);
+console.log(`wrote dist/board.css (${boardCss.length} bytes)`);
+const boardKit = boardClassic(readFileSync(join(root, 'src/board.js'), 'utf8'),
+  `/* @nfccool/design v${version} - src/board.js as a classic script (window.NFCBoard), by build/emit-bundle.mjs, do not edit. */\n`);
+writeFileSync(join(root, 'dist', 'board-kit.js'), boardKit);
+console.log(`wrote dist/board-kit.js (${boardKit.length} bytes)`);

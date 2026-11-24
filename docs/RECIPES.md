@@ -648,3 +648,13 @@ The rules this recipe exists for, each one a fix someone had to ask for:
   row; in a card it reads as loose text.
 - Cancelling sits in the plan card's foot, asks first and names the date it
   ends; once cancelled, the same place offers to keep it.
+
+A host that vendors only the tokens and draws its own components (the business
+console) takes the board as its own layer: `dist/board.css`, the regions of
+`src/components.css` between `/* @board */` and `/* @end board */` (the board,
+its cards, strip and dock, the side panel, choice chips, stage tones, `.count`,
+`.logo-tile`, and a card's avatar sized inside `.board-card`, so the host's own
+`.avatar` never sizes it), and `dist/board-kit.js`, `board.js` as a classic
+script, `window.NFCBoard`, which does not start itself: call
+`NFCBoard.initBoard()` once the board is on the page. A rule the board needs goes
+inside a marker; a rule it does not, outside.

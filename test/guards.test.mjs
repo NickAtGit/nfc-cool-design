@@ -635,3 +635,37 @@ test('the editor kit has no em dash in its words', async () => {
   const bad = Object.entries(WORDS).filter(([, v]) => /[–—]/.test(JSON.stringify(v)));
   assert.deepEqual(bad, [], 'a dash in copy');
 });
+
+/* The board as a layer of its own, for a host that vendors only the tokens
+   and draws its own components (the business console, 2026-11-24). Its rules
+   stay in components.css, so every guard above still reads them, between
+   /* @board *\/ markers that the build cuts out into dist/board.css. */
+test('the board layer is cut from components.css between its markers', async () => {
+  const { boardLayer } = await import('../build/board-bundle.mjs');
+  const src = read('src/components.css');
+  const opens = (src.match(/\/\* @board \*\//g) || []).length;
+  const closes = (src.match(/\/\* @end board \*\//g) || []).length;
+  assert.ok(opens > 0, 'components.css marks the board family');
+  assert.equal(opens, closes, 'every /* @board */ has its /* @end board */');
+  const css = boardLayer(src);
+  for (const part of ['.board-card {', '.side-panel {', '.stage-dot', '[data-tone="blue"]', '.board-card .avatar', '.logo-tile {', '.choice-chip', '.board-dock']) {
+    assert.ok(css.includes(part), `the board layer carries ${part}`);
+  }
+  for (const part of ['.btn {', '.pill {', '.score-ring {', '.filter-bar {', '.progress-strip {']) {
+    assert.ok(!css.includes(part), `the board layer leaves out ${part}`);
+  }
+});
+
+test('dist/board-kit.js is one classic script exposing window.NFCBoard', async () => {
+  const vm = await import('node:vm');
+  const { boardClassic } = await import('../build/board-bundle.mjs');
+  const js = boardClassic(read('src/board.js'), '');
+  assert.doesNotMatch(js, /import\.meta/, 'no import.meta in a classic script');
+  assert.doesNotMatch(js, /^\s*(export|import)\s/m, 'no module syntax left');
+  assert.doesNotThrow(() => new vm.Script(js), 'the script must parse as a classic script');
+  const sandbox = { window: {}, document: { readyState: 'complete', addEventListener() {}, querySelectorAll: () => [] }, matchMedia: () => ({ matches: false }), CSS: { escape: s => s } };
+  vm.runInNewContext(js, sandbox);
+  for (const name of ['initBoard', 'moveCard', 'filterBoard', 'recount', 'openSidePanel', 'closeSidePanel']) {
+    assert.equal(typeof sandbox.window.NFCBoard?.[name], 'function', `window.NFCBoard.${name}`);
+  }
+});
