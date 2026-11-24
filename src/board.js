@@ -177,7 +177,12 @@ export function closeSidePanel(panel = document.querySelector('.side-panel.is-op
     if (scrim) scrim.hidden = true;
   }, calm() ? 0 : 200);
   document.querySelectorAll('.board-card.is-selected').forEach((c) => c.classList.remove('is-selected'));
-  if (opener?.isConnected) opener.focus({ preventScroll: true });
+  // A product may have sent the card back after a change in the panel, which
+  // replaced the element that opened it: the card with that id takes the focus.
+  const id = panel.dataset.boardCard;
+  const back = opener?.isConnected ? opener
+    : id && document.querySelector(`.board-card[data-id="${CSS.escape(id)}"]`);
+  back?.focus({ preventScroll: true });
   opener = null;
 }
 

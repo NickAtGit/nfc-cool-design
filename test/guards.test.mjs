@@ -695,3 +695,13 @@ test('only a card that can be dragged is carried by touch', () => {
   assert.match(js, /\.board-card\[draggable="true"\]/, 'touch screens turn off native drag only where it was on');
   assert.match(js, /if \(!card \|\| !card\.matches\('\[draggable="true"\], \[data-board-carry\]'\)/, 'the hold lifts only a movable card');
 });
+
+/* A product may send a card back after a change made in its panel (the
+   business console does), which replaces the element that opened the panel.
+   Closing it must still give the keyboard its place: the card with that id. */
+test('closing the side panel returns focus to its card even when the card was replaced', () => {
+  const js = read('src/board.js');
+  const close = js.slice(js.indexOf('export function closeSidePanel'), js.indexOf('function openCard'));
+  assert.match(close, /isConnected/, 'the opener may be gone');
+  assert.match(close, /\.board-card\[data-id=/, 'the card is found again by its id');
+});
