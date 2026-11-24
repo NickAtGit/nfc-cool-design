@@ -591,6 +591,13 @@ pointer events once risen: board.js finds the target by hit testing, and an
 element with `pointer-events: none` is invisible to it. Lurva's first dock
 kept the resting value and dropped nothing.
 
+**A moved card lands where the eye can follow it.** It takes its place by the
+board's own order (`data-board-order`, newest first on a date), not the bottom
+of the column; every card that changed place glides there, a dropped card
+settles under the pointer, and a ring in the new stage's colour holds a moment
+and fades (Nico, 2026-11-24, for the console's leads board). Nothing moves under
+reduced motion.
+
 **A record opens beside the board, not instead of it.** `.side-panel` slides
 in from the end edge, and below `sm` it is the modal's bottom sheet. This is
 not the drawer Navigation turns down: that was about the way around the site,
