@@ -58,7 +58,10 @@ export function blockRow(options) {
     handleSlot.replaceChildren(state.movable
       ? h('button', { type: 'button', class: 'ed-handle', 'data-ed-handle': '', 'aria-label': say('moveItem', { name: state.name }) }, icon('grip'))
       : '');
-    pills.replaceChildren(...state.pills.map(p => h('span', { class: cls(p.tone === 'warning' ? 'pillWarning' : 'pill') }, p.text)));
+    // A pill with `href` is a link (a plan's lock opens the plan), with an optional glyph (`icon`).
+    pills.replaceChildren(...state.pills.map(p => p.href
+      ? h('a', { class: `${cls('pill')} ${p.class || ''}`.trim(), href: p.href, title: p.title || null }, p.icon ? icon(p.icon) : null, p.text)
+      : h('span', { class: cls(p.tone === 'warning' ? 'pillWarning' : 'pill') }, p.text)));
     menuSlot.replaceChildren(...(state.menu.length ? [menuOf(state.name, state.menu)] : []));
   }
 
