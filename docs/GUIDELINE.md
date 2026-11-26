@@ -153,6 +153,9 @@ menus keep their own steps. A mail button keeps `--radius-md`: the decision was
 for the web's controls, and mail has its own layer. A capsule's text starts
 further in (`--space-5` on a field) so it clears the curve. The business console
 reads it from the `dist/design-tokens.css` it vendors, like every other token.
+A form's one switch boxed between its fields and its button (`.switch-row.is-boxed`,
+the sign-up terms) takes the capsule too, even on two lines: it sits in the stack of
+controls, and a squarer box there read as a different family (Nico, 2026-11-26).
 
 **No control sits on top of the media it acts on.** A thumbnail's ✕, hung off
 its corner, is the one control with nowhere to come from: it is smaller than the

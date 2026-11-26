@@ -400,6 +400,28 @@
    line-height: var(--leading-normal);
 }
 .switch-row + .switch-row { border-block-start: 1px solid var(--color-border-light); }
+/* A FORM'S ONE SWITCH, BOXED: the switch a form holds between its fields and
+   its primary button, such as the business console's sign-up terms ("I accept
+   the Terms and have read the Privacy Policy", 2026-11-26). Boxed so it reads
+   as one of the form's controls: the card's fill and edge, and the controls'
+   capsule corner, which it keeps when its sentence wraps to two lines (Nico:
+   "the box for the legal switch has a different radius than the buttons").
+   Its words start at --space-5, as a field's do, to clear the curve. A
+   sentence, not a setting's name, so it takes the body face.
+   Markup:
+     <label class="switch-row is-boxed"><span class="switch-label">I accept the
+       <a href="/terms">Terms</a>.</span><input class="switch" type="checkbox" role="switch" required></label> */
+.switch-row.is-boxed {
+   padding-block: var(--space-3);
+   padding-inline: var(--space-5) var(--space-3);
+   background: var(--color-bg-card);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-control);
+}
+.switch-row.is-boxed .switch-label {
+   font-family: var(--font-sans); font-weight: 400;
+   font-size: var(--text-sm); line-height: var(--leading-snug);
+}
 
 /* THE INFO TIP: where an explanation lives. What a setting does, a rule read
    once, the consequence someone checks while deciding: behind a mark beside
