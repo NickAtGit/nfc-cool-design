@@ -111,9 +111,22 @@ an inline link.
 **Its hover darkens.** White on the resting fill is 3.48:1, which is a recorded
 exception; hover takes it to 4.70:1, so the state a person is actively pointing
 at is the compliant one. The rule the test enforces is not a direction but an
-outcome: hover must never make the label harder to read. In dark mode, where the
-primary is brand yellow with a near-black label, that same rule makes hover
-brighten instead.
+outcome: hover must never make the label harder to read. In dark mode the
+primary is a yellow tint with a yellow label (below), and hover deepens the tint
+and makes the edge solid.
+
+**In dark mode the main button is tinted, not filled.** A wash of the brand
+yellow (`--btn-primary-bg`, 14%) with the yellow as its label and its edge (45%),
+like iOS's tinted buttons; hover deepens the wash to 22% and makes the edge solid.
+Nico, 2026-11-26: the big filled yellow buttons were too aggressive on a dark
+page, and a yellow glow under them added to it. The outline button's edge is
+grey in dark (`--btn-outline-border`, #6E7681, 3:1 on the card), so yellow marks
+only the main action and links; by day both stay the primary blue. The buttons
+read their own `btn-primary-*` and `btn-outline-*` tokens, so the switch track,
+the progress fill, a selected chip and the links keep the solid yellow. A button
+on the brand band keeps the solid yellow too (`btn-onbrand-*`). The yellow label
+is measured against the wash laid over the card (test/contrast.test.mjs). A
+filled button carries no coloured glow in either mode.
 
 **There is a filled primary button.** The marketing site has none: its primary
 CTA is an App Store badge, which works only when the conversion is leaving for
@@ -785,8 +798,9 @@ is not a token value.
 web button, and Nico chose it over the darker link blue on 2026-11-03 so a mail and
 the page it opens look alike. The cost is known: the white label is 3.48:1 by day,
 under AA, the one pair in a mail that does not clear 4.5:1, and a mail button has
-no hover to lift it. Link text stays `--color-link-text`. In dark mode the button
-is brand yellow with an ink label, the web's own flip.
+no hover to lift it. Link text stays `--color-link-text`. In dark mode the mail
+button is brand yellow with an ink label: mail has its own layer, and the web's
+tinted button (above) is not taken into it.
 
 **The mail button is a capsule, like every other control.** Its corner is
 `--radius-control` resolved to a literal by `build/emit-css.mjs`, so the next
