@@ -42,10 +42,10 @@
       needs 3:1, which it clears. */
    --btn-bg: transparent;
    --btn-fg: var(--color-text);
-   --btn-border: var(--color-primary-bg);
-   --btn-bg-hover: var(--color-link-light);
+   --btn-border: var(--btn-outline-border);
+   --btn-bg-hover: var(--btn-outline-bg-hover);
    --btn-fg-hover: var(--color-text);
-   --btn-border-hover: var(--color-primary-bg-hover);
+   --btn-border-hover: var(--btn-outline-border-hover);
 
    display: inline-flex;
    align-items: center;
@@ -108,15 +108,16 @@
    nfc.cool had no filled button at all - its primary CTA was a store badge,
    which only works when the conversion is "leave for the App Store". */
 .btn-primary {
-   /* The fill and its label are their own token pair, not the link colour.
-      In dark mode the interactive colour is brand yellow, and a yellow fill
-      needs a near-black label, not the near-white one links sit on. */
-   --btn-bg: var(--color-primary-bg);
-   --btn-fg: var(--color-primary-fg);
-   --btn-border: var(--color-primary-bg);
-   --btn-bg-hover: var(--color-primary-bg-hover);
-   --btn-fg-hover: var(--color-primary-fg);
-   --btn-border-hover: var(--color-primary-bg-hover);
+   /* The fill, label and edge are the button's own tokens (btn-primary-*),
+      not the link colour. Light: the blue fill with a white label. Dark: a
+      yellow TINT with a yellow label and edge (Nico, 2026-11-26: the filled
+      yellow was too aggressive); tokens.json says why. */
+   --btn-bg: var(--btn-primary-bg);
+   --btn-fg: var(--btn-primary-fg);
+   --btn-border: var(--btn-primary-border);
+   --btn-bg-hover: var(--btn-primary-bg-hover);
+   --btn-fg-hover: var(--btn-primary-fg);
+   --btn-border-hover: var(--btn-primary-border-hover);
 }
 /* Outlined. This is nfc.cool's shipped .landing-cta-button, unchanged. */
 .btn-secondary { /* inherits the .btn defaults */ }

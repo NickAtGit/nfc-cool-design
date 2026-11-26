@@ -7,6 +7,17 @@ const L = t.brands.nfccool.light, D = t.brands.nfccool.dark;
 
 import { ratio, AA, UI } from './contrast-math.mjs';
 
+// An rgba() colour laid over a solid hex, as the eye sees it.
+const over = (rgba, under) => {
+  const m = String(rgba).match(/rgba?\(([^)]+)\)/);
+  if (!m) return rgba;
+  const [r, g, b, a = 1] = m[1].split(',').map(Number);
+  const n = parseInt(under.replace('#', ''), 16);
+  const base = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  const mix = [r, g, b].map((c, i) => Math.round(c * a + base[i] * (1 - a)));
+  return '#' + mix.map(c => c.toString(16).padStart(2, '0')).join('');
+};
+
 const cases = [
   // [label, fg, bg, threshold]
   ['light body text on page',        L['color-text'],           L['color-bg'],       AA],
@@ -59,8 +70,13 @@ const cases = [
   ['dark danger fg on page',         D['color-danger-fg'],      D['color-bg'],       AA],
   ['dark info fg on page',           D['color-info-fg'],        D['color-bg'],       AA],
   ['dark ios pill label',            D['platform-ios-fg'],      D['color-bg-card'],  AA],
-  ['dark primary button label',        D['color-primary-fg'], D['color-primary-bg'],       AA],
-  ['dark primary button hover label',  D['color-primary-fg'], D['color-primary-bg-hover'], AA],
+  // The dark main button is a yellow wash: its label is read against the wash
+  // laid over the card it sits on (over the page it is darker still).
+  ['dark tinted button label',         D['btn-primary-fg'], over(D['btn-primary-bg'], D['color-bg-card']),       AA],
+  ['dark tinted button hover label',   D['btn-primary-fg'], over(D['btn-primary-bg-hover'], D['color-bg-card']), AA],
+  ['dark tinted button edge',          over(D['btn-primary-border'], D['color-bg-card']), D['color-bg-card'],    UI],
+  ['dark outline button edge',         D['btn-outline-border'], D['color-bg-card'],  UI],
+  ['light outline button edge',        L['btn-outline-border'], L['color-bg-card'],  UI],
   ['dark primary on brand band',       D['btn-onbrand-fg'],   D['btn-onbrand-bg'],         AA],
   ['dark android pill label',        D['platform-android-fg'],  D['color-bg-card'],  AA],
 
@@ -140,11 +156,15 @@ test('the filled primary label gains contrast on hover, in both themes', () => {
 
 /* Buttons use one blue. It is the light stop, and on a button it is only ever
    a fill or a border - never the label. */
-test('the outlined button borders in the same blue as the filled one', () => {
+test('the outlined button borders in the filled blue in light, and in grey in dark', () => {
   const css = readFileSync(new URL('../src/components.css', import.meta.url), 'utf8');
   const rule = css.slice(css.indexOf('.btn {'), css.indexOf('}', css.indexOf('.btn {')));
-  assert.match(rule, /--btn-border:\s*var\(--color-primary-bg\)/,
-    'the outlined border must be the same token as the filled fill');
+  assert.match(rule, /--btn-border:\s*var\(--btn-outline-border\)/,
+    'the outlined border is the outline token');
+  assert.equal(L['btn-outline-border'], L['btn-primary-bg'],
+    'in light the outlined border is the same blue as the filled fill');
+  assert.notEqual(D['btn-outline-border'], D['btn-primary-fg'],
+    'in dark yellow marks only the main action (Nico, 2026-11-26): the outline is grey');
   assert.match(rule, /--btn-fg:\s*var\(--color-text\)/,
     'the outlined label must be ink, not a second blue');
 });
