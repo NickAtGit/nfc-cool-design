@@ -123,7 +123,10 @@ page, and a yellow glow under them added to it. The outline button's edge is
 grey in dark (`--btn-outline-border`, #6E7681, 3:1 on the card), so yellow marks
 only the main action and links; by day both stay the primary blue. The buttons
 read their own `btn-primary-*` and `btn-outline-*` tokens, so the switch track,
-the progress fill, a selected chip and the links keep the solid yellow. A button
+the progress fill and the links keep the solid yellow. A selected chip
+(`.choice-chip[aria-pressed="true"]`, the console's filter chips) wears the main
+button's tint since 2026-11-27: Nico found the solid yellow pill as aggressive as
+the buttons had been. A button
 on the brand band keeps the solid yellow too (`btn-onbrand-*`). The yellow label
 is measured against the wash laid over the card (test/contrast.test.mjs). A
 filled button carries no coloured glow in either mode.

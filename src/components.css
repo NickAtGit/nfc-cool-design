@@ -2185,8 +2185,14 @@ body.has-side-panel { overflow: hidden; }
 @media (hover: hover) {
    .choice-chip:hover { border-color: var(--color-link); color: var(--color-text); }
 }
-.choice-chip[aria-pressed="true"] { background: var(--color-primary-bg); border-color: transparent; color: var(--color-primary-fg); }
-.choice-chip[aria-pressed="true"][data-tone]::before { box-shadow: 0 0 0 2px var(--color-primary-fg); }
+/* The chosen chip fills exactly as the main button does: solid in light, the soft
+   tint with its edge and label in dark (Nico 2026-11-27, the console's filter chips:
+   "so they don't look so aggressive in dark mode"). */
+.choice-chip[aria-pressed="true"] { background: var(--btn-primary-bg); border-color: var(--btn-primary-border); color: var(--btn-primary-fg); }
+@media (hover: hover) {
+   .choice-chip[aria-pressed="true"]:hover { background: var(--btn-primary-bg-hover); border-color: var(--btn-primary-border-hover); color: var(--btn-primary-fg); }
+}
+.choice-chip[aria-pressed="true"][data-tone]::before { box-shadow: 0 0 0 2px var(--btn-primary-fg); }
 
 /* THE BOARD: one column per stage, each at least 17rem, filling the width
    when there is room and scrolling sideways when there is not. A column's
